@@ -43,7 +43,7 @@ export default function Heatmap({ data, className = "" }: HeatmapProps) {
                 title={d.date}
               >
                 {i % 7 === 0
-                  ? new Date(d.date).toLocaleDateString("es", { day: "2-digit", month: "numeric" })
+                  ? (() => { const [, mm, dd] = d.date.split("-"); return `${parseInt(dd)}/${parseInt(mm)}`; })()
                   : ""}
               </th>
             ))}
