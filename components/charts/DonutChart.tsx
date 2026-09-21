@@ -27,8 +27,6 @@ export default function DonutChart({
   const cy = 55;
   const stroke = 18;
 
-  let cumAngle = -90;
-
   function polarToXY(angle: number, radius: number) {
     const rad = (angle * Math.PI) / 180;
     return {
@@ -51,20 +49,19 @@ export default function DonutChart({
         <circle cx={cx} cy={cy} r={r} fill="none" stroke="#f1f5f9" strokeWidth={stroke} />
         {data.map((slice, i) => {
           if (slice.value === 0) return null;
+          const startAngle =
+            -90 + (data.slice(0, i).reduce((s, d) => s + d.value, 0) / (total || 1)) * 360;
           const angle = (slice.value / (total || 1)) * 360;
-          const path = slicePath(cumAngle, cumAngle + angle - 0.5, r);
-          const el = (
+          return (
             <path
               key={i}
-              d={path}
+              d={slicePath(startAngle, startAngle + angle - 0.5, r)}
               fill="none"
               stroke={slice.color}
               strokeWidth={stroke}
               strokeLinecap="round"
             />
           );
-          cumAngle += angle;
-          return el;
         })}
         {/* Center */}
         {centerValue !== undefined && (
