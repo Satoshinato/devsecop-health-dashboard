@@ -116,8 +116,8 @@ export const HISTORIAL_SCANS: ScanHistorico[] = [
   { fecha: "2026-09-18", reposConSonar: 21, reposConTrivy: 18, criticos: 40, deudaDias: 268, cobertura: 58.8 },
   { fecha: "2026-09-19", reposConSonar: 24, reposConTrivy: 21, criticos: 43, deudaDias: 301, cobertura: 58.2 },
   { fecha: "2026-09-20", reposConSonar: 28, reposConTrivy: 24, criticos: 47, deudaDias: 357, cobertura: 57.8 },
-  { fecha: "2026-09-21", reposConSonar: 29, reposConTrivy: 25, criticos: 46, deudaDias: 379, cobertura: 57.6 },
-  { fecha: "2026-09-21", reposConSonar: 29, reposConTrivy: 25, criticos: 46, deudaDias: 384, cobertura: 57.5 },
+  { fecha: "2026-09-21", reposConSonar: 28, reposConTrivy: 25, criticos: 46, deudaDias: 379, cobertura: 57.6 },
+  { fecha: "2026-09-21", reposConSonar: 29, reposConTrivy: 25, criticos: 45, deudaDias: 384, cobertura: 57.5 },
 ];
 
 function sonar(m: Partial<SonarMetrics> & Pick<SonarMetrics, "ncloc">): SonarMetrics {
@@ -246,7 +246,7 @@ export const PROYECTOS: ProyectoSample[] = [
     azdoProject: "mep-cronos",
     reposTotal: 15,
     lider: "Fernando Luna",
-    historial: [0, 0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 6, 6],
+    historial: [0, 0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6],
     repos: [
       {
         name: "ms-cronos-liquidacion",

@@ -149,13 +149,17 @@ export default function ProjectsTable({ filas, seleccionada, compacta = false }:
                     <SinDatosBadge texto="0 %" />
                   ) : (
                     <div className="flex items-center justify-end gap-2">
-                      <div className="h-1.5 w-12 overflow-hidden rounded-full bg-slate-100">
-                        <div
-                          className="h-full rounded-full bg-teal-600"
-                          style={{ width: `${fila.adopcionSonar}%` }}
-                        />
-                      </div>
-                      <span className="font-semibold text-slate-700">{fila.adopcionSonar} %</span>
+                      {!compacta && (
+                        <div className="h-1.5 w-12 overflow-hidden rounded-full bg-slate-100">
+                          <div
+                            className="h-full rounded-full bg-teal-600"
+                            style={{ width: `${fila.adopcionSonar}%` }}
+                          />
+                        </div>
+                      )}
+                      <span className="whitespace-nowrap font-semibold text-slate-700">
+                        {fila.adopcionSonar}&nbsp;%
+                      </span>
                     </div>
                   )}
                 </td>

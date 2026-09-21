@@ -49,20 +49,25 @@ export default function ProjectDetailPanel({ fila }: { fila: FilaProyecto }) {
               : "sin análisis registrados"}
           </p>
         </div>
-        <div className="flex shrink-0 flex-col items-end gap-1">
-          <a
-            href={`${AZDO_BASE_URL}/${fila.azdoProject}`}
-            className="text-[11px] font-medium text-teal-700 underline decoration-teal-300 underline-offset-2"
-          >
-            Abrir en Azure DevOps
-          </a>
-          <a
-            href={`${SONAR_BASE_URL}/organizations/${SONAR_ORG}/projects?search=${fila.key}`}
-            className="text-[11px] font-medium text-teal-700 underline decoration-teal-300 underline-offset-2"
-          >
-            Abrir en SonarQube Cloud
-          </a>
-          <Sparkline data={fila.historial} width={96} height={22} />
+        <div className="flex shrink-0 items-start gap-5">
+          <div className="flex flex-col items-end gap-0.5">
+            <span className="text-[10px] text-slate-400">Repos analizados por scan</span>
+            <Sparkline data={fila.historial} width={96} height={24} />
+          </div>
+          <div className="flex flex-col items-end gap-1">
+            <a
+              href={`${AZDO_BASE_URL}/${fila.azdoProject}`}
+              className="text-[11px] font-medium text-teal-700 underline decoration-teal-300 underline-offset-2"
+            >
+              Abrir en Azure DevOps
+            </a>
+            <a
+              href={`${SONAR_BASE_URL}/organizations/${SONAR_ORG}/projects?search=${fila.key}`}
+              className="text-[11px] font-medium text-teal-700 underline decoration-teal-300 underline-offset-2"
+            >
+              Abrir en SonarQube Cloud
+            </a>
+          </div>
         </div>
       </header>
 

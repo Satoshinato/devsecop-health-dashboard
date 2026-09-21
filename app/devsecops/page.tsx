@@ -14,7 +14,7 @@ export default function PortadaEjecutivaPage() {
   const kpis: Kpi[] = [
     {
       label: "Repos escaneados",
-      value: `${resumen.reposConSonar} / ${resumen.reposTotal}`,
+      value: `${resumen.reposConSonar}/${resumen.reposTotal}`,
       sub: `${resumen.adopcionSonar} % del inventario`,
       delta: `${resumen.deltaRepos >= 0 ? "+" : ""}${resumen.deltaRepos} vs. scan anterior`,
       tonoDelta: resumen.deltaRepos >= 0 ? "bueno" : "malo",
@@ -74,6 +74,7 @@ export default function PortadaEjecutivaPage() {
           <AdopcionPanel resumen={resumen} />
           <AdopcionPorScanPanel />
           <DeudaYCriticosPanel />
+          <CvePanel />
         </div>
         <div className="flex flex-col gap-4">
           <BaseImagesPanel />
@@ -81,8 +82,6 @@ export default function PortadaEjecutivaPage() {
           <QualityGatePanel />
         </div>
       </div>
-
-      <CvePanel />
 
       <footer className="border-t border-slate-200 pt-3 text-center text-[10px] text-slate-400">
         Maqueta del tablero DevSecOps de Accusys · Todos los valores son de muestra · Los datos están

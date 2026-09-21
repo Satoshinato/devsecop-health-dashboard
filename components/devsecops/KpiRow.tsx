@@ -36,7 +36,11 @@ function KpiCard({ kpi }: { kpi: Kpi }) {
     <div className={`flex-1 min-w-[170px] rounded-xl border bg-white px-4 py-3 shadow-sm ${borde}`}>
       <p className="text-[11px] text-slate-500">{kpi.label}</p>
       <div className="mt-1 flex items-end justify-between gap-2">
-        <span className={`text-[30px] font-semibold leading-none ${colorValor}`}>{kpi.value}</span>
+        <span
+          className={`whitespace-nowrap text-[30px] font-semibold leading-none ${colorValor}`}
+        >
+          {kpi.value}
+        </span>
         {kpi.serie && <Sparkline data={kpi.serie} width={68} height={22} />}
       </div>
       <div className="mt-1.5 flex items-center gap-2">

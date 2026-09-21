@@ -13,6 +13,7 @@ export function AdopcionPorScanPanel() {
       </p>
       <BarChart
         height={190}
+        fillHeight
         data={HISTORIAL_SCANS.map(scan => ({
           label: etiquetaFecha(scan.fecha),
           value: scan.reposConSonar,
@@ -25,22 +26,37 @@ export function AdopcionPorScanPanel() {
 
 export function DeudaYCriticosPanel() {
   return (
-    <Panel title="Deuda técnica y CVE críticos por scan" hint="Días de deuda · CVE críticos">
-      <LineChart
-        height={170}
-        color="#7c3aed"
-        color2="#e11d48"
-        label2="CVE críticos"
-        showArea
-        data={HISTORIAL_SCANS.map(scan => ({
-          label: etiquetaFecha(scan.fecha),
-          value: scan.deudaDias,
-          value2: scan.criticos,
-        }))}
-      />
+    <Panel title="Deuda técnica y CVE críticos por scan" hint="Escalas independientes">
+      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+        <div>
+          <h3 className="mb-1 text-[11px] font-medium text-slate-500">Deuda técnica (días)</h3>
+          <LineChart
+            height={150}
+            color="#7c3aed"
+            showArea
+            data={HISTORIAL_SCANS.map(scan => ({
+              label: etiquetaFecha(scan.fecha),
+              value: scan.deudaDias,
+            }))}
+          />
+        </div>
+        <div>
+          <h3 className="mb-1 text-[11px] font-medium text-slate-500">CVE críticos abiertos</h3>
+          <LineChart
+            height={150}
+            color="#e11d48"
+            showArea
+            data={HISTORIAL_SCANS.map(scan => ({
+              label: etiquetaFecha(scan.fecha),
+              value: scan.criticos,
+            }))}
+          />
+        </div>
+      </div>
       <p className="mt-2 text-[10px] text-slate-400">
-        La deuda crece porque se suman repos al análisis, no porque el código empeore. Es el efecto
-        esperado mientras avanza la adopción.
+        Las dos series van en gráficos separados a propósito: comparten un rango muy distinto y en un
+        eje común la curva de críticos queda aplastada contra el piso. La deuda crece porque se suman
+        repos al análisis, no porque el código empeore.
       </p>
     </Panel>
   );
