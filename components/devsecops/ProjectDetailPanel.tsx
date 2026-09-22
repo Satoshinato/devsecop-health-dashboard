@@ -126,7 +126,7 @@ export default function ProjectDetailPanel({ fila }: { fila: FilaProyecto }) {
           </div>
 
           <div className="grid grid-cols-1 gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
-            <div className="flex flex-wrap items-start justify-around gap-3 rounded-lg border border-slate-100 bg-slate-50/60 px-2 py-3">
+            <div className="grid grid-cols-3 items-start gap-2 rounded-lg border border-slate-100 bg-slate-50/60 px-2 py-3">
               <Gauge
                 value={fila.adopcionSonar}
                 label={`Adopción Sonar (${fila.reposConSonar}/${fila.reposTotal})`}
