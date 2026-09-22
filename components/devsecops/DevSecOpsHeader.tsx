@@ -17,12 +17,14 @@ function esActiva(pathname: string, href: string): boolean {
   return pathname.startsWith("/devsecops/proyectos/");
 }
 
+/** Nombre del tablero, igual en las tres vistas. */
+const TITULO = "DevSecOps health (Deuda Técnica)";
+
 interface Props {
-  titulo: string;
   subtitulo?: string;
 }
 
-export default function DevSecOpsHeader({ titulo, subtitulo }: Props) {
+export default function DevSecOpsHeader({ subtitulo }: Props) {
   const pathname = usePathname() ?? "/devsecops";
   const serie = HISTORIAL_SCANS.map(s => s.reposConSonar);
   const delta = serie[serie.length - 1] - serie[serie.length - 2];
@@ -34,7 +36,7 @@ export default function DevSecOpsHeader({ titulo, subtitulo }: Props) {
           <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-400">
             Inteligencia de ingeniería · Accusys
           </p>
-          <h1 className="mt-1 text-[32px] font-semibold leading-tight text-slate-800">{titulo}</h1>
+          <h1 className="mt-1 text-[32px] font-semibold leading-tight text-slate-800">{TITULO}</h1>
           {subtitulo && <p className="mt-1 text-xs text-slate-500">{subtitulo}</p>}
         </div>
 

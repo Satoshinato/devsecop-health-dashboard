@@ -1,7 +1,7 @@
 import DonutChart from "@/components/charts/DonutChart";
 import Gauge from "@/components/charts/Gauge";
 import Panel from "@/components/devsecops/Panel";
-import { QUALITY_GATE } from "@/lib/devsecops-data";
+import { ALCANCE_TRIVY, QUALITY_GATE } from "@/lib/devsecops-data";
 import type { ResumenGlobal } from "@/lib/devsecops-metrics";
 import { formatearNumero } from "@/lib/devsecops-metrics";
 
@@ -9,8 +9,18 @@ export function AdopcionPanel({ resumen }: { resumen: ResumenGlobal }) {
   return (
     <Panel title="Adopción y cobertura" hint="Sobre el inventario real de Azure DevOps">
       <div className="flex flex-wrap items-start justify-around gap-4 py-1">
-        <Gauge value={resumen.adopcionSonar} label="Adopción SonarQube" color="#0f9b8e" size={92} />
-        <Gauge value={resumen.adopcionTrivy} label="Adopción Trivy" color="#2563eb" size={92} />
+        <Gauge
+          value={resumen.adopcionSonar}
+          label={`Adopción SonarQube (${resumen.reposConSonar}/${resumen.reposTotal} repos)`}
+          color="#0f9b8e"
+          size={92}
+        />
+        <Gauge
+          value={resumen.adopcionTrivy}
+          label={`Adopción Trivy (${resumen.reposConTrivy}/${resumen.reposConImagen} con imagen)`}
+          color="#2563eb"
+          size={92}
+        />
         <Gauge
           value={Math.round(resumen.cobertura)}
           label="Cobertura ponderada"
@@ -41,12 +51,16 @@ export function AdopcionPanel({ resumen }: { resumen: ResumenGlobal }) {
           <dd className="font-semibold text-slate-700">{formatearNumero(resumen.ncloc)}</dd>
         </div>
         <div>
-          <dt className="text-slate-400">Repos con Trivy</dt>
+          <dt className="text-slate-400">Repos que publican imagen</dt>
           <dd className="font-semibold text-slate-700">
-            {resumen.reposConTrivy} de {resumen.reposTotal}
+            {resumen.reposConImagen} de {resumen.reposTotal}
           </dd>
         </div>
       </dl>
+      <p className="mt-2 text-[10px] text-slate-400">
+        La adopción de Trivy se mide solo contra los repos que publican imagen de contenedor: las
+        librerías no generan imagen y bajarían el porcentaje sin motivo.
+      </p>
     </Panel>
   );
 }
@@ -54,7 +68,7 @@ export function AdopcionPanel({ resumen }: { resumen: ResumenGlobal }) {
 export function SeveridadesPanel({ resumen }: { resumen: ResumenGlobal }) {
   const total = resumen.criticos + resumen.altos + resumen.medios + resumen.bajos;
   return (
-    <Panel title="Vulnerabilidades por severidad" hint="Trivy · imágenes de contenedor">
+    <Panel title="Vulnerabilidades por severidad" hint={`Trivy Fase 1 · ${ALCANCE_TRIVY.toLowerCase()}`}>
       <div className="flex items-center gap-4">
         <DonutChart
           size={128}
@@ -69,11 +83,11 @@ export function SeveridadesPanel({ resumen }: { resumen: ResumenGlobal }) {
         />
         <ul className="flex-1 space-y-1.5 text-[11px]">
           <li className="flex justify-between">
-            <span className="text-slate-500">Quality Gates en verde</span>
+            <span className="text-slate-500">Repos con Quality Gate en verde</span>
             <span className="font-semibold text-emerald-600">{resumen.gatesOk}</span>
           </li>
           <li className="flex justify-between">
-            <span className="text-slate-500">Quality Gates en rojo</span>
+            <span className="text-slate-500">Repos con Quality Gate en rojo</span>
             <span className="font-semibold text-rose-600">{resumen.gatesError}</span>
           </li>
           <li className="flex justify-between border-t border-slate-100 pt-1.5">

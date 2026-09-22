@@ -29,7 +29,7 @@ export default function PortadaEjecutivaPage() {
     {
       label: "Adopción Trivy",
       value: `${resumen.adopcionTrivy} %`,
-      sub: `${resumen.reposConTrivy} repos con imagen escaneada`,
+      sub: `${resumen.reposConTrivy} de ${resumen.reposConImagen} repos con imagen`,
       serie: HISTORIAL_SCANS.map(s => s.reposConTrivy),
       destacado: "atencion",
     },
@@ -61,10 +61,7 @@ export default function PortadaEjecutivaPage() {
 
   return (
     <>
-      <DevSecOpsHeader
-        titulo="Salud DevSecOps"
-        subtitulo="Estado de calidad de código y seguridad de contenedores por proyecto de Azure DevOps"
-      />
+      <DevSecOpsHeader subtitulo="Portada ejecutiva · deuda técnica, calidad de código y seguridad de contenedores por proyecto de Azure DevOps" />
       <SampleDataBanner />
 
       <KpiRow kpis={kpis} />

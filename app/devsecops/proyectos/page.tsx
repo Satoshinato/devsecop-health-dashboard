@@ -35,44 +35,42 @@ export default function RankingProyectosPage() {
     {
       label: "Peor deuda normalizada",
       value: `${peorDeuda.deudaPor1kLineas} min`,
-      sub: `${peorDeuda.nombre} · por 1k líneas`,
+      sub: `${peorDeuda.nombreCorto} · por 1k líneas`,
       destacado: "atencion",
     },
     {
       label: "Más CVE críticos",
       value: String(masCriticos.criticos),
-      sub: masCriticos.nombre,
+      sub: masCriticos.nombreCorto,
       destacado: "riesgo",
     },
   ];
 
   return (
     <>
-      <DevSecOpsHeader
-        titulo="Ranking de proyectos"
-        subtitulo="Ordenable por cualquier columna. La deuda se muestra normalizada por tamaño para que los proyectos grandes no queden siempre últimos."
-      />
+      <DevSecOpsHeader subtitulo="Ranking de proyectos · ordenado por deuda cada 1.000 líneas, ordenable por cualquier columna" />
       <SampleDataBanner />
 
       <KpiRow kpis={kpis} />
 
       <div className="grid grid-cols-1 gap-4 xl:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
         <Panel title="Proyectos" hint={`${filas.length} proyectos`}>
-          <ProjectsTable filas={filas} />
+          <ProjectsTable filas={filas} buscador />
         </Panel>
 
         <div className="flex flex-col gap-4">
           <Panel title="Cómo leer esta tabla">
             <ul className="space-y-2 text-[11px] text-slate-600">
               <li>
+                <strong className="font-semibold text-slate-700">Deuda / 1k líneas</strong> =
+                minutos de <code>sqale_index</code> cada 1.000 líneas, y es el orden por defecto.
+                Permite comparar Probatch (35 repos) con Afrodita (5 repos) sin que el tamaño domine
+                el ranking. La deuda total usa jornadas de 8 h.
+              </li>
+              <li>
                 <strong className="font-semibold text-slate-700">Adopción</strong> = repos con
                 proyecto en SonarQube sobre el total de repos que Azure DevOps reporta para ese
                 proyecto. Es el indicador de avance del plan.
-              </li>
-              <li>
-                <strong className="font-semibold text-slate-700">Deuda / 1k líneas</strong> =
-                minutos de <code>sqale_index</code> cada 1.000 líneas. Permite comparar Probatch (35
-                repos) con Afrodita (5 repos) sin que el tamaño domine el ranking.
               </li>
               <li>
                 <strong className="font-semibold text-slate-700">Actividad</strong> = repos
@@ -81,10 +79,11 @@ export default function RankingProyectosPage() {
               </li>
               <li>
                 <strong className="font-semibold text-slate-700">Críticos Trivy</strong> = CVE de
-                severidad crítica en las imágenes del proyecto, sumados por repo.
+                severidad crítica en las imágenes de contenedor del proyecto, sumados por repo.
               </li>
               <li className="border-t border-slate-100 pt-2 text-slate-500">
-                Hacer clic en el nombre del proyecto abre el detalle con el desglose por repo.
+                Los nombres van cortos acá y completos en el detalle. Hacer clic en el nombre abre el
+                detalle con el desglose por repo.
               </li>
             </ul>
           </Panel>

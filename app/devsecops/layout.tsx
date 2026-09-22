@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Salud DevSecOps · Accusys (maqueta)",
+  title: "DevSecOps health (Deuda Técnica) · Accusys (maqueta)",
   description:
-    "Maqueta navegable del tablero DevSecOps de Accusys: adopción de SonarQube y Trivy por proyecto de Azure DevOps. Datos de muestra.",
+    "Maqueta navegable del tablero DevSecOps de Accusys: deuda técnica, adopción de SonarQube y Trivy por proyecto de Azure DevOps. Datos de muestra.",
 };
 
 export default function DevSecOpsLayout({ children }: { children: React.ReactNode }) {

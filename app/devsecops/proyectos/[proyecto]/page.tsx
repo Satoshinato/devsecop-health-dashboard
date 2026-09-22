@@ -23,10 +23,7 @@ export default async function DetalleProyectoPage(
 
   return (
     <>
-      <DevSecOpsHeader
-        titulo="Detalle de proyecto"
-        subtitulo="El panel de detalle se abre al costado de la lista, igual que en el tablero de obsolescencia, para no perder el contexto del ranking."
-      />
+      <DevSecOpsHeader subtitulo={`Detalle de proyecto · ${fila.nombre} · ruta propia y enlazable, con la lista al costado para no perder el contexto del ranking`} />
       <SampleDataBanner />
 
       <div className="grid grid-cols-1 gap-4 xl:grid-cols-[minmax(0,360px)_minmax(0,1fr)]">

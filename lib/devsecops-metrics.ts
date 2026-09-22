@@ -4,7 +4,9 @@
 
 import {
   HISTORIAL_SCANS,
+  IMAGENES_BASE,
   PROYECTOS,
+  type ImagenBase,
   type ProyectoSample,
   type RepoSample,
 } from "@/lib/devsecops-data";
@@ -14,11 +16,16 @@ const MINUTOS_POR_DIA = 480;
 
 export interface FilaProyecto {
   key: string;
+  /** Nombre completo, para el detalle. */
   nombre: string;
+  /** Nombre corto, para las tablas. */
+  nombreCorto: string;
   azdoProject: string;
   lider: string;
   esPoc: boolean;
   reposTotal: number;
+  /** Denominador de la adopción de Trivy: repos que publican imagen de contenedor. */
+  reposConImagen: number;
   reposConSonar: number;
   reposConTrivy: number;
   adopcionSonar: number;
@@ -72,14 +79,16 @@ export function filaProyecto(proyecto: ProyectoSample): FilaProyecto {
   return {
     key: proyecto.key,
     nombre: proyecto.name,
+    nombreCorto: proyecto.nombreCorto,
     azdoProject: proyecto.azdoProject,
     lider: proyecto.lider,
     esPoc: proyecto.esPoc ?? false,
     reposTotal: proyecto.reposTotal,
+    reposConImagen: proyecto.reposConImagen,
     reposConSonar: conSonar.length,
     reposConTrivy: conTrivy.length,
     adopcionSonar: porcentaje(conSonar.length, proyecto.reposTotal),
-    adopcionTrivy: porcentaje(conTrivy.length, proyecto.reposTotal),
+    adopcionTrivy: porcentaje(conTrivy.length, proyecto.reposConImagen),
     ncloc,
     deudaMin,
     deudaDias: Math.round((deudaMin / MINUTOS_POR_DIA) * 10) / 10,
@@ -115,6 +124,7 @@ export interface ResumenGlobal {
   proyectosConAdopcion: number;
   proyectosSinAdopcion: number;
   reposTotal: number;
+  reposConImagen: number;
   reposConSonar: number;
   reposConTrivy: number;
   adopcionSonar: number;
@@ -141,6 +151,7 @@ export function resumenGlobal(): ResumenGlobal {
   const conSonar = todosLosRepos.filter(r => r.sonar !== null);
 
   const reposTotal = filas.reduce((s, f) => s + f.reposTotal, 0);
+  const reposConImagen = filas.reduce((s, f) => s + f.reposConImagen, 0);
   const reposConSonar = conSonar.length;
   const reposConTrivy = todosLosRepos.filter(r => r.trivy !== null).length;
   const deudaMin = conSonar.reduce((s, r) => s + r.sonar!.sqaleIndex, 0);
@@ -153,10 +164,11 @@ export function resumenGlobal(): ResumenGlobal {
     proyectosConAdopcion: filas.filter(f => f.adopcionSonar > 0).length,
     proyectosSinAdopcion: filas.filter(f => f.adopcionSonar === 0).length,
     reposTotal,
+    reposConImagen,
     reposConSonar,
     reposConTrivy,
     adopcionSonar: porcentaje(reposConSonar, reposTotal),
-    adopcionTrivy: porcentaje(reposConTrivy, reposTotal),
+    adopcionTrivy: porcentaje(reposConTrivy, reposConImagen),
     deudaDias: Math.round(deudaMin / MINUTOS_POR_DIA),
     criticos: filas.reduce((s, f) => s + f.criticos, 0),
     altos: filas.reduce((s, f) => s + f.altos, 0),
@@ -171,6 +183,19 @@ export function resumenGlobal(): ResumenGlobal {
     deltaCriticos: ultimo.criticos - anterior.criticos,
     deltaDeudaDias: ultimo.deudaDias - anterior.deudaDias,
   };
+}
+
+export interface ImagenBaseConImpacto extends ImagenBase {
+  /** CVE críticos × repos afectados: cuánto baja el riesgo actualizar esta imagen. */
+  impacto: number;
+}
+
+/** Imágenes base ordenadas por impacto, que es el criterio acordado para el top. */
+export function imagenesBasePorImpacto(): ImagenBaseConImpacto[] {
+  return IMAGENES_BASE.map(imagen => ({
+    ...imagen,
+    impacto: imagen.criticosUnicos * imagen.reposAfectados,
+  })).sort((a, b) => b.impacto - a.impacto || b.criticosUnicos - a.criticosUnicos);
 }
 
 /** Etiqueta corta de fecha para los ejes de los gráficos: "21/9". */

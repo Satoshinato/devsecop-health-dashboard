@@ -3,7 +3,7 @@ import Gauge from "@/components/charts/Gauge";
 import Heatmap from "@/components/charts/Heatmap";
 import Sparkline from "@/components/charts/Sparkline";
 import { GateBadge, RatingBadge } from "@/components/devsecops/Badges";
-import { AZDO_BASE_URL, HISTORIAL_SCANS, SONAR_BASE_URL, SONAR_ORG } from "@/lib/devsecops-data";
+import { ALCANCE_TRIVY, AZDO_BASE_URL, HISTORIAL_SCANS, SONAR_BASE_URL, SONAR_ORG } from "@/lib/devsecops-data";
 import type { FilaProyecto } from "@/lib/devsecops-metrics";
 import { etiquetaFecha, formatearDeuda, formatearNumero } from "@/lib/devsecops-metrics";
 
@@ -43,7 +43,8 @@ export default function ProjectDetailPanel({ fila }: { fila: FilaProyecto }) {
             )}
           </div>
           <p className="mt-1 text-[11px] text-slate-500">
-            Referente técnico: {fila.lider} · {fila.reposTotal} repos en el inventario ·{" "}
+            Líder técnico: {fila.lider} · {fila.reposTotal} repos en el inventario (
+            {fila.reposConImagen} publican imagen) ·{" "}
             {fila.ultimoAnalisis
               ? `último análisis ${fila.ultimoAnalisis}`
               : "sin análisis registrados"}
@@ -126,8 +127,18 @@ export default function ProjectDetailPanel({ fila }: { fila: FilaProyecto }) {
 
           <div className="grid grid-cols-1 gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
             <div className="flex flex-wrap items-start justify-around gap-3 rounded-lg border border-slate-100 bg-slate-50/60 px-2 py-3">
-              <Gauge value={fila.adopcionSonar} label="Adopción Sonar" color="#0f9b8e" size={84} />
-              <Gauge value={fila.adopcionTrivy} label="Adopción Trivy" color="#2563eb" size={84} />
+              <Gauge
+                value={fila.adopcionSonar}
+                label={`Adopción Sonar (${fila.reposConSonar}/${fila.reposTotal})`}
+                color="#0f9b8e"
+                size={84}
+              />
+              <Gauge
+                value={fila.adopcionTrivy}
+                label={`Adopción Trivy (${fila.reposConTrivy}/${fila.reposConImagen} con imagen)`}
+                color="#2563eb"
+                size={84}
+              />
               <Gauge
                 value={Math.round(fila.coberturaNueva)}
                 label="Cobertura código nuevo"
@@ -167,6 +178,9 @@ export default function ProjectDetailPanel({ fila }: { fila: FilaProyecto }) {
                   <span className="text-slate-500">Hotspots a revisar</span>
                   <span className="font-semibold text-slate-700">{fila.hotspots}</span>
                 </li>
+                <li className="border-t border-slate-200 pt-1.5 text-[10px] text-slate-400">
+                  Trivy Fase 1: {ALCANCE_TRIVY.toLowerCase()}.
+                </li>
               </ul>
             </div>
           </div>
@@ -204,6 +218,9 @@ export default function ProjectDetailPanel({ fila }: { fila: FilaProyecto }) {
                           >
                             {repo.name}
                           </a>
+                          <div className="text-[9px] text-slate-400" title={repo.sonarProjectKey ?? ""}>
+                            {repo.sonarProjectName}
+                          </div>
                         </td>
                         <td className="py-1.5 pr-2">
                           <GateBadge estado={s.alertStatus} />
@@ -260,7 +277,9 @@ export default function ProjectDetailPanel({ fila }: { fila: FilaProyecto }) {
                               <span className="text-slate-500">{repo.trivy.low}</span>
                             </span>
                           ) : (
-                            <span className="text-[10px] text-slate-400">sin imagen</span>
+                            <span className="text-[10px] text-slate-400">
+                              {repo.publicaImagen ? "sin escanear" : "no publica imagen"}
+                            </span>
                           )}
                         </td>
                       </tr>
@@ -270,19 +289,33 @@ export default function ProjectDetailPanel({ fila }: { fila: FilaProyecto }) {
               </table>
             </div>
 
-            {(sinAnalizar.length > 0 || noDescubiertos > 0) && (
-              <p className="mt-2 text-[10px] text-slate-400">
-                {sinAnalizar.length > 0 && (
-                  <>
-                    Sin SonarQube todavía: {sinAnalizar.map(r => r.name).join(", ")}.{" "}
-                  </>
-                )}
+            <p className="mt-2 text-[10px] text-slate-400">
+              Columna C·S·M: ratings de confiabilidad, seguridad y mantenibilidad. Debajo de cada
+              repo, el nombre del proyecto en SonarQube Cloud. El Quality Gate es por repo; el
+              proyecto no tiene semáforo propio, solo el conteo de verdes y rojos.
+            </p>
+
+            {sinAnalizar.length > 0 && (
+              <div className="mt-3 rounded-lg border border-dashed border-slate-200 bg-slate-50/60 px-3 py-2">
+                <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-400">
+                  Sin proyecto en SonarQube todavía ({sinAnalizar.length})
+                </p>
+                <div className="mt-1.5 flex flex-wrap gap-1">
+                  {sinAnalizar.map(repo => (
+                    <span
+                      key={repo.name}
+                      className="rounded border border-slate-200 bg-white px-1.5 py-0.5 text-[10px] text-slate-500"
+                    >
+                      {repo.name}
+                    </span>
+                  ))}
+                </div>
                 {noDescubiertos > 0 && (
-                  <>
-                    Quedan {noDescubiertos} repos del inventario sin incorporar al scan.
-                  </>
+                  <p className="mt-1.5 text-[10px] text-slate-400">
+                    Además quedan {noDescubiertos} repos del inventario sin incorporar al scan.
+                  </p>
                 )}
-              </p>
+              </div>
             )}
           </div>
 

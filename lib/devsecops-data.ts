@@ -6,6 +6,10 @@
 // produzca el colector (contrato definido en el plan) y poner ES_MUESTRA = false.
 // Nada de lo que está debajo de lib/devsecops-metrics.ts ni de components/
 // conoce el origen de los datos.
+//
+// Reales: el inventario de proyectos, su cantidad de repos, los 15 repos de
+// Gema/Ophir y la nomenclatura de SonarQube Cloud.
+// De muestra: todas las métricas, los uuid de los project key y los referentes.
 // ─────────────────────────────────────────────────────────────────────────────
 
 export const ES_MUESTRA = true;
@@ -45,8 +49,12 @@ export interface TrivyMetrics {
 
 export interface RepoSample {
   name: string;
-  /** null = todavía no tiene proyecto en SonarQube Cloud. */
+  /** Nombre del proyecto en Sonar: `projectname_repository-name`. */
+  sonarProjectName: string | null;
+  /** Project key en Sonar: `projectname_repository-name_uuid`. null = todavía sin proyecto. */
   sonarProjectKey: string | null;
+  /** Si el repo publica una imagen de contenedor: define si entra al denominador de Trivy. */
+  publicaImagen: boolean;
   sonar: SonarMetrics | null;
   trivy: TrivyMetrics | null;
   /** Análisis registrados en cada scan del histórico, para el heatmap. */
@@ -55,11 +63,17 @@ export interface RepoSample {
 
 export interface ProyectoSample {
   key: string;
+  /** Nombre completo del cuadro de inventario, para el detalle. */
   name: string;
-  /** Nombre del proyecto en Azure DevOps (para el enlace). */
+  /** Nombre corto, para las tablas. */
+  nombreCorto: string;
+  /** Nombre del proyecto en Azure DevOps: prefijo de la nomenclatura de Sonar y del enlace. */
   azdoProject: string;
   /** Repos totales del proyecto según el inventario de Azure DevOps. */
   reposTotal: number;
+  /** Repos que publican imagen de contenedor: denominador de la adopción de Trivy. */
+  reposConImagen: number;
+  /** Líder técnico del proyecto. */
   lider: string;
   esPoc?: boolean;
   repos: RepoSample[];
@@ -100,6 +114,9 @@ export const SONAR_ORG = "accusys";
 export const AZDO_BASE_URL = `https://dev.azure.com/${ORGANIZACION}`;
 export const SONAR_BASE_URL = "https://sonarcloud.io";
 
+/** Fase 1: Trivy solo escanea imágenes de contenedor (ni dependencias ni IaC). */
+export const ALCANCE_TRIVY = "Solo imágenes de contenedor";
+
 export const SCAN_ACTUAL = "2026-09-21";
 
 /** Últimos 14 scans, equivalente al "Last 17 scans" del tablero de obsolescencia. */
@@ -116,8 +133,8 @@ export const HISTORIAL_SCANS: ScanHistorico[] = [
   { fecha: "2026-09-18", reposConSonar: 21, reposConTrivy: 18, criticos: 40, deudaDias: 268, cobertura: 58.8 },
   { fecha: "2026-09-19", reposConSonar: 24, reposConTrivy: 21, criticos: 43, deudaDias: 301, cobertura: 58.2 },
   { fecha: "2026-09-20", reposConSonar: 28, reposConTrivy: 24, criticos: 47, deudaDias: 357, cobertura: 57.8 },
-  { fecha: "2026-09-21", reposConSonar: 28, reposConTrivy: 25, criticos: 46, deudaDias: 379, cobertura: 57.6 },
-  { fecha: "2026-09-21", reposConSonar: 29, reposConTrivy: 25, criticos: 45, deudaDias: 384, cobertura: 57.5 },
+  { fecha: "2026-09-21", reposConSonar: 29, reposConTrivy: 25, criticos: 46, deudaDias: 381, cobertura: 57.6 },
+  { fecha: "2026-09-21", reposConSonar: 30, reposConTrivy: 26, criticos: 45, deudaDias: 391, cobertura: 57.5 },
 ];
 
 function sonar(m: Partial<SonarMetrics> & Pick<SonarMetrics, "ncloc">): SonarMetrics {
@@ -155,6 +172,30 @@ function trivy(image: string, m: Partial<TrivyMetrics>): TrivyMetrics {
 }
 
 /**
+ * Nomenclatura acordada para SonarQube Cloud. El uuid no se infiere del nombre:
+ * el colector tiene que guardarlo en su mapeo. Los de acá son de muestra.
+ */
+function sonarKeys(azdoProject: string, repo: string, uuid: string) {
+  return {
+    sonarProjectName: `${azdoProject}_${repo}`,
+    sonarProjectKey: `${azdoProject}_${repo}_${uuid}`,
+  };
+}
+
+/** Repo detectado en Azure DevOps pero todavía sin proyecto en Sonar. */
+function repoSinAnalizar(name: string, publicaImagen = true): RepoSample {
+  return {
+    name,
+    sonarProjectName: null,
+    sonarProjectKey: null,
+    publicaImagen,
+    sonar: null,
+    trivy: null,
+    actividad: new Array(HISTORIAL_SCANS.length).fill(0),
+  };
+}
+
+/**
  * Inventario de los 12 proyectos de Azure DevOps (118 repos) más Gema/Ophir,
  * que es el único con análisis reales en la Fase 1 del plan.
  */
@@ -162,15 +203,32 @@ export const PROYECTOS: ProyectoSample[] = [
   {
     key: "gema",
     name: "Gema - Ophir",
+    nombreCorto: "Gema",
     azdoProject: "gema",
-    reposTotal: 6,
+    reposTotal: 15,
+    reposConImagen: 15,
     lider: "Sebastián Denezio",
     esPoc: true,
-    historial: [1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5],
+    historial: [1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 6, 6],
     repos: [
       {
+        name: "mf-ophir-migrador-app",
+        ...sonarKeys("gema", "mf-ophir-migrador-app", "3f7a21c8-9b04-4d61-a5e2-71c0b9d4e830"),
+        publicaImagen: true,
+        actividad: [0, 0, 1, 1, 2, 1, 2, 1, 1, 2, 1, 2, 1, 1],
+        sonar: sonar({
+          ncloc: 31480, coverage: 71.4, newCoverage: 76.3, duplications: 2.4, sqaleIndex: 2680,
+          bugs: 5, vulnerabilities: 2, hotspotsToReview: 4, codeSmells: 312,
+          reliabilityRating: "B", securityRating: "A", maintainabilityRating: "A", alertStatus: "ERROR",
+        }),
+        trivy: trivy("accusystechnology/mf-ophir-migrador-app:0.4.2-a91c3f01", {
+          critical: 1, high: 4, medium: 12, low: 7, fixable: 17, unfixable: 7,
+        }),
+      },
+      {
         name: "ms-ophir-api",
-        sonarProjectKey: "accusys_gema_ms-ophir-api",
+        ...sonarKeys("gema", "ms-ophir-api", "9c1e4b22-0a7d-4f38-b6c1-2e5d8f4a9017"),
+        publicaImagen: true,
         actividad: [1, 1, 2, 1, 1, 2, 3, 2, 1, 2, 2, 3, 2, 1],
         sonar: sonar({
           ncloc: 48210, coverage: 84.2, newCoverage: 91.5, duplications: 1.8, sqaleIndex: 1420,
@@ -182,75 +240,85 @@ export const PROYECTOS: ProyectoSample[] = [
         }),
       },
       {
-        name: "ms-ophir-batch",
-        sonarProjectKey: "accusys_gema_ms-ophir-batch",
-        actividad: [0, 1, 1, 1, 2, 1, 2, 1, 1, 2, 1, 2, 1, 1],
-        sonar: sonar({
-          ncloc: 31480, coverage: 71.4, newCoverage: 76.3, duplications: 2.4, sqaleIndex: 2680,
-          bugs: 5, vulnerabilities: 2, hotspotsToReview: 4, codeSmells: 312,
-          reliabilityRating: "B", securityRating: "A", maintainabilityRating: "A", alertStatus: "ERROR",
-        }),
-        trivy: trivy("accusystechnology/ms-ophir-batch:0.4.2-a91c3f01", {
-          critical: 1, high: 4, medium: 12, low: 7, fixable: 17, unfixable: 7,
-        }),
-      },
-      {
-        name: "web-ophir-front",
-        sonarProjectKey: "accusys_gema_web-ophir-front",
+        name: "ms-ophir-app",
+        ...sonarKeys("gema", "ms-ophir-app", "5d8b03fa-6c41-4a92-9e07-b31f7c2d6a45"),
+        publicaImagen: true,
         actividad: [0, 0, 1, 2, 2, 3, 2, 3, 2, 2, 3, 2, 2, 2],
         sonar: sonar({
           ncloc: 62940, coverage: 62.8, newCoverage: 80.4, duplications: 3.6, sqaleIndex: 5210,
           bugs: 9, vulnerabilities: 3, hotspotsToReview: 7, codeSmells: 540,
           reliabilityRating: "B", securityRating: "B", maintainabilityRating: "B", alertStatus: "ERROR",
         }),
-        trivy: trivy("accusystechnology/web-ophir-front:2.1.0-c47ab920", {
+        trivy: trivy("accusystechnology/ms-ophir-app:2.1.0-c47ab920", {
           critical: 2, high: 9, medium: 21, low: 14, fixable: 26, unfixable: 20,
         }),
       },
       {
-        name: "ms-ophir-notificaciones",
-        sonarProjectKey: "accusys_gema_ms-ophir-notificaciones",
+        name: "ms-ophir-arqueo-atm-api",
+        ...sonarKeys("gema", "ms-ophir-arqueo-atm-api", "a24f9e17-3d58-4b06-8c1a-0f6e2b93d574"),
+        publicaImagen: true,
         actividad: [0, 0, 0, 0, 0, 1, 1, 1, 2, 1, 1, 2, 1, 1],
         sonar: sonar({
           ncloc: 12360, coverage: 79.1, newCoverage: 88.2, duplications: 0.9, sqaleIndex: 640,
           bugs: 1, vulnerabilities: 0, hotspotsToReview: 1, codeSmells: 74,
           alertStatus: "OK",
         }),
-        trivy: trivy("accusystechnology/ms-ophir-notificaciones:0.2.7-1de99ab4", {
+        trivy: trivy("accusystechnology/ms-ophir-arqueo-atm-api:0.2.7-1de99ab4", {
           critical: 0, high: 1, medium: 4, low: 2, fixable: 5, unfixable: 2,
         }),
       },
       {
-        name: "lib-ophir-commons",
-        sonarProjectKey: "accusys_gema_lib-ophir-commons",
+        name: "ms-ophir-atm-ce-api",
+        ...sonarKeys("gema", "ms-ophir-atm-ce-api", "7b06c3d9-52e1-4870-9af3-4c8d1e07b2a6"),
+        publicaImagen: true,
         actividad: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1],
         sonar: sonar({
           ncloc: 8740, coverage: 90.5, newCoverage: 95.0, duplications: 0.4, sqaleIndex: 210,
           bugs: 0, vulnerabilities: 0, hotspotsToReview: 0, codeSmells: 28,
           alertStatus: "OK",
         }),
-        trivy: null,
+        trivy: trivy("accusystechnology/ms-ophir-atm-ce-api:1.0.4-6b2ad013", {
+          critical: 0, high: 2, medium: 5, low: 3, fixable: 8, unfixable: 2,
+        }),
       },
       {
-        name: "ms-ophir-reportes",
-        sonarProjectKey: null,
-        actividad: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        sonar: null,
+        name: "ms-ophir-caja-api",
+        ...sonarKeys("gema", "ms-ophir-caja-api", "e18d5a40-7f29-4c13-b0d6-93a2f5c81e7b"),
+        publicaImagen: true,
+        actividad: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1],
+        sonar: sonar({
+          ncloc: 19640, coverage: 58.3, newCoverage: 72.6, duplications: 4.2, sqaleIndex: 3180,
+          bugs: 7, vulnerabilities: 3, hotspotsToReview: 6, codeSmells: 388,
+          reliabilityRating: "B", securityRating: "B", maintainabilityRating: "B", alertStatus: "ERROR",
+        }),
+        // Publica imagen pero todavía no pasó por el paso de Trivy en el pipeline.
         trivy: null,
       },
+      repoSinAnalizar("ms-ophir-calendario-api"),
+      repoSinAnalizar("ms-ophir-costos-api"),
+      repoSinAnalizar("ms-ophir-geolocation-api"),
+      repoSinAnalizar("ms-ophir-learning-api"),
+      repoSinAnalizar("ms-ophir-messaging-api"),
+      repoSinAnalizar("ms-ophir-migrador-api"),
+      repoSinAnalizar("ms-ophir-proyecciones-api"),
+      repoSinAnalizar("ms-ophir-remesa-api"),
+      repoSinAnalizar("ms-ophir-reportes-api"),
     ],
   },
   {
     key: "cronos",
     name: "Mep - Cronos",
+    nombreCorto: "Cronos",
     azdoProject: "mep-cronos",
     reposTotal: 15,
+    reposConImagen: 13,
     lider: "Fernando Luna",
     historial: [0, 0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6],
     repos: [
       {
         name: "ms-cronos-liquidacion",
-        sonarProjectKey: "accusys_cronos_ms-cronos-liquidacion",
+        ...sonarKeys("mep-cronos", "ms-cronos-liquidacion", "1a93f70c-4d26-4e85-92b7-6c0d8a31f5e4"),
+        publicaImagen: true,
         actividad: [0, 0, 0, 1, 1, 2, 1, 2, 2, 1, 2, 3, 2, 2],
         sonar: sonar({
           ncloc: 98420, coverage: 54.3, newCoverage: 68.1, duplications: 4.2, sqaleIndex: 14380,
@@ -263,7 +331,8 @@ export const PROYECTOS: ProyectoSample[] = [
       },
       {
         name: "ms-cronos-afiliaciones",
-        sonarProjectKey: "accusys_cronos_ms-cronos-afiliaciones",
+        ...sonarKeys("mep-cronos", "ms-cronos-afiliaciones", "b5720ed1-8c34-4f09-a6d2-17e93b04c8f6"),
+        publicaImagen: true,
         actividad: [0, 0, 0, 0, 0, 1, 1, 1, 2, 1, 1, 2, 2, 1],
         sonar: sonar({
           ncloc: 45120, coverage: 66.7, newCoverage: 81.3, duplications: 2.1, sqaleIndex: 5240,
@@ -276,7 +345,8 @@ export const PROYECTOS: ProyectoSample[] = [
       },
       {
         name: "web-cronos-portal",
-        sonarProjectKey: "accusys_cronos_web-cronos-portal",
+        ...sonarKeys("mep-cronos", "web-cronos-portal", "46c8d012-9a75-4b3e-8f14-2d6b07e5a9c3"),
+        publicaImagen: true,
         actividad: [0, 0, 0, 0, 0, 0, 1, 2, 1, 2, 2, 2, 3, 2],
         sonar: sonar({
           ncloc: 71340, coverage: 41.2, newCoverage: 62.5, duplications: 5.8, sqaleIndex: 11260,
@@ -289,7 +359,8 @@ export const PROYECTOS: ProyectoSample[] = [
       },
       {
         name: "ms-cronos-archivos",
-        sonarProjectKey: "accusys_cronos_ms-cronos-archivos",
+        ...sonarKeys("mep-cronos", "ms-cronos-archivos", "c907b3e5-1f48-42d6-95a0-8b3e7d21c064"),
+        publicaImagen: true,
         actividad: [0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 2, 1],
         sonar: sonar({
           ncloc: 22180, coverage: 73.9, newCoverage: 85.4, duplications: 1.6, sqaleIndex: 2140,
@@ -302,7 +373,8 @@ export const PROYECTOS: ProyectoSample[] = [
       },
       {
         name: "batch-cronos-cierre",
-        sonarProjectKey: "accusys_cronos_batch-cronos-cierre",
+        ...sonarKeys("mep-cronos", "batch-cronos-cierre", "2e64a819-7b0d-4c53-81f9-a5d072e4b638"),
+        publicaImagen: true,
         actividad: [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1],
         sonar: sonar({
           ncloc: 33870, coverage: 28.4, newCoverage: 34.7, duplications: 6.4, sqaleIndex: 9820,
@@ -315,7 +387,8 @@ export const PROYECTOS: ProyectoSample[] = [
       },
       {
         name: "lib-cronos-modelo",
-        sonarProjectKey: "accusys_cronos_lib-cronos-modelo",
+        ...sonarKeys("mep-cronos", "lib-cronos-modelo", "f3510c7b-6e92-4a08-b4d7-09c81f5a2e63"),
+        publicaImagen: false,
         actividad: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1],
         sonar: sonar({
           ncloc: 15640, coverage: 88.1, newCoverage: 93.2, duplications: 0.7, sqaleIndex: 480,
@@ -323,26 +396,23 @@ export const PROYECTOS: ProyectoSample[] = [
         }),
         trivy: null,
       },
-      {
-        name: "ms-cronos-auditoria",
-        sonarProjectKey: null,
-        actividad: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        sonar: null,
-        trivy: null,
-      },
+      repoSinAnalizar("ms-cronos-auditoria"),
     ],
   },
   {
     key: "iris",
     name: "Accusys Link - Iris",
+    nombreCorto: "Iris",
     azdoProject: "accusys-link-iris",
     reposTotal: 15,
+    reposConImagen: 13,
     lider: "Ivette Guevara",
     historial: [0, 0, 1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4],
     repos: [
       {
         name: "ms-iris-link-gateway",
-        sonarProjectKey: "accusys_iris_ms-iris-link-gateway",
+        ...sonarKeys("accusys-link-iris", "ms-iris-link-gateway", "8d2b6f04-3a17-49e5-b0c8-52f71d9e3a40"),
+        publicaImagen: true,
         actividad: [0, 0, 1, 1, 2, 1, 2, 2, 1, 2, 1, 2, 2, 1],
         sonar: sonar({
           ncloc: 56780, coverage: 77.5, newCoverage: 89.6, duplications: 1.4, sqaleIndex: 3420,
@@ -354,7 +424,8 @@ export const PROYECTOS: ProyectoSample[] = [
       },
       {
         name: "ms-iris-conciliacion",
-        sonarProjectKey: "accusys_iris_ms-iris-conciliacion",
+        ...sonarKeys("accusys-link-iris", "ms-iris-conciliacion", "0c7e491a-5d83-4620-97bf-e14a63d05c82"),
+        publicaImagen: true,
         actividad: [0, 0, 0, 0, 0, 1, 1, 1, 1, 2, 1, 2, 1, 1],
         sonar: sonar({
           ncloc: 38210, coverage: 69.3, newCoverage: 79.8, duplications: 2.8, sqaleIndex: 4860,
@@ -367,7 +438,8 @@ export const PROYECTOS: ProyectoSample[] = [
       },
       {
         name: "web-iris-consola",
-        sonarProjectKey: "accusys_iris_web-iris-consola",
+        ...sonarKeys("accusys-link-iris", "web-iris-consola", "63af2d58-0b91-4e74-a3c6-8f07b52d1e49"),
+        publicaImagen: true,
         actividad: [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 2, 1, 2, 1],
         sonar: sonar({
           ncloc: 44960, coverage: 51.7, newCoverage: 73.4, duplications: 4.9, sqaleIndex: 8140,
@@ -380,7 +452,8 @@ export const PROYECTOS: ProyectoSample[] = [
       },
       {
         name: "lib-iris-sdk",
-        sonarProjectKey: "accusys_iris_lib-iris-sdk",
+        ...sonarKeys("accusys-link-iris", "lib-iris-sdk", "d41569b2-8c07-43fa-9e15-7b2064a3f8d1"),
+        publicaImagen: false,
         actividad: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1],
         sonar: sonar({
           ncloc: 9840, coverage: 85.2, newCoverage: 92.1, duplications: 0.6, sqaleIndex: 320,
@@ -388,26 +461,23 @@ export const PROYECTOS: ProyectoSample[] = [
         }),
         trivy: null,
       },
-      {
-        name: "ms-iris-eventos",
-        sonarProjectKey: null,
-        actividad: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        sonar: null,
-        trivy: null,
-      },
+      repoSinAnalizar("ms-iris-eventos"),
     ],
   },
   {
     key: "apolo",
     name: "Sidef - Apolo",
+    nombreCorto: "Apolo",
     azdoProject: "sidef-apolo",
     reposTotal: 8,
+    reposConImagen: 7,
     lider: "Javier Montiel",
     historial: [0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 3, 3, 3, 3],
     repos: [
       {
         name: "ms-apolo-sidef-core",
-        sonarProjectKey: "accusys_apolo_ms-apolo-sidef-core",
+        ...sonarKeys("sidef-apolo", "ms-apolo-sidef-core", "5b8c07e3-2d19-4f60-a874-13e9c05b7df2"),
+        publicaImagen: true,
         actividad: [0, 0, 0, 0, 1, 1, 2, 1, 2, 1, 2, 2, 1, 2],
         sonar: sonar({
           ncloc: 67420, coverage: 58.9, newCoverage: 74.2, duplications: 3.9, sqaleIndex: 10480,
@@ -420,7 +490,8 @@ export const PROYECTOS: ProyectoSample[] = [
       },
       {
         name: "web-apolo-admin",
-        sonarProjectKey: "accusys_apolo_web-apolo-admin",
+        ...sonarKeys("sidef-apolo", "web-apolo-admin", "a70d41f6-9e25-4b83-80c1-6f3d2a95e074"),
+        publicaImagen: true,
         actividad: [0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 2, 1, 1],
         sonar: sonar({
           ncloc: 29340, coverage: 64.1, newCoverage: 83.7, duplications: 2.2, sqaleIndex: 3680,
@@ -433,7 +504,8 @@ export const PROYECTOS: ProyectoSample[] = [
       },
       {
         name: "batch-apolo-importacion",
-        sonarProjectKey: "accusys_apolo_batch-apolo-importacion",
+        ...sonarKeys("sidef-apolo", "batch-apolo-importacion", "27e9b5c0-4a36-41d8-b962-0d81f7c34e5a"),
+        publicaImagen: true,
         actividad: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1],
         sonar: sonar({
           ncloc: 18760, coverage: 35.6, newCoverage: 48.3, duplications: 5.1, sqaleIndex: 6240,
@@ -449,14 +521,17 @@ export const PROYECTOS: ProyectoSample[] = [
   {
     key: "zeus",
     name: "Mep Contable - Zeus",
+    nombreCorto: "Zeus",
     azdoProject: "mep-contable-zeus",
-    lider: "Eduardo Fabaro",
     reposTotal: 8,
+    reposConImagen: 7,
+    lider: "Eduardo Fabaro",
     historial: [0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2],
     repos: [
       {
         name: "ms-zeus-contable",
-        sonarProjectKey: "accusys_zeus_ms-zeus-contable",
+        ...sonarKeys("mep-contable-zeus", "ms-zeus-contable", "94f0c1a7-6b58-4d23-8e70-3a5c19b06f2d"),
+        publicaImagen: true,
         actividad: [0, 0, 0, 0, 0, 0, 1, 1, 2, 1, 1, 2, 1, 1],
         sonar: sonar({
           ncloc: 52180, coverage: 46.8, newCoverage: 71.5, duplications: 4.6, sqaleIndex: 9640,
@@ -469,7 +544,8 @@ export const PROYECTOS: ProyectoSample[] = [
       },
       {
         name: "web-zeus-balances",
-        sonarProjectKey: "accusys_zeus_web-zeus-balances",
+        ...sonarKeys("mep-contable-zeus", "web-zeus-balances", "6ea38b41-0c72-4956-a1df-85207e6b3c90"),
+        publicaImagen: true,
         actividad: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1],
         sonar: sonar({
           ncloc: 24710, coverage: 72.4, newCoverage: 86.9, duplications: 1.9, sqaleIndex: 2360,
@@ -485,14 +561,17 @@ export const PROYECTOS: ProyectoSample[] = [
   {
     key: "janus",
     name: "Pases y Cryl - Janus",
+    nombreCorto: "Janus",
     azdoProject: "pases-y-cryl-janus",
-    lider: "Hernán Atencio",
     reposTotal: 7,
+    reposConImagen: 6,
+    lider: "Hernán Atencio",
     historial: [0, 0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 2],
     repos: [
       {
         name: "ms-janus-pases",
-        sonarProjectKey: "accusys_janus_ms-janus-pases",
+        ...sonarKeys("pases-y-cryl-janus", "ms-janus-pases", "31d70e9b-8f46-42a1-95c3-7b0e4d2a6c18"),
+        publicaImagen: true,
         actividad: [0, 0, 0, 0, 0, 1, 1, 2, 1, 1, 2, 1, 2, 1],
         sonar: sonar({
           ncloc: 41360, coverage: 61.2, newCoverage: 78.4, duplications: 3.3, sqaleIndex: 6180,
@@ -505,7 +584,8 @@ export const PROYECTOS: ProyectoSample[] = [
       },
       {
         name: "ms-janus-cryl",
-        sonarProjectKey: "accusys_janus_ms-janus-cryl",
+        ...sonarKeys("pases-y-cryl-janus", "ms-janus-cryl", "c58a2740-1e63-4b09-87d5-24f10b9e6a37"),
+        publicaImagen: true,
         actividad: [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1],
         sonar: sonar({
           ncloc: 27890, coverage: 55.4, newCoverage: 69.2, duplications: 4.1, sqaleIndex: 5420,
@@ -521,14 +601,17 @@ export const PROYECTOS: ProyectoSample[] = [
   {
     key: "argus",
     name: "Mep Consolidado - Argus",
+    nombreCorto: "Argus",
     azdoProject: "mep-consolidado-argus",
-    lider: "Gustavo Troconis",
     reposTotal: 6,
+    reposConImagen: 5,
+    lider: "Gustavo Troconis",
     historial: [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1],
     repos: [
       {
         name: "ms-argus-consolidado",
-        sonarProjectKey: "accusys_argus_ms-argus-consolidado",
+        ...sonarKeys("mep-consolidado-argus", "ms-argus-consolidado", "7f43b921-5d08-4ec6-b310-96a2e07d4c85"),
+        publicaImagen: true,
         actividad: [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 2, 1, 1, 1],
         sonar: sonar({
           ncloc: 34620, coverage: 68.9, newCoverage: 84.1, duplications: 2.5, sqaleIndex: 4120,
@@ -544,14 +627,17 @@ export const PROYECTOS: ProyectoSample[] = [
   {
     key: "afrodita",
     name: "Mep Cedin - Afrodita",
+    nombreCorto: "Afrodita",
     azdoProject: "mep-cedin-afrodita",
-    lider: "Lisbeth Atencio",
     reposTotal: 5,
+    reposConImagen: 4,
+    lider: "Lisbeth Atencio",
     historial: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1],
     repos: [
       {
         name: "ms-afrodita-cedin",
-        sonarProjectKey: "accusys_afrodita_ms-afrodita-cedin",
+        ...sonarKeys("mep-cedin-afrodita", "ms-afrodita-cedin", "0b96e5d3-7c21-4a48-92f0-5d13b807e6a4"),
+        publicaImagen: true,
         actividad: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1],
         sonar: sonar({
           ncloc: 19480, coverage: 43.7, newCoverage: 58.6, duplications: 5.4, sqaleIndex: 5860,
@@ -567,14 +653,17 @@ export const PROYECTOS: ProyectoSample[] = [
   {
     key: "probatch",
     name: "Probatch",
+    nombreCorto: "Probatch",
     azdoProject: "probatch",
-    lider: "Leonardo Orellana",
     reposTotal: 35,
+    reposConImagen: 30,
+    lider: "Leonardo Orellana",
     historial: [0, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 5, 5, 5],
     repos: [
       {
         name: "ms-probatch-scheduler",
-        sonarProjectKey: "accusys_probatch_ms-probatch-scheduler",
+        ...sonarKeys("probatch", "ms-probatch-scheduler", "e2704bc8-3f19-45d7-86a0-1b9e5c04d372"),
+        publicaImagen: true,
         actividad: [0, 1, 1, 2, 1, 2, 1, 2, 2, 1, 2, 3, 2, 2],
         sonar: sonar({
           ncloc: 76240, coverage: 71.8, newCoverage: 87.3, duplications: 2.0, sqaleIndex: 7480,
@@ -587,7 +676,8 @@ export const PROYECTOS: ProyectoSample[] = [
       },
       {
         name: "ms-probatch-ejecutor",
-        sonarProjectKey: "accusys_probatch_ms-probatch-ejecutor",
+        ...sonarKeys("probatch", "ms-probatch-ejecutor", "48b1d0f7-9a62-4c35-b7e8-20d64a19f503"),
+        publicaImagen: true,
         actividad: [0, 0, 0, 1, 1, 1, 2, 1, 2, 2, 1, 2, 2, 2],
         sonar: sonar({
           ncloc: 89610, coverage: 63.4, newCoverage: 80.9, duplications: 3.1, sqaleIndex: 12640,
@@ -600,7 +690,8 @@ export const PROYECTOS: ProyectoSample[] = [
       },
       {
         name: "web-probatch-monitor",
-        sonarProjectKey: "accusys_probatch_web-probatch-monitor",
+        ...sonarKeys("probatch", "web-probatch-monitor", "9350af26-0d84-4b17-a6c9-73e5f218b0d4"),
+        publicaImagen: true,
         actividad: [0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 2, 1, 1, 1],
         sonar: sonar({
           ncloc: 38470, coverage: 57.2, newCoverage: 76.8, duplications: 4.4, sqaleIndex: 6920,
@@ -613,7 +704,8 @@ export const PROYECTOS: ProyectoSample[] = [
       },
       {
         name: "lib-probatch-core",
-        sonarProjectKey: "accusys_probatch_lib-probatch-core",
+        ...sonarKeys("probatch", "lib-probatch-core", "175cb840-6e93-4207-8daf-c5e21b90a476"),
+        publicaImagen: false,
         actividad: [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1],
         sonar: sonar({
           ncloc: 44180, coverage: 82.6, newCoverage: 90.4, duplications: 1.1, sqaleIndex: 1840,
@@ -623,7 +715,8 @@ export const PROYECTOS: ProyectoSample[] = [
       },
       {
         name: "batch-probatch-legacy",
-        sonarProjectKey: "accusys_probatch_batch-probatch-legacy",
+        ...sonarKeys("probatch", "batch-probatch-legacy", "b6d02e59-4173-48ca-90b7-e8f35d17c2a0"),
+        publicaImagen: true,
         actividad: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1],
         sonar: sonar({
           ncloc: 124860, coverage: 12.3, newCoverage: 21.7, duplications: 8.9, sqaleIndex: 31420,
@@ -634,55 +727,57 @@ export const PROYECTOS: ProyectoSample[] = [
           critical: 7, high: 26, medium: 61, low: 38, fixable: 79, unfixable: 53,
         }),
       },
-      {
-        name: "ms-probatch-plugins",
-        sonarProjectKey: null,
-        actividad: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        sonar: null,
-        trivy: null,
-      },
+      repoSinAnalizar("ms-probatch-plugins"),
     ],
   },
   // ── Proyectos con adopción en cero ────────────────────────────────────────
   {
     key: "themis",
     name: "Repi - Themis",
+    nombreCorto: "Themis",
     azdoProject: "repi-themis",
-    lider: "Braian Rosales",
     reposTotal: 5,
+    reposConImagen: 4,
+    lider: "Braian Rosales",
     historial: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     repos: [
-      { name: "ms-themis-repi", sonarProjectKey: null, sonar: null, trivy: null, actividad: new Array(14).fill(0) },
-      { name: "ms-themis-repi-consultas", sonarProjectKey: null, sonar: null, trivy: null, actividad: new Array(14).fill(0) },
-      { name: "web-themis-repi", sonarProjectKey: null, sonar: null, trivy: null, actividad: new Array(14).fill(0) },
-      { name: "batch-themis-cargas", sonarProjectKey: null, sonar: null, trivy: null, actividad: new Array(14).fill(0) },
-      { name: "lib-themis-comun", sonarProjectKey: null, sonar: null, trivy: null, actividad: new Array(14).fill(0) },
+      repoSinAnalizar("ms-themis-repi"),
+      repoSinAnalizar("ms-themis-repi-consultas"),
+      repoSinAnalizar("web-themis-repi"),
+      repoSinAnalizar("batch-themis-cargas"),
+      repoSinAnalizar("lib-themis-comun", false),
     ],
   },
   {
     key: "minerva",
     name: "Niif - Minerva",
+    nombreCorto: "Minerva",
     azdoProject: "niif-minerva",
-    lider: "Pablo Gálvez",
     reposTotal: 5,
+    reposConImagen: 4,
+    lider: "Pablo Gálvez",
     historial: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     repos: [],
   },
   {
     key: "hades",
     name: "Mep SML - Hades",
+    nombreCorto: "Hades",
     azdoProject: "mep-sml-hades",
-    lider: "Joshua García",
     reposTotal: 5,
+    reposConImagen: 4,
+    lider: "Joshua García",
     historial: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     repos: [],
   },
   {
     key: "poseidon",
     name: "Mep Contingencia - Poseidón",
+    nombreCorto: "Poseidón",
     azdoProject: "mep-contingencia-poseidon",
-    lider: "Lucas Gauna",
     reposTotal: 4,
+    reposConImagen: 3,
+    lider: "Lucas Gauna",
     historial: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     repos: [],
   },
@@ -690,8 +785,8 @@ export const PROYECTOS: ProyectoSample[] = [
 
 /**
  * Top de imágenes base que concentran CVE críticos. Es el análogo de
- * "Widespread dependencies" del tablero de obsolescencia: los números son
- * CVE únicos de la imagen, no la suma por repo.
+ * "Widespread dependencies" del tablero de obsolescencia. Se ordena por
+ * CVE críticos × repos afectados, que es el impacto real de actualizar la imagen.
  */
 export const IMAGENES_BASE: ImagenBase[] = [
   { imagen: "eclipse-temurin:17-jre-alpine", criticosUnicos: 7, altosUnicos: 22, reposAfectados: 9, proyectosAfectados: 5, tendencia: [3, 3, 4, 4, 5, 5, 6, 6, 6, 7, 7, 7, 7, 7] },
