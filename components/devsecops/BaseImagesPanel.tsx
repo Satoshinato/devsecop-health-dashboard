@@ -1,15 +1,14 @@
 import Sparkline from "@/components/charts/Sparkline";
 import Panel from "@/components/devsecops/Panel";
-import { imagenesBasePorImpacto } from "@/lib/devsecops-metrics";
+import type { ImagenBaseConImpacto } from "@/lib/metrics";
 
-/**
- * Análogo de "Widespread dependencies" del tablero de obsolescencia. Se ordena
- * por CVE críticos × repos afectados: actualizar una imagen muy difundida con
- * pocos críticos baja más riesgo que una imagen aislada con muchos.
- */
-export default function BaseImagesPanel({ limite = 8 }: { limite?: number }) {
-  const imagenes = imagenesBasePorImpacto();
-
+export default function BaseImagesPanel({
+  imagenes,
+  limite = 8,
+}: {
+  imagenes: ImagenBaseConImpacto[];
+  limite?: number;
+}) {
   return (
     <Panel
       title="Top hallazgos transversales"
@@ -45,6 +44,11 @@ export default function BaseImagesPanel({ limite = 8 }: { limite?: number }) {
           </li>
         ))}
       </ul>
+      {imagenes.length === 0 && (
+        <p className="py-4 text-center text-[11px] text-slate-400">
+          Sin hallazgos de imagen en este scan.
+        </p>
+      )}
     </Panel>
   );
 }

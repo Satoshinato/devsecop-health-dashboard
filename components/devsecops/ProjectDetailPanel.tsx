@@ -3,9 +3,9 @@ import Gauge from "@/components/charts/Gauge";
 import Heatmap from "@/components/charts/Heatmap";
 import Sparkline from "@/components/charts/Sparkline";
 import { GateBadge, RatingBadge } from "@/components/devsecops/Badges";
-import { ALCANCE_TRIVY, AZDO_BASE_URL, HISTORIAL_SCANS, SONAR_BASE_URL, SONAR_ORG } from "@/lib/devsecops-data";
-import type { FilaProyecto } from "@/lib/devsecops-metrics";
-import { etiquetaFecha, formatearDeuda, formatearNumero } from "@/lib/devsecops-metrics";
+import type { FilaProyecto, ScanHistorico } from "@/lib/metrics";
+import { etiquetaFecha, formatearDeuda, formatearNumero } from "@/lib/metrics";
+import { ALCANCE_TRIVY, AZDO_BASE_URL, SONAR_BASE_URL, SONAR_ORG_DEFAULT } from "@/lib/quality-gate";
 
 function Metrica({
   label,
@@ -24,7 +24,16 @@ function Metrica({
   );
 }
 
-export default function ProjectDetailPanel({ fila }: { fila: FilaProyecto }) {
+export default function ProjectDetailPanel({
+  fila,
+  historial,
+  sonarOrg,
+}: {
+  fila: FilaProyecto;
+  historial: ScanHistorico[];
+  sonarOrg?: string;
+}) {
+  const org = sonarOrg ?? SONAR_ORG_DEFAULT;
   const conSonar = fila.repos.filter(r => r.sonar !== null);
   const sinAnalizar = fila.repos.filter(r => r.sonar === null);
   const noDescubiertos = fila.reposTotal - fila.repos.length;
@@ -63,7 +72,7 @@ export default function ProjectDetailPanel({ fila }: { fila: FilaProyecto }) {
               Abrir en Azure DevOps
             </a>
             <a
-              href={`${SONAR_BASE_URL}/organizations/${SONAR_ORG}/projects?search=${fila.key}`}
+              href={`${SONAR_BASE_URL}/organizations/${org}/projects?search=${fila.key}`}
               className="text-[11px] font-medium text-teal-700 underline decoration-teal-300 underline-offset-2"
             >
               Abrir en SonarQube Cloud
@@ -102,10 +111,7 @@ export default function ProjectDetailPanel({ fila }: { fila: FilaProyecto }) {
       ) : (
         <>
           <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-6">
-            <Metrica
-              label="Repos analizados"
-              value={`${fila.reposConSonar}/${fila.reposTotal}`}
-            />
+            <Metrica label="Repos analizados" value={`${fila.reposConSonar}/${fila.reposTotal}`} />
             <Metrica label="Adopción" value={`${fila.adopcionSonar} %`} />
             <Metrica
               label="Deuda / 1k líneas"
@@ -246,16 +252,10 @@ export default function ProjectDetailPanel({ fila }: { fila: FilaProyecto }) {
                         >
                           {s.duplications.toLocaleString("es-AR")} %
                         </td>
-                        <td className="py-1.5 pr-2 text-right text-slate-600">
-                          {formatearDeuda(s.sqaleIndex)}
-                        </td>
+                        <td className="py-1.5 pr-2 text-right text-slate-600">{formatearDeuda(s.sqaleIndex)}</td>
                         <td className="py-1.5 pr-2 text-right text-slate-600">{s.bugs}</td>
-                        <td className="py-1.5 pr-2 text-right text-slate-600">
-                          {s.vulnerabilities}
-                        </td>
-                        <td className="py-1.5 pr-2 text-right text-slate-600">
-                          {s.hotspotsToReview}
-                        </td>
+                        <td className="py-1.5 pr-2 text-right text-slate-600">{s.vulnerabilities}</td>
+                        <td className="py-1.5 pr-2 text-right text-slate-600">{s.hotspotsToReview}</td>
                         <td className="py-1.5 pr-2">
                           <div className="flex justify-center gap-1">
                             <RatingBadge rating={s.reliabilityRating} title="Confiabilidad" />
@@ -266,9 +266,7 @@ export default function ProjectDetailPanel({ fila }: { fila: FilaProyecto }) {
                         <td className="py-1.5 pr-2 text-right">
                           {repo.trivy ? (
                             <span className="tabular-nums">
-                              <span className="font-semibold text-rose-600">
-                                {repo.trivy.critical}
-                              </span>
+                              <span className="font-semibold text-rose-600">{repo.trivy.critical}</span>
                               <span className="text-slate-300"> / </span>
                               <span className="text-orange-600">{repo.trivy.high}</span>
                               <span className="text-slate-300"> / </span>
@@ -298,7 +296,7 @@ export default function ProjectDetailPanel({ fila }: { fila: FilaProyecto }) {
             {sinAnalizar.length > 0 && (
               <div className="mt-3 rounded-lg border border-dashed border-slate-200 bg-slate-50/60 px-3 py-2">
                 <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-400">
-                  Sin proyecto en SonarQube todavía ({sinAnalizar.length})
+                  Sin medidas de Sonar en este scan ({sinAnalizar.length})
                 </p>
                 <div className="mt-1.5 flex flex-wrap gap-1">
                   {sinAnalizar.map(repo => (
@@ -320,24 +318,22 @@ export default function ProjectDetailPanel({ fila }: { fila: FilaProyecto }) {
           </div>
 
           <div>
-            <h3 className="mb-2 text-[13px] font-semibold text-teal-700">
-              Actividad de análisis por repo
-            </h3>
+            <h3 className="mb-2 text-[13px] font-semibold text-teal-700">Actividad de análisis por repo</h3>
             <Heatmap
               rowLabel="Repo"
               unitLabel="análisis"
-              data={fila.repos.map(repo => ({
+              data={fila.repos.map((repo, i) => ({
                 reviewer: { nombre: repo.name, avatar: repo.name },
-                days: HISTORIAL_SCANS.map((scan, i) => ({
+                days: historial.map((scan, j) => ({
                   date: scan.fecha,
-                  count: repo.actividad[i] ?? 0,
+                  count: fila.actividad[i]?.[j] ?? 0,
                 })),
               }))}
             />
             <p className="mt-1 text-[10px] text-slate-400">
-              Una celda por scan ({HISTORIAL_SCANS.map(s => etiquetaFecha(s.fecha))[0]} al{" "}
-              {etiquetaFecha(HISTORIAL_SCANS[HISTORIAL_SCANS.length - 1].fecha)}). Las filas vacías
-              son repos que todavía no entraron al pipeline de análisis.
+              Una celda por scan ({historial.map(s => etiquetaFecha(s.fecha))[0]} al{" "}
+              {etiquetaFecha(historial[historial.length - 1].fecha)}). Las filas vacías son repos
+              que todavía no entraron al pipeline de análisis.
             </p>
           </div>
         </>

@@ -3,31 +3,33 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Sparkline from "@/components/charts/Sparkline";
-import { HISTORIAL_SCANS, SCAN_ACTUAL } from "@/lib/devsecops-data";
+import type { ScanHistorico } from "@/lib/metrics";
 
 const SOLAPAS = [
-  { href: "/devsecops", label: "Portada ejecutiva" },
-  { href: "/devsecops/proyectos", label: "Ranking de proyectos" },
-  { href: "/devsecops/proyectos/gema", label: "Detalle de proyecto" },
+  { href: "/", label: "Portada ejecutiva" },
+  { href: "/ranking", label: "Ranking de proyectos" },
+  { href: "/gema", label: "Detalle de proyecto" },
 ];
 
 function esActiva(pathname: string, href: string): boolean {
-  if (href === "/devsecops") return pathname === "/devsecops";
-  if (href === "/devsecops/proyectos") return pathname === "/devsecops/proyectos";
-  return pathname.startsWith("/devsecops/proyectos/");
+  const path = pathname.replace(/\/$/, "") || "/";
+  if (href === "/") return path === "/";
+  if (href === "/ranking") return path === "/ranking";
+  return path !== "/" && path !== "/ranking";
 }
 
-/** Nombre del tablero, igual en las tres vistas. */
 const TITULO = "DevSecOps health (Deuda Técnica)";
 
 interface Props {
   subtitulo?: string;
+  historial: ScanHistorico[];
+  fechaScan: string;
 }
 
-export default function DevSecOpsHeader({ subtitulo }: Props) {
-  const pathname = usePathname() ?? "/devsecops";
-  const serie = HISTORIAL_SCANS.map(s => s.reposConSonar);
-  const delta = serie[serie.length - 1] - serie[serie.length - 2];
+export default function DevSecOpsHeader({ subtitulo, historial, fechaScan }: Props) {
+  const pathname = usePathname() ?? "/";
+  const serie = historial.map(s => s.reposConSonar);
+  const delta = serie.length >= 2 ? serie[serie.length - 1] - serie[serie.length - 2] : 0;
 
   return (
     <header className="flex flex-col gap-4">
@@ -46,7 +48,7 @@ export default function DevSecOpsHeader({ subtitulo }: Props) {
             Actividad: {delta >= 0 ? "+" : ""}
             {delta} repos vs. scan anterior
           </p>
-          <p className="text-[10px] text-slate-400">Scan {SCAN_ACTUAL}</p>
+          <p className="text-[10px] text-slate-400">Scan {fechaScan}</p>
           <p className="text-[10px] text-slate-400">accusys/devsecops-dashboard</p>
         </div>
       </div>

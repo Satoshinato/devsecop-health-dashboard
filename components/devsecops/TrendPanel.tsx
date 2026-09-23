@@ -1,12 +1,12 @@
 import BarChart from "@/components/charts/BarChart";
 import LineChart from "@/components/charts/LineChart";
 import Panel from "@/components/devsecops/Panel";
-import { HISTORIAL_SCANS } from "@/lib/devsecops-data";
-import { etiquetaFecha } from "@/lib/devsecops-metrics";
+import type { ScanHistorico } from "@/lib/metrics";
+import { etiquetaFecha } from "@/lib/metrics";
 
-export function AdopcionPorScanPanel() {
+export function AdopcionPorScanPanel({ historial }: { historial: ScanHistorico[] }) {
   return (
-    <Panel title="Tendencia" hint={`Últimos ${HISTORIAL_SCANS.length} scans`}>
+    <Panel title="Tendencia" hint={`Últimos ${historial.length} scans`}>
       <p className="mb-2 text-[11px] text-slate-500">
         Repos con análisis de SonarQube en cada scan. Cada scan diario produce un snapshot
         inmutable, así la tendencia sale sin base de datos.
@@ -14,7 +14,7 @@ export function AdopcionPorScanPanel() {
       <BarChart
         height={190}
         fillHeight
-        data={HISTORIAL_SCANS.map(scan => ({
+        data={historial.map(scan => ({
           label: etiquetaFecha(scan.fecha),
           value: scan.reposConSonar,
           color: "#0f9b8e",
@@ -24,7 +24,7 @@ export function AdopcionPorScanPanel() {
   );
 }
 
-export function DeudaYCriticosPanel() {
+export function DeudaYCriticosPanel({ historial }: { historial: ScanHistorico[] }) {
   return (
     <Panel title="Deuda técnica y CVE críticos por scan" hint="Escalas independientes">
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
@@ -34,7 +34,7 @@ export function DeudaYCriticosPanel() {
             height={150}
             color="#7c3aed"
             showArea
-            data={HISTORIAL_SCANS.map(scan => ({
+            data={historial.map(scan => ({
               label: etiquetaFecha(scan.fecha),
               value: scan.deudaDias,
             }))}
@@ -46,7 +46,7 @@ export function DeudaYCriticosPanel() {
             height={150}
             color="#e11d48"
             showArea
-            data={HISTORIAL_SCANS.map(scan => ({
+            data={historial.map(scan => ({
               label: etiquetaFecha(scan.fecha),
               value: scan.criticos,
             }))}

@@ -4,8 +4,8 @@ import Link from "next/link";
 import { useId, useMemo, useState } from "react";
 import Sparkline from "@/components/charts/Sparkline";
 import { SinDatosBadge } from "@/components/devsecops/Badges";
-import type { FilaProyecto } from "@/lib/devsecops-metrics";
-import { etiquetaFecha } from "@/lib/devsecops-metrics";
+import type { FilaProyecto } from "@/lib/metrics";
+import { etiquetaFecha } from "@/lib/metrics";
 
 type Columna =
   | "nombre"
@@ -190,7 +190,7 @@ export default function ProjectsTable({
                 >
                   <td className="py-2 pr-3">
                     <Link
-                      href={`/devsecops/proyectos/${fila.key}`}
+                      href={`/${fila.key}`}
                       className={`font-medium ${activa ? "text-teal-800" : "text-teal-700 hover:underline"}`}
                     >
                       {fila.nombre}

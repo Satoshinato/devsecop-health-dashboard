@@ -1,9 +1,8 @@
 import Panel from "@/components/devsecops/Panel";
 import { SeverityPill } from "@/components/devsecops/Badges";
-import { CVES_TRANSVERSALES } from "@/lib/devsecops-data";
+import type { CveTransversal } from "@/lib/metrics";
 
-/** Mismo formato de columnas que la solapa Trivy de Azure DevOps, pero agregado por CVE. */
-export default function CvePanel() {
+export default function CvePanel({ cves }: { cves: CveTransversal[] }) {
   return (
     <Panel title="CVE presentes en más de un repo" hint="Ordenado por repos afectados">
       <div className="overflow-x-auto">
@@ -19,7 +18,7 @@ export default function CvePanel() {
             </tr>
           </thead>
           <tbody>
-            {CVES_TRANSVERSALES.map(cve => (
+            {cves.map(cve => (
               <tr key={cve.cve} className="border-b border-slate-100">
                 <td className="py-2 pr-3">
                   <SeverityPill severidad={cve.severidad} />
@@ -28,9 +27,7 @@ export default function CvePanel() {
                 <td className="py-2 pr-3 text-slate-600">
                   {cve.paquete} <span className="text-slate-400">{cve.version}</span>
                 </td>
-                <td className="py-2 pr-3 text-right font-semibold text-slate-700">
-                  {cve.reposAfectados}
-                </td>
+                <td className="py-2 pr-3 text-right font-semibold text-slate-700">{cve.reposAfectados}</td>
                 <td className="py-2 pr-3 text-slate-500">
                   {cve.versionCorregida ?? <span className="text-slate-300">—</span>}
                 </td>
@@ -45,6 +42,11 @@ export default function CvePanel() {
             ))}
           </tbody>
         </table>
+        {cves.length === 0 && (
+          <p className="py-4 text-center text-[11px] text-slate-400">
+            Ningún CVE aparece en más de un repo en este scan.
+          </p>
+        )}
       </div>
     </Panel>
   );

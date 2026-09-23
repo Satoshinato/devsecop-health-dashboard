@@ -1,9 +1,9 @@
 import DonutChart from "@/components/charts/DonutChart";
 import Gauge from "@/components/charts/Gauge";
 import Panel from "@/components/devsecops/Panel";
-import { ALCANCE_TRIVY, QUALITY_GATE } from "@/lib/devsecops-data";
-import type { ResumenGlobal } from "@/lib/devsecops-metrics";
-import { formatearNumero } from "@/lib/devsecops-metrics";
+import type { ResumenGlobal } from "@/lib/metrics";
+import { formatearNumero } from "@/lib/metrics";
+import { ALCANCE_TRIVY, QUALITY_GATE } from "@/lib/quality-gate";
 
 export function AdopcionPanel({ resumen }: { resumen: ResumenGlobal }) {
   return (

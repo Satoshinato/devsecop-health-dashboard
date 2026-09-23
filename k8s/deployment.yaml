@@ -1,0 +1,66 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: devsecops-dashboard
+  labels:
+    app: devsecops-dashboard
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: devsecops-dashboard
+  template:
+    metadata:
+      labels:
+        app: devsecops-dashboard
+    spec:
+      containers:
+        - name: nginx
+          image: accusystechnology.azurecr.io/devsecops-dashboard:latest
+          ports:
+            - containerPort: 80
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 200m
+              memory: 128Mi
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 80
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: devsecops-dashboard
+spec:
+  selector:
+    app: devsecops-dashboard
+  ports:
+    - port: 80
+      targetPort: 80
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: devsecops-dashboard
+  annotations:
+    kubernetes.io/ingress.class: nginx
+spec:
+  rules:
+    - host: devsecops.shared.accusys.com.ar
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: devsecops-dashboard
+                port:
+                  number: 80

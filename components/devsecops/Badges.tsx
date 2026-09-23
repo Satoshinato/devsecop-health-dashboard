@@ -1,4 +1,4 @@
-import type { EstadoGate, Rating } from "@/lib/devsecops-data";
+import type { EstadoGate, Rating } from "@/lib/snapshot";
 
 const RATING_CLASSES: Record<Rating, string> = {
   A: "bg-emerald-100 text-emerald-700 border-emerald-200",

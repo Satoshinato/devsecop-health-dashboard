@@ -3,12 +3,16 @@ import DevSecOpsHeader from "@/components/devsecops/DevSecOpsHeader";
 import KpiRow, { type Kpi } from "@/components/devsecops/KpiRow";
 import Panel from "@/components/devsecops/Panel";
 import ProjectsTable from "@/components/devsecops/ProjectsTable";
-import SampleDataBanner from "@/components/devsecops/SampleDataBanner";
-import { filasProyectos, resumenGlobal } from "@/lib/devsecops-metrics";
+import { filasProyectos, historialScans, imagenesBasePorImpacto, resumenGlobal } from "@/lib/metrics";
+import { cargarScans, scanActual } from "@/lib/scans";
 
 export default function RankingProyectosPage() {
-  const filas = filasProyectos();
-  const resumen = resumenGlobal();
+  const scans = cargarScans();
+  const actual = scanActual(scans);
+  const historial = historialScans(scans);
+  const filas = filasProyectos(actual, scans);
+  const resumen = resumenGlobal(scans);
+  const imagenes = imagenesBasePorImpacto(scans);
 
   const peorDeuda = [...filas]
     .filter(f => f.reposConSonar > 0)
@@ -34,22 +38,25 @@ export default function RankingProyectosPage() {
     },
     {
       label: "Peor deuda normalizada",
-      value: `${peorDeuda.deudaPor1kLineas} min`,
-      sub: `${peorDeuda.nombre} · por 1k líneas`,
+      value: peorDeuda ? `${peorDeuda.deudaPor1kLineas} min` : "—",
+      sub: peorDeuda ? `${peorDeuda.nombre} · por 1k líneas` : "Sin datos",
       destacado: "atencion",
     },
     {
       label: "Más CVE críticos",
-      value: String(masCriticos.criticos),
-      sub: masCriticos.nombre,
+      value: masCriticos ? String(masCriticos.criticos) : "—",
+      sub: masCriticos?.nombre,
       destacado: "riesgo",
     },
   ];
 
   return (
     <>
-      <DevSecOpsHeader subtitulo="Ranking de proyectos · ordenado por deuda cada 1.000 líneas, ordenable por cualquier columna" />
-      <SampleDataBanner />
+      <DevSecOpsHeader
+        subtitulo="Ranking de proyectos · ordenado por deuda cada 1.000 líneas, ordenable por cualquier columna"
+        historial={historial}
+        fechaScan={actual.fecha}
+      />
 
       <KpiRow kpis={kpis} />
 
@@ -88,13 +95,12 @@ export default function RankingProyectosPage() {
             </ul>
           </Panel>
 
-          <BaseImagesPanel limite={6} />
+          <BaseImagesPanel imagenes={imagenes} limite={6} />
         </div>
       </div>
 
       <footer className="border-t border-slate-200 pt-3 text-center text-[10px] text-slate-400">
-        Maqueta del tablero DevSecOps de Accusys · Todos los valores son de muestra · Los datos están
-        centralizados en <code className="text-slate-500">lib/devsecops-data.ts</code>
+        DevSecOps health (Deuda Técnica) · Accusys · snapshot {actual.fecha}
       </footer>
     </>
   );
