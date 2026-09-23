@@ -15,7 +15,9 @@ pool:
   vmImage: ubuntu-latest
 
 variables:
-  imageName: accusystechnology.azurecr.io/devsecops-dashboard
+  - group: devsecops-dashboard
+  - name: imageName
+    value: accusystechnology.azurecr.io/devsecops-dashboard
 
 stages:
   - stage: ScanAndBuild

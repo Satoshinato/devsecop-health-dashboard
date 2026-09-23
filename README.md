@@ -30,16 +30,7 @@ npm run build          # sale `out/`
 | `npm run scan:fixture` | Arma el inventario desde `config/projects.yml` y rellena métricas **plausibles** de Gema. No llama a Sonar ni a Azure DevOps. Sirve para el build y la validación local. |
 | `npm run scan` | Requiere credenciales. Inventario AzDO + measures Sonar + attachment `JSON_RESULT` del último build **completado** de cada definición `*-pr`. |
 
-Variables de entorno para el scan real:
-
-| Variable | Uso |
-| --- | --- |
-| `SONAR_TOKEN` | Token de SonarQube Cloud |
-| `SONAR_ORG` | Organización en SonarCloud (ej. `accusys`) |
-| `AZDO_ORG` | Organización Azure DevOps (ej. `accusystechnology`) |
-| `AZDO_PAT` | PAT con Code + Build (lectura de repos y de builds) |
-
-Sin esas variables, `npm run scan` sale con error y pide `--from-fixture`. El pipeline diario **omite** el colector si no hay secrets y construye con los JSON ya versionados en `data/scans/`.
+Variables de entorno para el scan real (`SONAR_TOKEN`, `SONAR_ORG`, `AZDO_ORG`, `AZDO_PAT`). En Azure DevOps van en el Library group **`devsecops-dashboard`** (ligado al YAML; no se commitean). El PAT es de lectura: **Code + Build + Project and team**. El de SonarCloud es un **user token** de la org, no un token de análisis de un proyecto suelto. En local se exportan las mismas vars; sin ellas `npm run scan` pide `--from-fixture` y el pipeline diario omite el colector.
 
 Los UUID de `sonarProjectKey` de Gema en `config/projects.yml` son **placeholders** hasta cargar los project key reales.
 
@@ -47,7 +38,7 @@ Este entorno no validó contra Gema real: no hay PAT ni token de Sonar en el age
 
 ## Deploy
 
-1. Pipeline `azure-pipelines.yml`: `npm ci`, scan (o skip), tests, `next build`, imagen Docker nginx que sirve `out/`.
+1. Pipeline `azure-pipelines.yml` (variable group `devsecops-dashboard`): `npm ci`, scan (o skip), tests, `next build`, imagen Docker nginx que sirve `out/`.
 2. Manifiestos en `k8s/` (Deployment + Service + Ingress, host de ejemplo `devsecops.shared.accusys.com.ar`).
 3. Trivy Fase 1 no pide cambios de YAML: el colector lee el attachment `JSON_RESULT` que ya publica la task Aqua en los pipelines `*-pr` (p. ej. `ms-ophir-api-pr` → repo `ms-ophir-api`).
 
