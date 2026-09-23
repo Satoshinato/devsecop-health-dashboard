@@ -35,13 +35,13 @@ export default function RankingProyectosPage() {
     {
       label: "Peor deuda normalizada",
       value: `${peorDeuda.deudaPor1kLineas} min`,
-      sub: `${peorDeuda.nombreCorto} · por 1k líneas`,
+      sub: `${peorDeuda.nombre} · por 1k líneas`,
       destacado: "atencion",
     },
     {
       label: "Más CVE críticos",
       value: String(masCriticos.criticos),
-      sub: masCriticos.nombreCorto,
+      sub: masCriticos.nombre,
       destacado: "riesgo",
     },
   ];
@@ -82,8 +82,8 @@ export default function RankingProyectosPage() {
                 severidad crítica en las imágenes de contenedor del proyecto, sumados por repo.
               </li>
               <li className="border-t border-slate-100 pt-2 text-slate-500">
-                Los nombres van cortos acá y completos en el detalle. Hacer clic en el nombre abre el
-                detalle con el desglose por repo.
+                Los nombres van siempre completos. Hacer clic en el nombre abre el detalle con el
+                desglose por repo.
               </li>
             </ul>
           </Panel>

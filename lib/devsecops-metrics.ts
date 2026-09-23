@@ -16,10 +16,8 @@ const MINUTOS_POR_DIA = 480;
 
 export interface FilaProyecto {
   key: string;
-  /** Nombre completo, para el detalle. */
+  /** Nombre completo, en ranking, KPIs y detalle. */
   nombre: string;
-  /** Nombre corto, para las tablas. */
-  nombreCorto: string;
   azdoProject: string;
   lider: string;
   esPoc: boolean;
@@ -79,7 +77,6 @@ export function filaProyecto(proyecto: ProyectoSample): FilaProyecto {
   return {
     key: proyecto.key,
     nombre: proyecto.name,
-    nombreCorto: proyecto.nombreCorto,
     azdoProject: proyecto.azdoProject,
     lider: proyecto.lider,
     esPoc: proyecto.esPoc ?? false,

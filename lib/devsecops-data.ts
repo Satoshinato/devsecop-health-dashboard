@@ -63,10 +63,8 @@ export interface RepoSample {
 
 export interface ProyectoSample {
   key: string;
-  /** Nombre completo del cuadro de inventario, para el detalle. */
+  /** Nombre completo del cuadro de inventario, en ranking, KPIs y detalle. */
   name: string;
-  /** Nombre corto, para las tablas. */
-  nombreCorto: string;
   /** Nombre del proyecto en Azure DevOps: prefijo de la nomenclatura de Sonar y del enlace. */
   azdoProject: string;
   /** Repos totales del proyecto según el inventario de Azure DevOps. */
@@ -203,7 +201,6 @@ export const PROYECTOS: ProyectoSample[] = [
   {
     key: "gema",
     name: "Gema - Ophir",
-    nombreCorto: "Gema",
     azdoProject: "gema",
     reposTotal: 15,
     reposConImagen: 15,
@@ -308,7 +305,6 @@ export const PROYECTOS: ProyectoSample[] = [
   {
     key: "cronos",
     name: "Mep - Cronos",
-    nombreCorto: "Cronos",
     azdoProject: "mep-cronos",
     reposTotal: 15,
     reposConImagen: 13,
@@ -402,7 +398,6 @@ export const PROYECTOS: ProyectoSample[] = [
   {
     key: "iris",
     name: "Accusys Link - Iris",
-    nombreCorto: "Iris",
     azdoProject: "accusys-link-iris",
     reposTotal: 15,
     reposConImagen: 13,
@@ -467,7 +462,6 @@ export const PROYECTOS: ProyectoSample[] = [
   {
     key: "apolo",
     name: "Sidef - Apolo",
-    nombreCorto: "Apolo",
     azdoProject: "sidef-apolo",
     reposTotal: 8,
     reposConImagen: 7,
@@ -521,7 +515,6 @@ export const PROYECTOS: ProyectoSample[] = [
   {
     key: "zeus",
     name: "Mep Contable - Zeus",
-    nombreCorto: "Zeus",
     azdoProject: "mep-contable-zeus",
     reposTotal: 8,
     reposConImagen: 7,
@@ -561,7 +554,6 @@ export const PROYECTOS: ProyectoSample[] = [
   {
     key: "janus",
     name: "Pases y Cryl - Janus",
-    nombreCorto: "Janus",
     azdoProject: "pases-y-cryl-janus",
     reposTotal: 7,
     reposConImagen: 6,
@@ -601,7 +593,6 @@ export const PROYECTOS: ProyectoSample[] = [
   {
     key: "argus",
     name: "Mep Consolidado - Argus",
-    nombreCorto: "Argus",
     azdoProject: "mep-consolidado-argus",
     reposTotal: 6,
     reposConImagen: 5,
@@ -627,7 +618,6 @@ export const PROYECTOS: ProyectoSample[] = [
   {
     key: "afrodita",
     name: "Mep Cedin - Afrodita",
-    nombreCorto: "Afrodita",
     azdoProject: "mep-cedin-afrodita",
     reposTotal: 5,
     reposConImagen: 4,
@@ -653,7 +643,6 @@ export const PROYECTOS: ProyectoSample[] = [
   {
     key: "probatch",
     name: "Probatch",
-    nombreCorto: "Probatch",
     azdoProject: "probatch",
     reposTotal: 35,
     reposConImagen: 30,
@@ -734,7 +723,6 @@ export const PROYECTOS: ProyectoSample[] = [
   {
     key: "themis",
     name: "Repi - Themis",
-    nombreCorto: "Themis",
     azdoProject: "repi-themis",
     reposTotal: 5,
     reposConImagen: 4,
@@ -751,7 +739,6 @@ export const PROYECTOS: ProyectoSample[] = [
   {
     key: "minerva",
     name: "Niif - Minerva",
-    nombreCorto: "Minerva",
     azdoProject: "niif-minerva",
     reposTotal: 5,
     reposConImagen: 4,
@@ -762,7 +749,6 @@ export const PROYECTOS: ProyectoSample[] = [
   {
     key: "hades",
     name: "Mep SML - Hades",
-    nombreCorto: "Hades",
     azdoProject: "mep-sml-hades",
     reposTotal: 5,
     reposConImagen: 4,
@@ -773,7 +759,6 @@ export const PROYECTOS: ProyectoSample[] = [
   {
     key: "poseidon",
     name: "Mep Contingencia - Poseidón",
-    nombreCorto: "Poseidón",
     azdoProject: "mep-contingencia-poseidon",
     reposTotal: 4,
     reposConImagen: 3,

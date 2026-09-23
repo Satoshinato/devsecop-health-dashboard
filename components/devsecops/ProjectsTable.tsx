@@ -8,7 +8,7 @@ import type { FilaProyecto } from "@/lib/devsecops-metrics";
 import { etiquetaFecha } from "@/lib/devsecops-metrics";
 
 type Columna =
-  | "nombreCorto"
+  | "nombre"
   | "reposConSonar"
   | "adopcionSonar"
   | "deudaPor1kLineas"
@@ -30,7 +30,7 @@ interface Props {
 }
 
 const COLUMNAS_COMPLETAS: { key: Columna; label: string; align: string; ayuda?: string }[] = [
-  { key: "nombreCorto", label: "Proyecto", align: "text-left" },
+  { key: "nombre", label: "Proyecto", align: "text-left" },
   { key: "reposConSonar", label: "Repos analizados", align: "text-right" },
   { key: "adopcionSonar", label: "Adopción", align: "text-right", ayuda: "Repos con proyecto en Sonar sobre el total del proyecto" },
   { key: "deudaPor1kLineas", label: "Deuda / 1k líneas", align: "text-right", ayuda: "Minutos de deuda técnica cada 1.000 líneas" },
@@ -40,10 +40,10 @@ const COLUMNAS_COMPLETAS: { key: Columna; label: string; align: string; ayuda?: 
   { key: "ultimoAnalisis", label: "Último análisis", align: "text-right" },
 ];
 
-const COLUMNAS_COMPACTAS: Columna[] = ["nombreCorto", "reposConSonar", "adopcionSonar", "criticos"];
+const COLUMNAS_COMPACTAS: Columna[] = ["nombre", "reposConSonar", "adopcionSonar", "criticos"];
 
 function valorOrden(fila: FilaProyecto, columna: Columna): string | number {
-  if (columna === "nombreCorto") return fila.nombreCorto.toLowerCase();
+  if (columna === "nombre") return fila.nombre.toLowerCase();
   if (columna === "ultimoAnalisis") return fila.ultimoAnalisis ?? "";
   return fila[columna];
 }
@@ -83,7 +83,7 @@ export default function ProjectsTable({
     const busqueda = normalizar(texto.trim());
     if (!busqueda) return filas;
     return filas.filter(fila => {
-      const campo = criterio === "proyecto" ? `${fila.nombreCorto} ${fila.nombre}` : fila.lider;
+      const campo = criterio === "proyecto" ? fila.nombre : fila.lider;
       return normalizar(campo).includes(busqueda);
     });
   }, [filas, criterio, texto]);
@@ -98,7 +98,7 @@ export default function ProjectsTable({
 
       const va = valorOrden(a, orden.columna);
       const vb = valorOrden(b, orden.columna);
-      if (va === vb) return a.nombreCorto.localeCompare(b.nombreCorto);
+      if (va === vb) return a.nombre.localeCompare(b.nombre);
       const cmp = va > vb ? 1 : -1;
       return orden.desc ? -cmp : cmp;
     });
@@ -109,7 +109,7 @@ export default function ProjectsTable({
     setOrden(actual =>
       actual.columna === columna
         ? { columna, desc: !actual.desc }
-        : { columna, desc: columna !== "nombreCorto" }
+        : { columna, desc: columna !== "nombre" }
     );
   }
 
@@ -140,7 +140,7 @@ export default function ProjectsTable({
               type="search"
               value={texto}
               onChange={e => setTexto(e.target.value)}
-              placeholder={criterio === "proyecto" ? "Cronos, Gema, Probatch…" : "Fernando Luna…"}
+              placeholder={criterio === "proyecto" ? "Gema - Ophir, Mep Contingencia - Poseidón…" : "Fernando Luna…"}
               className="rounded border border-slate-300 bg-white px-2 py-1.5 text-xs text-slate-700 placeholder:text-slate-400"
             />
           </div>
@@ -193,7 +193,7 @@ export default function ProjectsTable({
                       href={`/devsecops/proyectos/${fila.key}`}
                       className={`font-medium ${activa ? "text-teal-800" : "text-teal-700 hover:underline"}`}
                     >
-                      {fila.nombreCorto}
+                      {fila.nombre}
                     </Link>
                     <div className="mt-0.5 flex items-center gap-1.5">
                       {fila.esPoc && (
