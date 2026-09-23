@@ -1,17 +1,21 @@
 {
-  "name": "tmp-scaffold",
+  "name": "devsecops-dashboard",
   "version": "0.1.0",
   "private": true,
   "scripts": {
     "dev": "next dev --port 4317",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "test": "tsx --test lib/metrics.test.ts collector/trivy.test.ts",
+    "scan": "tsx collector/main.ts",
+    "scan:fixture": "tsx collector/main.ts --from-fixture"
   },
   "dependencies": {
     "next": "16.3.3",
     "react": "19.2.8",
-    "react-dom": "19.2.8"
+    "react-dom": "19.2.8",
+    "yaml": "^2.9.1"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
@@ -21,6 +25,7 @@
     "eslint": "^9",
     "eslint-config-next": "16.3.3",
     "tailwindcss": "^4",
+    "tsx": "^4.23.15",
     "typescript": "^5"
   }
 }

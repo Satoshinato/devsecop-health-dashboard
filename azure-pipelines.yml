@@ -1,0 +1,63 @@
+trigger:
+  branches:
+    include:
+      - main
+
+schedules:
+  - cron: "0 6 * * *"
+    displayName: Scan diario
+    branches:
+      include:
+        - main
+    always: true
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+  - group: devsecops-dashboard
+  - name: imageName
+    value: accusystechnology.azurecr.io/devsecops-dashboard
+
+stages:
+  - stage: ScanAndBuild
+    jobs:
+      - job: scan_build_image
+        displayName: Colector, export estático e imagen nginx
+        steps:
+          - task: NodeTool@0
+            inputs:
+              versionSpec: "20.x"
+
+          - script: npm ci
+            displayName: npm ci
+
+          - script: |
+              set -euo pipefail
+              if [ -n "${SONAR_TOKEN:-}" ] && [ -n "${SONAR_ORG:-}" ] && [ -n "${AZDO_ORG:-}" ] && [ -n "${AZDO_PAT:-}" ]; then
+                npx tsx collector/main.ts
+              else
+                echo "Sin secretos de Sonar/AzDO: se omite el scan y se usa data/scans ya versionado."
+              fi
+            displayName: Scan (o skip si no hay secrets)
+            env:
+              SONAR_TOKEN: $(SONAR_TOKEN)
+              SONAR_ORG: $(SONAR_ORG)
+              AZDO_ORG: $(AZDO_ORG)
+              AZDO_PAT: $(AZDO_PAT)
+
+          - script: npm test
+            displayName: Tests de métricas
+
+          - script: npm run build
+            displayName: next build (export)
+
+          - task: Docker@2
+            displayName: Docker build nginx que sirve out/
+            inputs:
+              command: build
+              Dockerfile: Dockerfile
+              repository: $(imageName)
+              tags: |
+                $(Build.BuildId)
+                latest

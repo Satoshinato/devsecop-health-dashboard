@@ -11,6 +11,7 @@ interface LineChartProps {
   height?: number;
   color?: string;
   color2?: string;
+  label1?: string;
   label2?: string;
   showArea?: boolean;
   className?: string;
@@ -22,6 +23,7 @@ export default function LineChart({
   height = 120,
   color = "#3b82f6",
   color2 = "#10b981",
+  label1 = "Principal",
   label2,
   showArea = true,
   className = "",
@@ -101,7 +103,7 @@ export default function LineChart({
         <div className="flex gap-4 mt-1 justify-center">
           <div className="flex items-center gap-1">
             <div className="w-3 h-0.5 rounded" style={{ backgroundColor: color }} />
-            <span className="text-[10px] text-slate-500">Principal</span>
+            <span className="text-[10px] text-slate-500">{label1}</span>
           </div>
           <div className="flex items-center gap-1">
             <div className="w-3 h-0.5 rounded" style={{ backgroundColor: color2 }} />

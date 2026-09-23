@@ -13,6 +13,11 @@ interface BarChartProps {
   showValues?: boolean;
   horizontal?: boolean;
   className?: string;
+  /**
+   * Estira cada columna a la altura del gráfico para que el porcentaje de la
+   * barra se resuelva contra ella. Sin esto las barras quedan en su alto mínimo.
+   */
+  fillHeight?: boolean;
 }
 
 export default function BarChart({
@@ -22,6 +27,7 @@ export default function BarChart({
   showValues = true,
   horizontal = false,
   className = "",
+  fillHeight = false,
 }: BarChartProps) {
   const max = maxValue ?? Math.max(...data.map(d => d.value), 1);
 
@@ -56,19 +62,31 @@ export default function BarChart({
     <div className={`flex items-end gap-1 ${className}`} style={{ height }}>
       {data.map((bar, i) => {
         const pct = max > 0 ? (bar.value / max) * 100 : 0;
+        const barra = (
+          <div
+            className="w-full rounded-t transition-all duration-500"
+            style={{
+              height: `${Math.max(pct, 2)}%`,
+              backgroundColor: bar.color ?? "#3b82f6",
+              minHeight: bar.value > 0 ? 4 : 0,
+            }}
+          />
+        );
         return (
-          <div key={i} className="flex-1 flex flex-col items-center justify-end gap-1">
+          <div
+            key={i}
+            className={`flex-1 flex flex-col items-center justify-end gap-1 ${
+              fillHeight ? "h-full" : ""
+            }`}
+          >
             {showValues && (
               <span className="text-[10px] font-semibold text-slate-600">{bar.value}</span>
             )}
-            <div
-              className="w-full rounded-t transition-all duration-500"
-              style={{
-                height: `${Math.max(pct, 2)}%`,
-                backgroundColor: bar.color ?? "#3b82f6",
-                minHeight: bar.value > 0 ? 4 : 0,
-              }}
-            />
+            {fillHeight ? (
+              <div className="w-full flex-1 min-h-0 flex items-end">{barra}</div>
+            ) : (
+              barra
+            )}
             <span className="text-[9px] text-slate-400 text-center leading-tight max-w-full">
               {bar.label}
             </span>

@@ -8,6 +8,10 @@ interface HeatmapRow {
 interface HeatmapProps {
   data: HeatmapRow[];
   className?: string;
+  /** Encabezado de la primera columna. */
+  rowLabel?: string;
+  /** Sustantivo usado en el tooltip de cada celda. */
+  unitLabel?: string;
 }
 
 const INTENSITY = [
@@ -26,7 +30,12 @@ function intensityClass(count: number) {
   return INTENSITY[4];
 }
 
-export default function Heatmap({ data, className = "" }: HeatmapProps) {
+export default function Heatmap({
+  data,
+  className = "",
+  rowLabel = "Revisor",
+  unitLabel = "revisión(es)",
+}: HeatmapProps) {
   // Show last 28 days grouped in 4 weeks
   const days = data[0]?.days?.slice(-28) ?? [];
 
@@ -35,7 +44,7 @@ export default function Heatmap({ data, className = "" }: HeatmapProps) {
       <table className="text-[10px] border-collapse">
         <thead>
           <tr>
-            <th className="w-20 text-left font-medium text-slate-400 pb-1 pr-2">Revisor</th>
+            <th className="w-20 text-left font-medium text-slate-400 pb-1 pr-2">{rowLabel}</th>
             {days.map((d, i) => (
               <th
                 key={i}
@@ -59,7 +68,7 @@ export default function Heatmap({ data, className = "" }: HeatmapProps) {
                 <td key={di} className="py-0.5 px-px">
                   <div
                     className={`w-4 h-4 rounded-sm ${intensityClass(d.count)}`}
-                    title={`${row.reviewer.nombre} — ${d.date}: ${d.count} revisión(es)`}
+                    title={`${row.reviewer.nombre} — ${d.date}: ${d.count} ${unitLabel}`}
                   />
                 </td>
               ))}
