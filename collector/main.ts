@@ -37,7 +37,6 @@ async function scanReal(fecha: string): Promise<ScanSnapshot> {
       org,
       pat,
       fecha,
-      source: process.env.TRIVY_SOURCE,
     });
   }
   return {

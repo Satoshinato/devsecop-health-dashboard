@@ -28,7 +28,7 @@ npm run build          # sale `out/`
 | Comando | Qué hace |
 | --- | --- |
 | `npm run scan:fixture` | Arma el inventario desde `config/projects.yml` y rellena métricas **plausibles** de Gema. No llama a Sonar ni a Azure DevOps. Sirve para el build y la validación local. |
-| `npm run scan` | Requiere credenciales. Inventario AzDO + measures Sonar + artefacto `trivy` / `trivy-report.json` del último build exitoso. |
+| `npm run scan` | Requiere credenciales. Inventario AzDO + measures Sonar + attachment `JSON_RESULT` del último build **completado** de cada definición `*-pr`. |
 
 Variables de entorno para el scan real:
 
@@ -37,8 +37,7 @@ Variables de entorno para el scan real:
 | `SONAR_TOKEN` | Token de SonarQube Cloud |
 | `SONAR_ORG` | Organización en SonarCloud (ej. `accusys`) |
 | `AZDO_ORG` | Organización Azure DevOps (ej. `accusystechnology`) |
-| `AZDO_PAT` | PAT con Code + Build |
-| `TRIVY_SOURCE` | `artifact` (default) o `attachment` (fallback apagado de Fase 1) |
+| `AZDO_PAT` | PAT con Code + Build (lectura de repos y de builds) |
 
 Sin esas variables, `npm run scan` sale con error y pide `--from-fixture`. El pipeline diario **omite** el colector si no hay secrets y construye con los JSON ya versionados en `data/scans/`.
 
@@ -50,8 +49,8 @@ Este entorno no validó contra Gema real: no hay PAT ni token de Sonar en el age
 
 1. Pipeline `azure-pipelines.yml`: `npm ci`, scan (o skip), tests, `next build`, imagen Docker nginx que sirve `out/`.
 2. Manifiestos en `k8s/` (Deployment + Service + Ingress, host de ejemplo `devsecops.shared.accusys.com.ar`).
-3. Snippet para pipelines de imagen: `snippets/trivy-pipeline-artifact.yml`.
+3. Trivy Fase 1 no pide cambios de YAML: el colector lee el attachment `JSON_RESULT` que ya publica la task Aqua en los pipelines `*-pr` (p. ej. `ms-ophir-api-pr` → repo `ms-ophir-api`).
 
 ## Contrato de datos
 
-El front no hardcodea métricas: lee el último snapshot y hasta 14 anteriores en `data/scans/`. Las agregaciones están en `lib/metrics.ts` (adopción Trivy solo sobre `publicaImagen`, deuda en días = `sqale_index / 480`, top = críticos × repos).
+El front no hardcodea métricas: lee el último snapshot y hasta 14 anteriores en `data/scans/`. Las agregaciones están en `lib/metrics.ts` (adopción Trivy solo sobre `publicaImagen`, deuda en días = `sqale_index / 480`, top = críticos × repos). El colector de Trivy no usa Pipeline Artifacts: baja el attachment `JSON_RESULT` del último build completado de cada definición cuyo nombre termina en `-pr`.

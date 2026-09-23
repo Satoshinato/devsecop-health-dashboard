@@ -43,7 +43,6 @@ stages:
               SONAR_ORG: $(SONAR_ORG)
               AZDO_ORG: $(AZDO_ORG)
               AZDO_PAT: $(AZDO_PAT)
-              TRIVY_SOURCE: $(TRIVY_SOURCE)
 
           - script: npm test
             displayName: Tests de métricas
