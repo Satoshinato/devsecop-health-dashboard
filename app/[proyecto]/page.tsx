@@ -41,7 +41,6 @@ export default async function DetalleProyectoPage({
         <ProjectDetailPanel
           fila={fila}
           historial={historial}
-          sonarOrg={actual.organizacionSonar}
         />
       </div>
 

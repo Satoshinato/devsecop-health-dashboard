@@ -145,8 +145,8 @@ async function listPrDefinitions(opts: {
   org: string;
   project: string;
   pat: string;
-}): Promise<{ id: number; name: string }[]> {
-  const found: { id: number; name: string }[] = [];
+}): Promise<{ id: number; name: string; repoName?: string }[]> {
+  const found: { id: number; name: string; repoName?: string }[] = [];
   let continuation: string | undefined;
   do {
     const url = new URL(
@@ -160,33 +160,35 @@ async function listPrDefinitions(opts: {
     if (!res.ok) {
       throw new Error(`Azure DevOps definitions: ${res.status} ${await res.text()}`);
     }
-    const body = (await res.json()) as { value?: { id: number; name: string }[] };
+    const body = (await res.json()) as {
+      value?: { id: number; name: string; repository?: { name?: string } }[];
+    };
     for (const def of body.value ?? []) {
-      if (def.name.endsWith("-pr")) found.push({ id: def.id, name: def.name });
+      if (def.name.endsWith("-pr")) found.push({ id: def.id, name: def.name, repoName: def.repository?.name });
     }
     continuation = res.headers.get("x-ms-continuationtoken") ?? undefined;
   } while (continuation);
   return found;
 }
 
-async function lastCompletedBuild(opts: {
+async function recentCompletedBuilds(opts: {
   org: string;
   project: string;
   definitionId: number;
   pat: string;
-}): Promise<{ id: number } | null> {
+}): Promise<{ id: number }[]> {
   const url = new URL(
     `https://dev.azure.com/${opts.org}/${encodeURIComponent(opts.project)}/_apis/build/builds`,
   );
   url.searchParams.set("definitions", String(opts.definitionId));
   url.searchParams.set("statusFilter", "completed");
-  url.searchParams.set("$top", "1");
+  url.searchParams.set("$top", "10");
   url.searchParams.set("queryOrder", "finishTimeDescending");
   url.searchParams.set("api-version", API);
   const res = await fetch(url, { headers: azdoHeaders(opts.pat) });
-  if (!res.ok) return null;
+  if (!res.ok) return [];
   const body = (await res.json()) as { value?: { id: number }[] };
-  return body.value?.[0] ?? null;
+  return body.value ?? [];
 }
 
 type AttachmentRef = { name: string; href?: string };
@@ -292,45 +294,47 @@ export async function enrichTrivy(
   });
 
   for (const def of definitions) {
-    const repoName = repoNameFromPrDefinition(def.name);
+    const repoName = def.repoName ?? repoNameFromPrDefinition(def.name);
     if (!repoName) continue;
     const repo = byName.get(repoName);
     if (!repo || !repo.publicaImagen) continue;
 
-    const build = await lastCompletedBuild({
+    const builds = await recentCompletedBuilds({
       org: opts.org,
       project: projectAzdo,
       definitionId: def.id,
       pat: opts.pat,
     });
-    if (!build) continue;
-
-    const attachments = await listJsonResultAttachments({
-      org: opts.org,
-      project: projectAzdo,
-      buildId: build.id,
-      pat: opts.pat,
-    });
-    if (attachments.length === 0) continue;
-
-    let parsed: TrivyMetrics | null = null;
-    for (const attachment of attachments) {
-      const report = await downloadJson({
+    for (const build of builds) {
+      const attachments = await listJsonResultAttachments({
         org: opts.org,
         project: projectAzdo,
         buildId: build.id,
         pat: opts.pat,
-        attachment,
       });
-      if (!report) continue;
-      parsed = parseTrivyReport(
-        report,
-        `accusystechnology/${repo.name}:latest`,
-        opts.fecha,
-        String(build.id),
-      );
-      if (parsed) break;
+      if (attachments.length === 0) continue;
+
+      for (const attachment of attachments) {
+        const report = await downloadJson({
+          org: opts.org,
+          project: projectAzdo,
+          buildId: build.id,
+          pat: opts.pat,
+          attachment,
+        });
+        if (!report) continue;
+        const parsed = parseTrivyReport(
+          report,
+          `accusystechnology/${repo.name}:latest`,
+          opts.fecha,
+          String(build.id),
+        );
+        if (parsed) {
+          repo.trivy = parsed;
+          break;
+        }
+      }
+      if (repo.trivy) break;
     }
-    repo.trivy = parsed;
   }
 }

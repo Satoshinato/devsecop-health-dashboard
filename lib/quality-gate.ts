@@ -18,4 +18,6 @@ export const ALCANCE_TRIVY = "Solo imágenes de contenedor";
 export const AZDO_ORG_DEFAULT = "accusystechnology";
 export const SONAR_ORG_DEFAULT = "accusys";
 export const AZDO_BASE_URL = `https://dev.azure.com/${AZDO_ORG_DEFAULT}`;
-export const SONAR_BASE_URL = "https://sonarcloud.io";
+/** SonarQube Community on-prem (no SonarCloud). */
+export const SONAR_HOST_DEFAULT = "https://sonarqube.shared.accusys.com.ar";
+export const SONAR_BASE_URL = SONAR_HOST_DEFAULT;

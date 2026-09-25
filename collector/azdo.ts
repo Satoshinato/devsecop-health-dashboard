@@ -33,6 +33,10 @@ export async function fetchInventario(opts: {
     if (reposRes.ok) {
       const body = (await reposRes.json()) as { value?: { name: string }[] };
       remoteNames = (body.value ?? []).map(r => r.name);
+    } else {
+      console.warn(
+        `Azure DevOps repos (${proyecto.azdoProject}): ${reposRes.status} — usando inventario de projects.yml`,
+      );
     }
 
     const known = new Map(proyecto.repos.map(r => [r.name, r]));
@@ -46,6 +50,7 @@ export async function fetchInventario(opts: {
         sonarProjectKey: cfg?.sonarProjectKey ?? null,
         sonar: null,
         trivy: null,
+        renovate: null,
       };
     });
 

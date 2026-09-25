@@ -5,7 +5,7 @@ import Sparkline from "@/components/charts/Sparkline";
 import { GateBadge, RatingBadge } from "@/components/devsecops/Badges";
 import type { FilaProyecto, ScanHistorico } from "@/lib/metrics";
 import { etiquetaFecha, formatearDeuda, formatearNumero } from "@/lib/metrics";
-import { ALCANCE_TRIVY, AZDO_BASE_URL, SONAR_BASE_URL, SONAR_ORG_DEFAULT } from "@/lib/quality-gate";
+import { ALCANCE_TRIVY, AZDO_BASE_URL, SONAR_BASE_URL } from "@/lib/quality-gate";
 
 function Metrica({
   label,
@@ -27,13 +27,10 @@ function Metrica({
 export default function ProjectDetailPanel({
   fila,
   historial,
-  sonarOrg,
 }: {
   fila: FilaProyecto;
   historial: ScanHistorico[];
-  sonarOrg?: string;
 }) {
-  const org = sonarOrg ?? SONAR_ORG_DEFAULT;
   const conSonar = fila.repos.filter(r => r.sonar !== null);
   const sinAnalizar = fila.repos.filter(r => r.sonar === null);
   const noDescubiertos = fila.reposTotal - fila.repos.length;
@@ -72,10 +69,10 @@ export default function ProjectDetailPanel({
               Abrir en Azure DevOps
             </a>
             <a
-              href={`${SONAR_BASE_URL}/organizations/${org}/projects?search=${fila.key}`}
+              href={`${SONAR_BASE_URL}/projects?search=${encodeURIComponent(fila.key)}`}
               className="text-[11px] font-medium text-teal-700 underline decoration-teal-300 underline-offset-2"
             >
-              Abrir en SonarQube Cloud
+              Abrir en SonarQube
             </a>
           </div>
         </div>
@@ -110,7 +107,7 @@ export default function ProjectDetailPanel({
         </div>
       ) : (
         <>
-          <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-6">
+          <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-7">
             <Metrica label="Repos analizados" value={`${fila.reposConSonar}/${fila.reposTotal}`} />
             <Metrica label="Adopción" value={`${fila.adopcionSonar} %`} />
             <Metrica
@@ -127,6 +124,17 @@ export default function ProjectDetailPanel({
               label="CVE críticos"
               value={String(fila.criticos)}
               tono={fila.criticos > 0 ? "text-rose-600" : "text-emerald-600"}
+            />
+            <Metrica
+              label="Deps. EOL / depr."
+              value={`${fila.dependenciasEol} / ${fila.dependenciasDeprecadas}`}
+              tono={
+                fila.dependenciasEol > 0
+                  ? "text-rose-600"
+                  : fila.dependenciasDeprecadas > 0
+                    ? "text-amber-600"
+                    : "text-slate-800"
+              }
             />
             <Metrica label="Líneas" value={formatearNumero(fila.ncloc)} />
           </div>
@@ -210,6 +218,8 @@ export default function ProjectDetailPanel({
                       C·S·M
                     </th>
                     <th className="pb-2 pr-2 text-right font-medium">Trivy C/A/M/B</th>
+                    <th className="pb-2 pr-2 text-right font-medium">EOL</th>
+                    <th className="pb-2 text-right font-medium">Depr.</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -219,7 +229,7 @@ export default function ProjectDetailPanel({
                       <tr key={repo.name} className="border-b border-slate-100">
                         <td className="py-1.5 pr-2">
                           <a
-                            href={`${SONAR_BASE_URL}/project/overview?id=${repo.sonarProjectKey}`}
+                            href={`${SONAR_BASE_URL}/dashboard?id=${encodeURIComponent(repo.sonarProjectKey ?? "")}`}
                             className="font-medium text-teal-700 hover:underline"
                           >
                             {repo.name}
@@ -280,6 +290,36 @@ export default function ProjectDetailPanel({
                             </span>
                           )}
                         </td>
+                        <td className="py-1.5 pr-2 text-right">
+                          {repo.renovate ? (
+                            <span
+                              className={
+                                repo.renovate.eol > 0
+                                  ? "font-semibold text-rose-600"
+                                  : "text-slate-500"
+                              }
+                            >
+                              {repo.renovate.eol}
+                            </span>
+                          ) : (
+                            <span className="text-[10px] text-slate-400">—</span>
+                          )}
+                        </td>
+                        <td className="py-1.5 text-right">
+                          {repo.renovate ? (
+                            <span
+                              className={
+                                repo.renovate.deprecated > 0
+                                  ? "font-semibold text-amber-600"
+                                  : "text-slate-500"
+                              }
+                            >
+                              {repo.renovate.deprecated}
+                            </span>
+                          ) : (
+                            <span className="text-[10px] text-slate-400">—</span>
+                          )}
+                        </td>
                       </tr>
                     );
                   })}
@@ -289,7 +329,7 @@ export default function ProjectDetailPanel({
 
             <p className="mt-2 text-[10px] text-slate-400">
               Columna C·S·M: ratings de confiabilidad, seguridad y mantenibilidad. Debajo de cada
-              repo, el nombre del proyecto en SonarQube Cloud. El Quality Gate es por repo; el
+              repo, el nombre del proyecto en SonarQube. El Quality Gate es por repo; el
               proyecto no tiene semáforo propio, solo el conteo de verdes y rojos.
             </p>
 
@@ -305,6 +345,11 @@ export default function ProjectDetailPanel({
                       className="rounded border border-slate-200 bg-white px-1.5 py-0.5 text-[10px] text-slate-500"
                     >
                       {repo.name}
+                      {repo.renovate && (repo.renovate.eol > 0 || repo.renovate.deprecated > 0) && (
+                        <span className="ml-1 text-rose-500">
+                          ({repo.renovate.eol} EOL / {repo.renovate.deprecated} depr.)
+                        </span>
+                      )}
                     </span>
                   ))}
                 </div>

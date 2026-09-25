@@ -1,6 +1,6 @@
 # DevSecOps health (Deuda Técnica)
 
-Tablero estático de deuda técnica, adopción de SonarQube Cloud y Trivy (imágenes de contenedor) sobre los 13 proyectos de Azure DevOps (133 repos). La POC de Fase 1 es **Gema - Ophir**.
+Tablero estático de deuda técnica, adopción de SonarQube (Community: `https://sonarqube.shared.accusys.com.ar`), dependencias en fin de soporte (Dependency Health / Renovate: `https://renovate.shared.accusys.com.ar`) y Trivy (imágenes de contenedor) sobre los 13 proyectos de Azure DevOps. La POC de Fase 1 es **Gema - Ophir**.
 
 Rutas:
 
@@ -28,13 +28,22 @@ npm run build          # sale `out/`
 | Comando | Qué hace |
 | --- | --- |
 | `npm run scan:fixture` | Arma el inventario desde `config/projects.yml` y rellena métricas **plausibles** de Gema. No llama a Sonar ni a Azure DevOps. Sirve para el build y la validación local. |
-| `npm run scan` | Requiere credenciales. Inventario AzDO + measures Sonar + attachment `JSON_RESULT` del último build **completado** de cada definición `*-pr`. |
+| `npm run scan:inventario` | Sincroniza `config/projects.yml` con los repos reales de [Dependency Health](https://renovate.shared.accusys.com.ar) (sin PAT). Conserva claves Sonar existentes. |
+| `npm run scan` | Sin credenciales: inventario YAML + métricas Renovate. Con credenciales: suma Sonar y/o Azure DevOps (Trivy + inventario remoto). |
 
-Variables de entorno para el scan real (`SONAR_TOKEN`, `SONAR_ORG`, `AZDO_ORG`, `AZDO_PAT`). En Azure DevOps van en el Library group **`devsecops-dashboard`** (ligado al YAML; no se commitean). El PAT es de lectura: **Code + Build + Project and team**. El de SonarCloud es un **user token** de la org, no un token de análisis de un proyecto suelto. En local se exportan las mismas vars; sin ellas `npm run scan` pide `--from-fixture` y el pipeline diario omite el colector.
+Variables de entorno para el scan real:
 
-Los UUID de `sonarProjectKey` de Gema en `config/projects.yml` son **placeholders** hasta cargar los project key reales.
+| Variable | Uso |
+| --- | --- |
+| `SONAR_TOKEN` | User token de [SonarQube Community](https://sonarqube.shared.accusys.com.ar) (My Account → Security). |
+| `SONAR_ORG` | Obligatorio para arrancar el scan (`accusys`). En Community no va en la URL. |
+| `SONAR_HOST` | Opcional. Default `https://sonarqube.shared.accusys.com.ar`. |
+| `RENOVATE_HOST` | Opcional. Default `https://renovate.shared.accusys.com.ar`. Sin credenciales. |
+| `AZDO_ORG` / `AZDO_PAT` | Inventario remoto y Trivy. PAT de lectura: **Code + Build + Project and team**. |
 
-Este entorno no validó contra Gema real: no hay PAT ni token de Sonar en el agente.
+En Azure DevOps van en el Library group **`devsecops-dashboard`**. Sin PAT, `npm run scan` igual escribe snapshot con inventario YAML + Dependency Health. Sonar requiere `SONAR_TOKEN` y `SONAR_ORG`.
+
+El colector lista proyectos TRK en Community y matchea por key/nombre de repo (las UUID de muestra del YAML no bloquean). Un 400 de Trivy/AzDO **no aborta** el scan: se omite ese proyecto y se escribe el snapshot.
 
 ## Deploy
 

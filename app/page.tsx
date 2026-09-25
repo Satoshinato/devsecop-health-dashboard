@@ -1,11 +1,13 @@
 import BaseImagesPanel from "@/components/devsecops/BaseImagesPanel";
 import CvePanel from "@/components/devsecops/CvePanel";
+import DependenciasPanel from "@/components/devsecops/DependenciasPanel";
 import DevSecOpsHeader from "@/components/devsecops/DevSecOpsHeader";
 import KpiRow, { type Kpi } from "@/components/devsecops/KpiRow";
 import { AdopcionPanel, QualityGatePanel, SeveridadesPanel } from "@/components/devsecops/SummaryPanels";
 import { AdopcionPorScanPanel, DeudaYCriticosPanel } from "@/components/devsecops/TrendPanel";
 import {
   cvesTransversales,
+  dependenciasTransversales,
   historialScans,
   imagenesBasePorImpacto,
   resumenGlobal,
@@ -19,6 +21,7 @@ export default function PortadaEjecutivaPage() {
   const resumen = resumenGlobal(scans);
   const imagenes = imagenesBasePorImpacto(scans);
   const cves = cvesTransversales(actual);
+  const dependencias = dependenciasTransversales(actual);
 
   const kpis: Kpi[] = [
     {
@@ -60,6 +63,13 @@ export default function PortadaEjecutivaPage() {
       destacado: "riesgo",
     },
     {
+      label: "Dependencias EOL",
+      value: String(resumen.dependenciasEol),
+      sub: `${resumen.dependenciasDeprecadas} deprecadas · Dependency Health`,
+      destacado: resumen.dependenciasEol > 0 ? "riesgo" : undefined,
+      serie: historial.map(s => s.eol),
+    },
+    {
       label: "Cobertura ponderada",
       value: `${resumen.cobertura.toLocaleString("es-AR")} %`,
       sub: `Código nuevo: ${resumen.coberturaNueva.toLocaleString("es-AR")} %`,
@@ -83,6 +93,11 @@ export default function PortadaEjecutivaPage() {
           <AdopcionPanel resumen={resumen} />
           <AdopcionPorScanPanel historial={historial} />
           <DeudaYCriticosPanel historial={historial} />
+          <DependenciasPanel
+            dependencias={dependencias}
+            scanDate={actual.renovateScanDate}
+            pipelineUrl={actual.renovatePipelineUrl}
+          />
           <CvePanel cves={cves} />
         </div>
         <div className="flex flex-col gap-4">

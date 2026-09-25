@@ -8,9 +8,27 @@
       "name": "Gema - Ophir",
       "azdoProject": "gema",
       "leader": "Sebastián Denezio",
-      "reposTotal": 15,
+      "reposTotal": 18,
       "esPoc": true,
       "repos": [
+        {
+          "name": "db",
+          "publicaImagen": true,
+          "sonarProjectName": null,
+          "sonarProjectKey": null,
+          "sonar": null,
+          "trivy": null,
+          "renovate": null
+        },
+        {
+          "name": "legacy",
+          "publicaImagen": true,
+          "sonarProjectName": null,
+          "sonarProjectKey": null,
+          "sonar": null,
+          "trivy": null,
+          "renovate": null
+        },
         {
           "name": "mf-ophir-migrador-app",
           "publicaImagen": true,
@@ -59,7 +77,8 @@
             ],
             "scanDate": "2026-09-22",
             "buildId": "20260922.1"
-          }
+          },
+          "renovate": null
         },
         {
           "name": "ms-ophir-api",
@@ -109,7 +128,8 @@
             ],
             "scanDate": "2026-09-22",
             "buildId": "20260922.1"
-          }
+          },
+          "renovate": null
         },
         {
           "name": "ms-ophir-app",
@@ -166,7 +186,8 @@
             ],
             "scanDate": "2026-09-22",
             "buildId": "20260922.1"
-          }
+          },
+          "renovate": null
         },
         {
           "name": "ms-ophir-arqueo-atm-api",
@@ -216,7 +237,8 @@
             ],
             "scanDate": "2026-09-22",
             "buildId": "20260922.1"
-          }
+          },
+          "renovate": null
         },
         {
           "name": "ms-ophir-atm-ce-api",
@@ -239,7 +261,8 @@
             "alertStatus": "OK",
             "lastAnalysis": "2026-09-22"
           },
-          "trivy": null
+          "trivy": null,
+          "renovate": null
         },
         {
           "name": "ms-ophir-caja-api",
@@ -247,7 +270,8 @@
           "sonarProjectName": "gema_ms-ophir-caja-api",
           "sonarProjectKey": "gema_ms-ophir-caja-api_e18d5a40-7f29-4c13-b0d6-93a2f5c81e7b",
           "sonar": null,
-          "trivy": null
+          "trivy": null,
+          "renovate": null
         },
         {
           "name": "ms-ophir-calendario-api",
@@ -255,7 +279,8 @@
           "sonarProjectName": "gema_ms-ophir-calendario-api",
           "sonarProjectKey": "gema_ms-ophir-calendario-api_c3a91b70-2e64-4f18-9d05-8a17e42c6b90",
           "sonar": null,
-          "trivy": null
+          "trivy": null,
+          "renovate": null
         },
         {
           "name": "ms-ophir-costos-api",
@@ -263,7 +288,8 @@
           "sonarProjectName": "gema_ms-ophir-costos-api",
           "sonarProjectKey": "gema_ms-ophir-costos-api_1f80d4e6-5b29-4c71-a3e8-06d92f15b847",
           "sonar": null,
-          "trivy": null
+          "trivy": null,
+          "renovate": null
         },
         {
           "name": "ms-ophir-geolocation-api",
@@ -271,7 +297,8 @@
           "sonarProjectName": "gema_ms-ophir-geolocation-api",
           "sonarProjectKey": "gema_ms-ophir-geolocation-api_4a16c8b2-7d03-49e5-b1f4-2c90a63e5d18",
           "sonar": null,
-          "trivy": null
+          "trivy": null,
+          "renovate": null
         },
         {
           "name": "ms-ophir-learning-api",
@@ -279,7 +306,8 @@
           "sonarProjectName": "gema_ms-ophir-learning-api",
           "sonarProjectKey": "gema_ms-ophir-learning-api_8e27f1a4-0c56-42b9-93d7-15a80e4c6f32",
           "sonar": null,
-          "trivy": null
+          "trivy": null,
+          "renovate": null
         },
         {
           "name": "ms-ophir-messaging-api",
@@ -287,7 +315,8 @@
           "sonarProjectName": "gema_ms-ophir-messaging-api",
           "sonarProjectKey": "gema_ms-ophir-messaging-api_b90d35c1-6a48-4e12-87f0-3d15b92c7a64",
           "sonar": null,
-          "trivy": null
+          "trivy": null,
+          "renovate": null
         },
         {
           "name": "ms-ophir-migrador-api",
@@ -295,7 +324,8 @@
           "sonarProjectName": "gema_ms-ophir-migrador-api",
           "sonarProjectKey": "gema_ms-ophir-migrador-api_2c48e9d7-1b50-4a63-9c18-7e04f26d5b91",
           "sonar": null,
-          "trivy": null
+          "trivy": null,
+          "renovate": null
         },
         {
           "name": "ms-ophir-proyecciones-api",
@@ -303,7 +333,8 @@
           "sonarProjectName": "gema_ms-ophir-proyecciones-api",
           "sonarProjectKey": "gema_ms-ophir-proyecciones-api_6d15a0b8-3c72-4f91-a6e4-09b83d27c150",
           "sonar": null,
-          "trivy": null
+          "trivy": null,
+          "renovate": null
         },
         {
           "name": "ms-ophir-remesa-api",
@@ -311,7 +342,8 @@
           "sonarProjectName": "gema_ms-ophir-remesa-api",
           "sonarProjectKey": "gema_ms-ophir-remesa-api_9f31c6e2-8d14-45a0-b2c7-4e68a01d93f5",
           "sonar": null,
-          "trivy": null
+          "trivy": null,
+          "renovate": null
         },
         {
           "name": "ms-ophir-reportes-api",
@@ -319,7 +351,17 @@
           "sonarProjectName": "gema_ms-ophir-reportes-api",
           "sonarProjectKey": "gema_ms-ophir-reportes-api_0a74b5d3-9e21-48c6-81f2-5d07c39a16e8",
           "sonar": null,
-          "trivy": null
+          "trivy": null,
+          "renovate": null
+        },
+        {
+          "name": "ophir",
+          "publicaImagen": true,
+          "sonarProjectName": null,
+          "sonarProjectKey": null,
+          "sonar": null,
+          "trivy": null,
+          "renovate": null
         }
       ]
     },
@@ -328,1062 +370,748 @@
       "name": "Probatch",
       "azdoProject": "probatch",
       "leader": "Leonardo Orellana",
-      "reposTotal": 35,
+      "reposTotal": 24,
       "esPoc": false,
       "repos": [
         {
-          "name": "ms-probatch-scheduler",
+          "name": "aspire-monitor",
           "publicaImagen": true,
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
-          "trivy": null
+          "trivy": null,
+          "renovate": null
         },
         {
-          "name": "ms-probatch-ejecutor",
-          "publicaImagen": true,
-          "sonarProjectName": null,
-          "sonarProjectKey": null,
-          "sonar": null,
-          "trivy": null
-        },
-        {
-          "name": "web-probatch-monitor",
-          "publicaImagen": true,
-          "sonarProjectName": null,
-          "sonarProjectKey": null,
-          "sonar": null,
-          "trivy": null
-        },
-        {
-          "name": "lib-probatch-core",
+          "name": "lib-aspire-defaults",
           "publicaImagen": false,
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
-          "trivy": null
+          "trivy": null,
+          "renovate": null
         },
         {
-          "name": "batch-probatch-legacy",
-          "publicaImagen": true,
-          "sonarProjectName": null,
-          "sonarProjectKey": null,
-          "sonar": null,
-          "trivy": null
-        },
-        {
-          "name": "ms-probatch-plugins",
-          "publicaImagen": true,
-          "sonarProjectName": null,
-          "sonarProjectKey": null,
-          "sonar": null,
-          "trivy": null
-        },
-        {
-          "name": "ms-probatch-cola",
-          "publicaImagen": true,
-          "sonarProjectName": null,
-          "sonarProjectKey": null,
-          "sonar": null,
-          "trivy": null
-        },
-        {
-          "name": "ms-probatch-alertas",
-          "publicaImagen": true,
-          "sonarProjectName": null,
-          "sonarProjectKey": null,
-          "sonar": null,
-          "trivy": null
-        },
-        {
-          "name": "ms-probatch-catalogo",
-          "publicaImagen": true,
-          "sonarProjectName": null,
-          "sonarProjectKey": null,
-          "sonar": null,
-          "trivy": null
-        },
-        {
-          "name": "ms-probatch-auditoria",
-          "publicaImagen": true,
-          "sonarProjectName": null,
-          "sonarProjectKey": null,
-          "sonar": null,
-          "trivy": null
-        },
-        {
-          "name": "ms-probatch-parametros",
-          "publicaImagen": true,
-          "sonarProjectName": null,
-          "sonarProjectKey": null,
-          "sonar": null,
-          "trivy": null
-        },
-        {
-          "name": "ms-probatch-reintentos",
-          "publicaImagen": true,
-          "sonarProjectName": null,
-          "sonarProjectKey": null,
-          "sonar": null,
-          "trivy": null
-        },
-        {
-          "name": "ms-probatch-calendario",
-          "publicaImagen": true,
-          "sonarProjectName": null,
-          "sonarProjectKey": null,
-          "sonar": null,
-          "trivy": null
-        },
-        {
-          "name": "ms-probatch-notificaciones",
-          "publicaImagen": true,
-          "sonarProjectName": null,
-          "sonarProjectKey": null,
-          "sonar": null,
-          "trivy": null
-        },
-        {
-          "name": "ms-probatch-metrics",
-          "publicaImagen": true,
-          "sonarProjectName": null,
-          "sonarProjectKey": null,
-          "sonar": null,
-          "trivy": null
-        },
-        {
-          "name": "ms-probatch-gateway",
-          "publicaImagen": true,
-          "sonarProjectName": null,
-          "sonarProjectKey": null,
-          "sonar": null,
-          "trivy": null
-        },
-        {
-          "name": "ms-probatch-auth",
-          "publicaImagen": true,
-          "sonarProjectName": null,
-          "sonarProjectKey": null,
-          "sonar": null,
-          "trivy": null
-        },
-        {
-          "name": "ms-probatch-workers",
-          "publicaImagen": true,
-          "sonarProjectName": null,
-          "sonarProjectKey": null,
-          "sonar": null,
-          "trivy": null
-        },
-        {
-          "name": "ms-probatch-orquestador",
-          "publicaImagen": true,
-          "sonarProjectName": null,
-          "sonarProjectKey": null,
-          "sonar": null,
-          "trivy": null
-        },
-        {
-          "name": "ms-probatch-reportes",
-          "publicaImagen": true,
-          "sonarProjectName": null,
-          "sonarProjectKey": null,
-          "sonar": null,
-          "trivy": null
-        },
-        {
-          "name": "ms-probatch-archivos",
-          "publicaImagen": true,
-          "sonarProjectName": null,
-          "sonarProjectKey": null,
-          "sonar": null,
-          "trivy": null
-        },
-        {
-          "name": "ms-probatch-eventos",
-          "publicaImagen": true,
-          "sonarProjectName": null,
-          "sonarProjectKey": null,
-          "sonar": null,
-          "trivy": null
-        },
-        {
-          "name": "web-probatch-admin",
-          "publicaImagen": true,
-          "sonarProjectName": null,
-          "sonarProjectKey": null,
-          "sonar": null,
-          "trivy": null
-        },
-        {
-          "name": "web-probatch-consola",
-          "publicaImagen": true,
-          "sonarProjectName": null,
-          "sonarProjectKey": null,
-          "sonar": null,
-          "trivy": null
-        },
-        {
-          "name": "batch-probatch-cierre",
-          "publicaImagen": true,
-          "sonarProjectName": null,
-          "sonarProjectKey": null,
-          "sonar": null,
-          "trivy": null
-        },
-        {
-          "name": "batch-probatch-reproceso",
-          "publicaImagen": true,
-          "sonarProjectName": null,
-          "sonarProjectKey": null,
-          "sonar": null,
-          "trivy": null
-        },
-        {
-          "name": "mf-probatch-tareas",
-          "publicaImagen": true,
-          "sonarProjectName": null,
-          "sonarProjectKey": null,
-          "sonar": null,
-          "trivy": null
-        },
-        {
-          "name": "mf-probatch-dashboard",
-          "publicaImagen": true,
-          "sonarProjectName": null,
-          "sonarProjectKey": null,
-          "sonar": null,
-          "trivy": null
-        },
-        {
-          "name": "lib-probatch-modelo",
+          "name": "lib-core",
           "publicaImagen": false,
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
-          "trivy": null
+          "trivy": null,
+          "renovate": null
         },
         {
-          "name": "lib-probatch-sdk",
+          "name": "lib-utils",
           "publicaImagen": false,
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
-          "trivy": null
+          "trivy": null,
+          "renovate": null
         },
         {
-          "name": "ms-probatch-integraciones",
+          "name": "ms-core-api",
           "publicaImagen": true,
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
-          "trivy": null
+          "trivy": null,
+          "renovate": null
         },
         {
-          "name": "ms-probatch-plantillas",
+          "name": "ms-executor-actions-api",
           "publicaImagen": true,
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
-          "trivy": null
+          "trivy": null,
+          "renovate": null
         },
         {
-          "name": "ms-probatch-horarios",
+          "name": "ms-executor-api",
           "publicaImagen": true,
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
-          "trivy": null
+          "trivy": null,
+          "renovate": null
         },
         {
-          "name": "ms-probatch-locks",
+          "name": "ms-executor-auth-api",
           "publicaImagen": true,
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
-          "trivy": null
+          "trivy": null,
+          "renovate": null
         },
         {
-          "name": "ms-probatch-health",
+          "name": "ms-executor-menu-api",
           "publicaImagen": true,
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
-          "trivy": null
+          "trivy": null,
+          "renovate": null
+        },
+        {
+          "name": "ms-executor-system-api",
+          "publicaImagen": true,
+          "sonarProjectName": null,
+          "sonarProjectKey": null,
+          "sonar": null,
+          "trivy": null,
+          "renovate": null
+        },
+        {
+          "name": "ms-gateway-api",
+          "publicaImagen": true,
+          "sonarProjectName": null,
+          "sonarProjectKey": null,
+          "sonar": null,
+          "trivy": null,
+          "renovate": null
+        },
+        {
+          "name": "ms-logging-service-api",
+          "publicaImagen": true,
+          "sonarProjectName": null,
+          "sonarProjectKey": null,
+          "sonar": null,
+          "trivy": null,
+          "renovate": null
+        },
+        {
+          "name": "ms-real-time-notification-api",
+          "publicaImagen": true,
+          "sonarProjectName": null,
+          "sonarProjectKey": null,
+          "sonar": null,
+          "trivy": null,
+          "renovate": null
+        },
+        {
+          "name": "release-notes",
+          "publicaImagen": true,
+          "sonarProjectName": null,
+          "sonarProjectKey": null,
+          "sonar": null,
+          "trivy": null,
+          "renovate": null
+        },
+        {
+          "name": "svc-ai-assistant-api",
+          "publicaImagen": true,
+          "sonarProjectName": null,
+          "sonarProjectKey": null,
+          "sonar": null,
+          "trivy": null,
+          "renovate": null
+        },
+        {
+          "name": "svc-business-data-engine",
+          "publicaImagen": true,
+          "sonarProjectName": null,
+          "sonarProjectKey": null,
+          "sonar": null,
+          "trivy": null,
+          "renovate": null
+        },
+        {
+          "name": "svc-executor",
+          "publicaImagen": true,
+          "sonarProjectName": null,
+          "sonarProjectKey": null,
+          "sonar": null,
+          "trivy": null,
+          "renovate": null
+        },
+        {
+          "name": "svc-maintenance",
+          "publicaImagen": true,
+          "sonarProjectName": null,
+          "sonarProjectKey": null,
+          "sonar": null,
+          "trivy": null,
+          "renovate": null
+        },
+        {
+          "name": "svc-openrouter-gateway-api",
+          "publicaImagen": true,
+          "sonarProjectName": null,
+          "sonarProjectKey": null,
+          "sonar": null,
+          "trivy": null,
+          "renovate": null
+        },
+        {
+          "name": "web-administrator",
+          "publicaImagen": true,
+          "sonarProjectName": null,
+          "sonarProjectKey": null,
+          "sonar": null,
+          "trivy": null,
+          "renovate": null
+        },
+        {
+          "name": "web-documentation",
+          "publicaImagen": true,
+          "sonarProjectName": null,
+          "sonarProjectKey": null,
+          "sonar": null,
+          "trivy": null,
+          "renovate": null
+        },
+        {
+          "name": "web-executor",
+          "publicaImagen": true,
+          "sonarProjectName": null,
+          "sonarProjectKey": null,
+          "sonar": null,
+          "trivy": null,
+          "renovate": null
+        },
+        {
+          "name": "web-executor-v2",
+          "publicaImagen": true,
+          "sonarProjectName": null,
+          "sonarProjectKey": null,
+          "sonar": null,
+          "trivy": null,
+          "renovate": null
+        },
+        {
+          "name": "web-probatch",
+          "publicaImagen": true,
+          "sonarProjectName": null,
+          "sonarProjectKey": null,
+          "sonar": null,
+          "trivy": null,
+          "renovate": null
         }
       ]
     },
     {
       "key": "cronos",
       "name": "Mep - Cronos",
-      "azdoProject": "mep-cronos",
+      "azdoProject": "cronos",
       "leader": "Fernando Luna",
-      "reposTotal": 15,
+      "reposTotal": 12,
       "esPoc": false,
       "repos": [
         {
-          "name": "ms-cronos-liquidacion",
+          "name": "ms-connectorbds-api",
           "publicaImagen": true,
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
-          "trivy": null
+          "trivy": null,
+          "renovate": null
         },
         {
-          "name": "ms-cronos-afiliaciones",
+          "name": "ms-connectorbh-api",
           "publicaImagen": true,
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
-          "trivy": null
+          "trivy": null,
+          "renovate": null
         },
         {
-          "name": "web-cronos-portal",
+          "name": "ms-connectorbst-api",
           "publicaImagen": true,
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
-          "trivy": null
+          "trivy": null,
+          "renovate": null
         },
         {
-          "name": "ms-cronos-archivos",
+          "name": "ms-connectorcolumbia-api",
           "publicaImagen": true,
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
-          "trivy": null
+          "trivy": null,
+          "renovate": null
         },
         {
-          "name": "batch-cronos-cierre",
+          "name": "ms-connectormariva-api",
           "publicaImagen": true,
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
-          "trivy": null
+          "trivy": null,
+          "renovate": null
         },
         {
-          "name": "lib-cronos-modelo",
-          "publicaImagen": false,
-          "sonarProjectName": null,
-          "sonarProjectKey": null,
-          "sonar": null,
-          "trivy": null
-        },
-        {
-          "name": "ms-cronos-auditoria",
+          "name": "ms-connectornaranjax-api",
           "publicaImagen": true,
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
-          "trivy": null
+          "trivy": null,
+          "renovate": null
         },
         {
-          "name": "ms-cronos-padron",
+          "name": "ms-connectorpetersen-api",
           "publicaImagen": true,
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
-          "trivy": null
+          "trivy": null,
+          "renovate": null
         },
         {
-          "name": "ms-cronos-cobranzas",
+          "name": "ms-mep-api",
           "publicaImagen": true,
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
-          "trivy": null
+          "trivy": null,
+          "renovate": null
         },
         {
-          "name": "ms-cronos-cuentas",
+          "name": "ms-mep-app",
           "publicaImagen": true,
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
-          "trivy": null
+          "trivy": null,
+          "renovate": null
         },
         {
-          "name": "ms-cronos-notificaciones",
+          "name": "ms-mep-worker",
           "publicaImagen": true,
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
-          "trivy": null
+          "trivy": null,
+          "renovate": null
         },
         {
-          "name": "web-cronos-backoffice",
+          "name": "ms-mepbcra-api",
           "publicaImagen": true,
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
-          "trivy": null
+          "trivy": null,
+          "renovate": null
         },
         {
-          "name": "mf-cronos-tramites",
+          "name": "ms-mepbh-app",
           "publicaImagen": true,
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
-          "trivy": null
-        },
-        {
-          "name": "batch-cronos-importacion",
-          "publicaImagen": true,
-          "sonarProjectName": null,
-          "sonarProjectKey": null,
-          "sonar": null,
-          "trivy": null
-        },
-        {
-          "name": "lib-cronos-sdk",
-          "publicaImagen": false,
-          "sonarProjectName": null,
-          "sonarProjectKey": null,
-          "sonar": null,
-          "trivy": null
+          "trivy": null,
+          "renovate": null
         }
       ]
     },
     {
       "key": "iris",
       "name": "Accusys Link - Iris",
-      "azdoProject": "accusys-link-iris",
+      "azdoProject": "iris",
       "leader": "Ivette Guevara",
-      "reposTotal": 15,
+      "reposTotal": 11,
       "esPoc": false,
       "repos": [
         {
-          "name": "ms-iris-link-gateway",
+          "name": "ms-conciliator-worker",
           "publicaImagen": true,
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
-          "trivy": null
+          "trivy": null,
+          "renovate": null
         },
         {
-          "name": "ms-iris-conciliacion",
+          "name": "ms-ftpreader-worker",
           "publicaImagen": true,
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
-          "trivy": null
+          "trivy": null,
+          "renovate": null
         },
         {
-          "name": "web-iris-consola",
+          "name": "ms-handler-api",
           "publicaImagen": true,
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
-          "trivy": null
+          "trivy": null,
+          "renovate": null
         },
         {
-          "name": "lib-iris-sdk",
-          "publicaImagen": false,
-          "sonarProjectName": null,
-          "sonarProjectKey": null,
-          "sonar": null,
-          "trivy": null
-        },
-        {
-          "name": "ms-iris-eventos",
+          "name": "ms-handler-worker",
           "publicaImagen": true,
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
-          "trivy": null
+          "trivy": null,
+          "renovate": null
         },
         {
-          "name": "ms-iris-pagos",
+          "name": "ms-inputfileprocessing-worker",
           "publicaImagen": true,
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
-          "trivy": null
+          "trivy": null,
+          "renovate": null
         },
         {
-          "name": "ms-iris-ruteo",
+          "name": "ms-linker-worker",
           "publicaImagen": true,
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
-          "trivy": null
+          "trivy": null,
+          "renovate": null
         },
         {
-          "name": "ms-iris-tokens",
+          "name": "ms-outputfileprocessing-worker",
           "publicaImagen": true,
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
-          "trivy": null
+          "trivy": null,
+          "renovate": null
         },
         {
-          "name": "ms-iris-webhooks",
+          "name": "ms-posting-worker",
           "publicaImagen": true,
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
-          "trivy": null
+          "trivy": null,
+          "renovate": null
         },
         {
-          "name": "ms-iris-auditoria",
+          "name": "ms-report-api",
           "publicaImagen": true,
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
-          "trivy": null
+          "trivy": null,
+          "renovate": null
         },
         {
-          "name": "web-iris-portal",
+          "name": "ms-report-app",
           "publicaImagen": true,
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
-          "trivy": null
+          "trivy": null,
+          "renovate": null
         },
         {
-          "name": "mf-iris-operador",
+          "name": "ms-transferqueuedprocessing-worker",
           "publicaImagen": true,
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
-          "trivy": null
-        },
-        {
-          "name": "batch-iris-asientos",
-          "publicaImagen": true,
-          "sonarProjectName": null,
-          "sonarProjectKey": null,
-          "sonar": null,
-          "trivy": null
-        },
-        {
-          "name": "lib-iris-contratos",
-          "publicaImagen": false,
-          "sonarProjectName": null,
-          "sonarProjectKey": null,
-          "sonar": null,
-          "trivy": null
-        },
-        {
-          "name": "ms-iris-catalogo",
-          "publicaImagen": true,
-          "sonarProjectName": null,
-          "sonarProjectKey": null,
-          "sonar": null,
-          "trivy": null
+          "trivy": null,
+          "renovate": null
         }
       ]
     },
     {
       "key": "apolo",
       "name": "Sidef - Apolo",
-      "azdoProject": "sidef-apolo",
+      "azdoProject": "apolo",
       "leader": "Javier Montiel",
-      "reposTotal": 8,
+      "reposTotal": 3,
       "esPoc": false,
       "repos": [
         {
-          "name": "ms-apolo-sidef-core",
+          "name": "bd",
           "publicaImagen": true,
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
-          "trivy": null
+          "trivy": null,
+          "renovate": null
         },
         {
-          "name": "web-apolo-admin",
+          "name": "ms-sidef-api",
           "publicaImagen": true,
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
-          "trivy": null
+          "trivy": null,
+          "renovate": null
         },
         {
-          "name": "batch-apolo-importacion",
+          "name": "ms-sidef-app",
           "publicaImagen": true,
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
-          "trivy": null
-        },
-        {
-          "name": "ms-apolo-expedientes",
-          "publicaImagen": true,
-          "sonarProjectName": null,
-          "sonarProjectKey": null,
-          "sonar": null,
-          "trivy": null
-        },
-        {
-          "name": "ms-apolo-documentos",
-          "publicaImagen": true,
-          "sonarProjectName": null,
-          "sonarProjectKey": null,
-          "sonar": null,
-          "trivy": null
-        },
-        {
-          "name": "mf-apolo-bandeja",
-          "publicaImagen": true,
-          "sonarProjectName": null,
-          "sonarProjectKey": null,
-          "sonar": null,
-          "trivy": null
-        },
-        {
-          "name": "lib-apolo-modelo",
-          "publicaImagen": false,
-          "sonarProjectName": null,
-          "sonarProjectKey": null,
-          "sonar": null,
-          "trivy": null
-        },
-        {
-          "name": "ms-apolo-notificaciones",
-          "publicaImagen": true,
-          "sonarProjectName": null,
-          "sonarProjectKey": null,
-          "sonar": null,
-          "trivy": null
+          "trivy": null,
+          "renovate": null
         }
       ]
     },
     {
       "key": "zeus",
       "name": "Mep Contable - Zeus",
-      "azdoProject": "mep-contable-zeus",
+      "azdoProject": "zeus",
       "leader": "Eduardo Fabaro",
-      "reposTotal": 8,
+      "reposTotal": 2,
       "esPoc": false,
       "repos": [
         {
-          "name": "ms-zeus-contable",
+          "name": "ms-mepcontable-api",
           "publicaImagen": true,
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
-          "trivy": null
+          "trivy": null,
+          "renovate": null
         },
         {
-          "name": "web-zeus-balances",
+          "name": "ms-mepcontablenx-worker",
           "publicaImagen": true,
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
-          "trivy": null
-        },
-        {
-          "name": "ms-zeus-asientos",
-          "publicaImagen": true,
-          "sonarProjectName": null,
-          "sonarProjectKey": null,
-          "sonar": null,
-          "trivy": null
-        },
-        {
-          "name": "ms-zeus-plan-cuentas",
-          "publicaImagen": true,
-          "sonarProjectName": null,
-          "sonarProjectKey": null,
-          "sonar": null,
-          "trivy": null
-        },
-        {
-          "name": "batch-zeus-cierre",
-          "publicaImagen": true,
-          "sonarProjectName": null,
-          "sonarProjectKey": null,
-          "sonar": null,
-          "trivy": null
-        },
-        {
-          "name": "mf-zeus-consultas",
-          "publicaImagen": true,
-          "sonarProjectName": null,
-          "sonarProjectKey": null,
-          "sonar": null,
-          "trivy": null
-        },
-        {
-          "name": "lib-zeus-modelo",
-          "publicaImagen": false,
-          "sonarProjectName": null,
-          "sonarProjectKey": null,
-          "sonar": null,
-          "trivy": null
-        },
-        {
-          "name": "ms-zeus-reportes",
-          "publicaImagen": true,
-          "sonarProjectName": null,
-          "sonarProjectKey": null,
-          "sonar": null,
-          "trivy": null
+          "trivy": null,
+          "renovate": null
         }
       ]
     },
     {
       "key": "janus",
       "name": "Pases y Cryl - Janus",
-      "azdoProject": "pases-y-cryl-janus",
+      "azdoProject": "janus",
       "leader": "Hernán Atencio",
-      "reposTotal": 7,
+      "reposTotal": 4,
       "esPoc": false,
       "repos": [
         {
-          "name": "ms-janus-pases",
+          "name": "ms-pases-api",
           "publicaImagen": true,
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
-          "trivy": null
+          "trivy": null,
+          "renovate": null
         },
         {
-          "name": "ms-janus-cryl",
+          "name": "ms-pases-app",
           "publicaImagen": true,
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
-          "trivy": null
+          "trivy": null,
+          "renovate": null
         },
         {
-          "name": "web-janus-mesa",
+          "name": "ms-pases-worker",
           "publicaImagen": true,
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
-          "trivy": null
+          "trivy": null,
+          "renovate": null
         },
         {
-          "name": "ms-janus-titulos",
+          "name": "ms-pasesbh-app",
           "publicaImagen": true,
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
-          "trivy": null
-        },
-        {
-          "name": "batch-janus-liquidacion",
-          "publicaImagen": true,
-          "sonarProjectName": null,
-          "sonarProjectKey": null,
-          "sonar": null,
-          "trivy": null
-        },
-        {
-          "name": "mf-janus-operador",
-          "publicaImagen": true,
-          "sonarProjectName": null,
-          "sonarProjectKey": null,
-          "sonar": null,
-          "trivy": null
-        },
-        {
-          "name": "lib-janus-comun",
-          "publicaImagen": false,
-          "sonarProjectName": null,
-          "sonarProjectKey": null,
-          "sonar": null,
-          "trivy": null
+          "trivy": null,
+          "renovate": null
         }
       ]
     },
     {
       "key": "argus",
       "name": "Mep Consolidado - Argus",
-      "azdoProject": "mep-consolidado-argus",
+      "azdoProject": "argus",
       "leader": "Gustavo Troconis",
-      "reposTotal": 6,
+      "reposTotal": 3,
       "esPoc": false,
       "repos": [
         {
-          "name": "ms-argus-consolidado",
+          "name": "ms-connector-api",
           "publicaImagen": true,
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
-          "trivy": null
+          "trivy": null,
+          "renovate": null
         },
         {
-          "name": "web-argus-tablero",
+          "name": "ms-consolidado-api",
           "publicaImagen": true,
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
-          "trivy": null
+          "trivy": null,
+          "renovate": null
         },
         {
-          "name": "ms-argus-ajustes",
+          "name": "ms-consolidado-app",
           "publicaImagen": true,
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
-          "trivy": null
-        },
-        {
-          "name": "batch-argus-cierre",
-          "publicaImagen": true,
-          "sonarProjectName": null,
-          "sonarProjectKey": null,
-          "sonar": null,
-          "trivy": null
-        },
-        {
-          "name": "mf-argus-consultas",
-          "publicaImagen": true,
-          "sonarProjectName": null,
-          "sonarProjectKey": null,
-          "sonar": null,
-          "trivy": null
-        },
-        {
-          "name": "lib-argus-modelo",
-          "publicaImagen": false,
-          "sonarProjectName": null,
-          "sonarProjectKey": null,
-          "sonar": null,
-          "trivy": null
+          "trivy": null,
+          "renovate": null
         }
       ]
     },
     {
       "key": "afrodita",
       "name": "Mep Cedin - Afrodita",
-      "azdoProject": "mep-cedin-afrodita",
+      "azdoProject": "afrodita",
       "leader": "Lisbeth Atencio",
-      "reposTotal": 5,
+      "reposTotal": 3,
       "esPoc": false,
       "repos": [
         {
-          "name": "ms-afrodita-cedin",
+          "name": "afrodita",
           "publicaImagen": true,
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
-          "trivy": null
+          "trivy": null,
+          "renovate": null
         },
         {
-          "name": "web-afrodita-portal",
+          "name": "ms-cedin-api",
           "publicaImagen": true,
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
-          "trivy": null
+          "trivy": null,
+          "renovate": null
         },
         {
-          "name": "ms-afrodita-tenencias",
+          "name": "ms-cedin-app",
           "publicaImagen": true,
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
-          "trivy": null
-        },
-        {
-          "name": "batch-afrodita-valuacion",
-          "publicaImagen": true,
-          "sonarProjectName": null,
-          "sonarProjectKey": null,
-          "sonar": null,
-          "trivy": null
-        },
-        {
-          "name": "lib-afrodita-comun",
-          "publicaImagen": false,
-          "sonarProjectName": null,
-          "sonarProjectKey": null,
-          "sonar": null,
-          "trivy": null
+          "trivy": null,
+          "renovate": null
         }
       ]
     },
     {
       "key": "themis",
       "name": "Repi - Themis",
-      "azdoProject": "repi-themis",
+      "azdoProject": "themis",
       "leader": "Braian Rosales",
-      "reposTotal": 5,
+      "reposTotal": 2,
       "esPoc": false,
       "repos": [
         {
-          "name": "ms-themis-repi",
+          "name": "ms-repi-api",
           "publicaImagen": true,
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
-          "trivy": null
+          "trivy": null,
+          "renovate": null
         },
         {
-          "name": "ms-themis-repi-consultas",
+          "name": "ms-repi-app",
           "publicaImagen": true,
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
-          "trivy": null
-        },
-        {
-          "name": "web-themis-repi",
-          "publicaImagen": true,
-          "sonarProjectName": null,
-          "sonarProjectKey": null,
-          "sonar": null,
-          "trivy": null
-        },
-        {
-          "name": "batch-themis-cargas",
-          "publicaImagen": true,
-          "sonarProjectName": null,
-          "sonarProjectKey": null,
-          "sonar": null,
-          "trivy": null
-        },
-        {
-          "name": "lib-themis-comun",
-          "publicaImagen": false,
-          "sonarProjectName": null,
-          "sonarProjectKey": null,
-          "sonar": null,
-          "trivy": null
+          "trivy": null,
+          "renovate": null
         }
       ]
     },
     {
       "key": "minerva",
       "name": "Niif - Minerva",
-      "azdoProject": "niif-minerva",
+      "azdoProject": "minerva",
       "leader": "Pablo Gálvez",
-      "reposTotal": 5,
+      "reposTotal": 2,
       "esPoc": false,
       "repos": [
         {
-          "name": "ms-minerva-niif",
+          "name": "ms-niif-api",
           "publicaImagen": true,
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
-          "trivy": null
+          "trivy": null,
+          "renovate": null
         },
         {
-          "name": "web-minerva-estados",
+          "name": "ms-niif-app",
           "publicaImagen": true,
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
-          "trivy": null
-        },
-        {
-          "name": "ms-minerva-notas",
-          "publicaImagen": true,
-          "sonarProjectName": null,
-          "sonarProjectKey": null,
-          "sonar": null,
-          "trivy": null
-        },
-        {
-          "name": "batch-minerva-cierre",
-          "publicaImagen": true,
-          "sonarProjectName": null,
-          "sonarProjectKey": null,
-          "sonar": null,
-          "trivy": null
-        },
-        {
-          "name": "lib-minerva-comun",
-          "publicaImagen": false,
-          "sonarProjectName": null,
-          "sonarProjectKey": null,
-          "sonar": null,
-          "trivy": null
+          "trivy": null,
+          "renovate": null
         }
       ]
     },
     {
       "key": "hades",
       "name": "Mep SML - Hades",
-      "azdoProject": "mep-sml-hades",
+      "azdoProject": "hades",
       "leader": "Joshua García",
-      "reposTotal": 5,
+      "reposTotal": 2,
       "esPoc": false,
       "repos": [
         {
-          "name": "ms-hades-sml",
+          "name": "ms-sml-api",
           "publicaImagen": true,
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
-          "trivy": null
+          "trivy": null,
+          "renovate": null
         },
         {
-          "name": "web-hades-monitor",
+          "name": "ms-sml-app",
           "publicaImagen": true,
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
-          "trivy": null
-        },
-        {
-          "name": "ms-hades-mensajes",
-          "publicaImagen": true,
-          "sonarProjectName": null,
-          "sonarProjectKey": null,
-          "sonar": null,
-          "trivy": null
-        },
-        {
-          "name": "batch-hades-reproceso",
-          "publicaImagen": true,
-          "sonarProjectName": null,
-          "sonarProjectKey": null,
-          "sonar": null,
-          "trivy": null
-        },
-        {
-          "name": "lib-hades-comun",
-          "publicaImagen": false,
-          "sonarProjectName": null,
-          "sonarProjectKey": null,
-          "sonar": null,
-          "trivy": null
+          "trivy": null,
+          "renovate": null
         }
       ]
     },
     {
       "key": "poseidon",
       "name": "Mep Contingencia - Poseidón",
-      "azdoProject": "mep-contingencia-poseidon",
+      "azdoProject": "poseidon",
       "leader": "Lucas Gauna",
-      "reposTotal": 4,
+      "reposTotal": 2,
       "esPoc": false,
       "repos": [
         {
-          "name": "ms-poseidon-contingencia",
+          "name": "ms-contingencia-api",
           "publicaImagen": true,
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
-          "trivy": null
+          "trivy": null,
+          "renovate": null
         },
         {
-          "name": "ms-poseidon-failover",
+          "name": "ms-contingencia-app",
           "publicaImagen": true,
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
-          "trivy": null
-        },
-        {
-          "name": "web-poseidon-panel",
-          "publicaImagen": true,
-          "sonarProjectName": null,
-          "sonarProjectKey": null,
-          "sonar": null,
-          "trivy": null
-        },
-        {
-          "name": "lib-poseidon-comun",
-          "publicaImagen": false,
-          "sonarProjectName": null,
-          "sonarProjectKey": null,
-          "sonar": null,
-          "trivy": null
+          "trivy": null,
+          "renovate": null
         }
       ]
     }

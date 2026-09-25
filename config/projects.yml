@@ -1,16 +1,19 @@
-# Inventario DevSecOps — 13 proyectos Azure DevOps, 133 repos.
+# Inventario DevSecOps — 13 proyectos Azure DevOps.
 #
-# Los sonarProjectKey de Gema usan UUID de MUESTRA (placeholder) hasta tener
-# los project key reales de SonarQube Cloud. Formato:
+# Los repos se sincronizan desde Dependency Health (Renovate):
+#   npm run scan:inventario
+# Fuente: https://renovate.shared.accusys.com.ar/api/data/dashboard
+# Es un piso: solo repos donde Renovate detectó dependencias (pom, package.json, Dockerfile, etc.).
+#
+# Las keys de Gema pueden ser placeholders: el colector las resuelve contra
+# https://sonarqube.shared.accusys.com.ar (api/components/search).
+# Formato si se cargan a mano:
 #   sonarProjectName: gema_<repo>
-#   sonarProjectKey:  gema_<repo>_<uuid>
+#   sonarProjectKey:  <Project Key de Community>
 #
-# El resto de proyectos no tiene mapeo Sonar en Fase 1 (sonarProjectKey: null).
-# Sus repos son placeholders de inventario (nombres sintéticos).
-
+# Cuando llegue el PAT de Azure DevOps, fetchInventario completa repos que Renovate no ve.
 organizacionAzdo: accusystechnology
 organizacionSonar: accusys
-
 proyectos:
   - key: gema
     name: Gema - Ophir
@@ -18,6 +21,14 @@ proyectos:
     lider: Sebastián Denezio
     esPoc: true
     repos:
+      - name: db
+        publicaImagen: true
+        sonarProjectName: null
+        sonarProjectKey: null
+      - name: legacy
+        publicaImagen: true
+        sonarProjectName: null
+        sonarProjectKey: null
       - name: mf-ophir-migrador-app
         publicaImagen: true
         sonarProjectName: gema_mf-ophir-migrador-app
@@ -78,547 +89,360 @@ proyectos:
         publicaImagen: true
         sonarProjectName: gema_ms-ophir-reportes-api
         sonarProjectKey: gema_ms-ophir-reportes-api_0a74b5d3-9e21-48c6-81f2-5d07c39a16e8
+      - name: ophir
+        publicaImagen: true
+        sonarProjectName: null
+        sonarProjectKey: null
   - key: probatch
-    name: "Probatch"
+    name: Probatch
     azdoProject: probatch
     lider: Leonardo Orellana
     esPoc: false
     repos:
-      - name: ms-probatch-scheduler
+      - name: aspire-monitor
         publicaImagen: true
         sonarProjectName: null
         sonarProjectKey: null
-      - name: ms-probatch-ejecutor
-        publicaImagen: true
-        sonarProjectName: null
-        sonarProjectKey: null
-      - name: web-probatch-monitor
-        publicaImagen: true
-        sonarProjectName: null
-        sonarProjectKey: null
-      - name: lib-probatch-core
+      - name: lib-aspire-defaults
         publicaImagen: false
         sonarProjectName: null
         sonarProjectKey: null
-      - name: batch-probatch-legacy
-        publicaImagen: true
-        sonarProjectName: null
-        sonarProjectKey: null
-      - name: ms-probatch-plugins
-        publicaImagen: true
-        sonarProjectName: null
-        sonarProjectKey: null
-      - name: ms-probatch-cola
-        publicaImagen: true
-        sonarProjectName: null
-        sonarProjectKey: null
-      - name: ms-probatch-alertas
-        publicaImagen: true
-        sonarProjectName: null
-        sonarProjectKey: null
-      - name: ms-probatch-catalogo
-        publicaImagen: true
-        sonarProjectName: null
-        sonarProjectKey: null
-      - name: ms-probatch-auditoria
-        publicaImagen: true
-        sonarProjectName: null
-        sonarProjectKey: null
-      - name: ms-probatch-parametros
-        publicaImagen: true
-        sonarProjectName: null
-        sonarProjectKey: null
-      - name: ms-probatch-reintentos
-        publicaImagen: true
-        sonarProjectName: null
-        sonarProjectKey: null
-      - name: ms-probatch-calendario
-        publicaImagen: true
-        sonarProjectName: null
-        sonarProjectKey: null
-      - name: ms-probatch-notificaciones
-        publicaImagen: true
-        sonarProjectName: null
-        sonarProjectKey: null
-      - name: ms-probatch-metrics
-        publicaImagen: true
-        sonarProjectName: null
-        sonarProjectKey: null
-      - name: ms-probatch-gateway
-        publicaImagen: true
-        sonarProjectName: null
-        sonarProjectKey: null
-      - name: ms-probatch-auth
-        publicaImagen: true
-        sonarProjectName: null
-        sonarProjectKey: null
-      - name: ms-probatch-workers
-        publicaImagen: true
-        sonarProjectName: null
-        sonarProjectKey: null
-      - name: ms-probatch-orquestador
-        publicaImagen: true
-        sonarProjectName: null
-        sonarProjectKey: null
-      - name: ms-probatch-reportes
-        publicaImagen: true
-        sonarProjectName: null
-        sonarProjectKey: null
-      - name: ms-probatch-archivos
-        publicaImagen: true
-        sonarProjectName: null
-        sonarProjectKey: null
-      - name: ms-probatch-eventos
-        publicaImagen: true
-        sonarProjectName: null
-        sonarProjectKey: null
-      - name: web-probatch-admin
-        publicaImagen: true
-        sonarProjectName: null
-        sonarProjectKey: null
-      - name: web-probatch-consola
-        publicaImagen: true
-        sonarProjectName: null
-        sonarProjectKey: null
-      - name: batch-probatch-cierre
-        publicaImagen: true
-        sonarProjectName: null
-        sonarProjectKey: null
-      - name: batch-probatch-reproceso
-        publicaImagen: true
-        sonarProjectName: null
-        sonarProjectKey: null
-      - name: mf-probatch-tareas
-        publicaImagen: true
-        sonarProjectName: null
-        sonarProjectKey: null
-      - name: mf-probatch-dashboard
-        publicaImagen: true
-        sonarProjectName: null
-        sonarProjectKey: null
-      - name: lib-probatch-modelo
+      - name: lib-core
         publicaImagen: false
         sonarProjectName: null
         sonarProjectKey: null
-      - name: lib-probatch-sdk
+      - name: lib-utils
         publicaImagen: false
         sonarProjectName: null
         sonarProjectKey: null
-      - name: ms-probatch-integraciones
+      - name: ms-core-api
         publicaImagen: true
         sonarProjectName: null
         sonarProjectKey: null
-      - name: ms-probatch-plantillas
+      - name: ms-executor-actions-api
         publicaImagen: true
         sonarProjectName: null
         sonarProjectKey: null
-      - name: ms-probatch-horarios
+      - name: ms-executor-api
         publicaImagen: true
         sonarProjectName: null
         sonarProjectKey: null
-      - name: ms-probatch-locks
+      - name: ms-executor-auth-api
         publicaImagen: true
         sonarProjectName: null
         sonarProjectKey: null
-      - name: ms-probatch-health
+      - name: ms-executor-menu-api
+        publicaImagen: true
+        sonarProjectName: null
+        sonarProjectKey: null
+      - name: ms-executor-system-api
+        publicaImagen: true
+        sonarProjectName: null
+        sonarProjectKey: null
+      - name: ms-gateway-api
+        publicaImagen: true
+        sonarProjectName: null
+        sonarProjectKey: null
+      - name: ms-logging-service-api
+        publicaImagen: true
+        sonarProjectName: null
+        sonarProjectKey: null
+      - name: ms-real-time-notification-api
+        publicaImagen: true
+        sonarProjectName: null
+        sonarProjectKey: null
+      - name: release-notes
+        publicaImagen: true
+        sonarProjectName: null
+        sonarProjectKey: null
+      - name: svc-ai-assistant-api
+        publicaImagen: true
+        sonarProjectName: null
+        sonarProjectKey: null
+      - name: svc-business-data-engine
+        publicaImagen: true
+        sonarProjectName: null
+        sonarProjectKey: null
+      - name: svc-executor
+        publicaImagen: true
+        sonarProjectName: null
+        sonarProjectKey: null
+      - name: svc-maintenance
+        publicaImagen: true
+        sonarProjectName: null
+        sonarProjectKey: null
+      - name: svc-openrouter-gateway-api
+        publicaImagen: true
+        sonarProjectName: null
+        sonarProjectKey: null
+      - name: web-administrator
+        publicaImagen: true
+        sonarProjectName: null
+        sonarProjectKey: null
+      - name: web-documentation
+        publicaImagen: true
+        sonarProjectName: null
+        sonarProjectKey: null
+      - name: web-executor
+        publicaImagen: true
+        sonarProjectName: null
+        sonarProjectKey: null
+      - name: web-executor-v2
+        publicaImagen: true
+        sonarProjectName: null
+        sonarProjectKey: null
+      - name: web-probatch
         publicaImagen: true
         sonarProjectName: null
         sonarProjectKey: null
   - key: cronos
-    name: "Mep - Cronos"
-    azdoProject: mep-cronos
+    name: Mep - Cronos
+    azdoProject: cronos
     lider: Fernando Luna
     esPoc: false
     repos:
-      - name: ms-cronos-liquidacion
+      - name: ms-connectorbds-api
         publicaImagen: true
         sonarProjectName: null
         sonarProjectKey: null
-      - name: ms-cronos-afiliaciones
+      - name: ms-connectorbh-api
         publicaImagen: true
         sonarProjectName: null
         sonarProjectKey: null
-      - name: web-cronos-portal
+      - name: ms-connectorbst-api
         publicaImagen: true
         sonarProjectName: null
         sonarProjectKey: null
-      - name: ms-cronos-archivos
+      - name: ms-connectorcolumbia-api
         publicaImagen: true
         sonarProjectName: null
         sonarProjectKey: null
-      - name: batch-cronos-cierre
+      - name: ms-connectormariva-api
         publicaImagen: true
         sonarProjectName: null
         sonarProjectKey: null
-      - name: lib-cronos-modelo
-        publicaImagen: false
-        sonarProjectName: null
-        sonarProjectKey: null
-      - name: ms-cronos-auditoria
+      - name: ms-connectornaranjax-api
         publicaImagen: true
         sonarProjectName: null
         sonarProjectKey: null
-      - name: ms-cronos-padron
+      - name: ms-connectorpetersen-api
         publicaImagen: true
         sonarProjectName: null
         sonarProjectKey: null
-      - name: ms-cronos-cobranzas
+      - name: ms-mep-api
         publicaImagen: true
         sonarProjectName: null
         sonarProjectKey: null
-      - name: ms-cronos-cuentas
+      - name: ms-mep-app
         publicaImagen: true
         sonarProjectName: null
         sonarProjectKey: null
-      - name: ms-cronos-notificaciones
+      - name: ms-mep-worker
         publicaImagen: true
         sonarProjectName: null
         sonarProjectKey: null
-      - name: web-cronos-backoffice
+      - name: ms-mepbcra-api
         publicaImagen: true
         sonarProjectName: null
         sonarProjectKey: null
-      - name: mf-cronos-tramites
+      - name: ms-mepbh-app
         publicaImagen: true
-        sonarProjectName: null
-        sonarProjectKey: null
-      - name: batch-cronos-importacion
-        publicaImagen: true
-        sonarProjectName: null
-        sonarProjectKey: null
-      - name: lib-cronos-sdk
-        publicaImagen: false
         sonarProjectName: null
         sonarProjectKey: null
   - key: iris
-    name: "Accusys Link - Iris"
-    azdoProject: accusys-link-iris
+    name: Accusys Link - Iris
+    azdoProject: iris
     lider: Ivette Guevara
     esPoc: false
     repos:
-      - name: ms-iris-link-gateway
+      - name: ms-conciliator-worker
         publicaImagen: true
         sonarProjectName: null
         sonarProjectKey: null
-      - name: ms-iris-conciliacion
+      - name: ms-ftpreader-worker
         publicaImagen: true
         sonarProjectName: null
         sonarProjectKey: null
-      - name: web-iris-consola
+      - name: ms-handler-api
         publicaImagen: true
         sonarProjectName: null
         sonarProjectKey: null
-      - name: lib-iris-sdk
-        publicaImagen: false
-        sonarProjectName: null
-        sonarProjectKey: null
-      - name: ms-iris-eventos
+      - name: ms-handler-worker
         publicaImagen: true
         sonarProjectName: null
         sonarProjectKey: null
-      - name: ms-iris-pagos
+      - name: ms-inputfileprocessing-worker
         publicaImagen: true
         sonarProjectName: null
         sonarProjectKey: null
-      - name: ms-iris-ruteo
+      - name: ms-linker-worker
         publicaImagen: true
         sonarProjectName: null
         sonarProjectKey: null
-      - name: ms-iris-tokens
+      - name: ms-outputfileprocessing-worker
         publicaImagen: true
         sonarProjectName: null
         sonarProjectKey: null
-      - name: ms-iris-webhooks
+      - name: ms-posting-worker
         publicaImagen: true
         sonarProjectName: null
         sonarProjectKey: null
-      - name: ms-iris-auditoria
+      - name: ms-report-api
         publicaImagen: true
         sonarProjectName: null
         sonarProjectKey: null
-      - name: web-iris-portal
+      - name: ms-report-app
         publicaImagen: true
         sonarProjectName: null
         sonarProjectKey: null
-      - name: mf-iris-operador
-        publicaImagen: true
-        sonarProjectName: null
-        sonarProjectKey: null
-      - name: batch-iris-asientos
-        publicaImagen: true
-        sonarProjectName: null
-        sonarProjectKey: null
-      - name: lib-iris-contratos
-        publicaImagen: false
-        sonarProjectName: null
-        sonarProjectKey: null
-      - name: ms-iris-catalogo
+      - name: ms-transferqueuedprocessing-worker
         publicaImagen: true
         sonarProjectName: null
         sonarProjectKey: null
   - key: apolo
-    name: "Sidef - Apolo"
-    azdoProject: sidef-apolo
+    name: Sidef - Apolo
+    azdoProject: apolo
     lider: Javier Montiel
     esPoc: false
     repos:
-      - name: ms-apolo-sidef-core
+      - name: bd
         publicaImagen: true
         sonarProjectName: null
         sonarProjectKey: null
-      - name: web-apolo-admin
+      - name: ms-sidef-api
         publicaImagen: true
         sonarProjectName: null
         sonarProjectKey: null
-      - name: batch-apolo-importacion
-        publicaImagen: true
-        sonarProjectName: null
-        sonarProjectKey: null
-      - name: ms-apolo-expedientes
-        publicaImagen: true
-        sonarProjectName: null
-        sonarProjectKey: null
-      - name: ms-apolo-documentos
-        publicaImagen: true
-        sonarProjectName: null
-        sonarProjectKey: null
-      - name: mf-apolo-bandeja
-        publicaImagen: true
-        sonarProjectName: null
-        sonarProjectKey: null
-      - name: lib-apolo-modelo
-        publicaImagen: false
-        sonarProjectName: null
-        sonarProjectKey: null
-      - name: ms-apolo-notificaciones
+      - name: ms-sidef-app
         publicaImagen: true
         sonarProjectName: null
         sonarProjectKey: null
   - key: zeus
-    name: "Mep Contable - Zeus"
-    azdoProject: mep-contable-zeus
+    name: Mep Contable - Zeus
+    azdoProject: zeus
     lider: Eduardo Fabaro
     esPoc: false
     repos:
-      - name: ms-zeus-contable
+      - name: ms-mepcontable-api
         publicaImagen: true
         sonarProjectName: null
         sonarProjectKey: null
-      - name: web-zeus-balances
-        publicaImagen: true
-        sonarProjectName: null
-        sonarProjectKey: null
-      - name: ms-zeus-asientos
-        publicaImagen: true
-        sonarProjectName: null
-        sonarProjectKey: null
-      - name: ms-zeus-plan-cuentas
-        publicaImagen: true
-        sonarProjectName: null
-        sonarProjectKey: null
-      - name: batch-zeus-cierre
-        publicaImagen: true
-        sonarProjectName: null
-        sonarProjectKey: null
-      - name: mf-zeus-consultas
-        publicaImagen: true
-        sonarProjectName: null
-        sonarProjectKey: null
-      - name: lib-zeus-modelo
-        publicaImagen: false
-        sonarProjectName: null
-        sonarProjectKey: null
-      - name: ms-zeus-reportes
+      - name: ms-mepcontablenx-worker
         publicaImagen: true
         sonarProjectName: null
         sonarProjectKey: null
   - key: janus
-    name: "Pases y Cryl - Janus"
-    azdoProject: pases-y-cryl-janus
+    name: Pases y Cryl - Janus
+    azdoProject: janus
     lider: Hernán Atencio
     esPoc: false
     repos:
-      - name: ms-janus-pases
+      - name: ms-pases-api
         publicaImagen: true
         sonarProjectName: null
         sonarProjectKey: null
-      - name: ms-janus-cryl
+      - name: ms-pases-app
         publicaImagen: true
         sonarProjectName: null
         sonarProjectKey: null
-      - name: web-janus-mesa
+      - name: ms-pases-worker
         publicaImagen: true
         sonarProjectName: null
         sonarProjectKey: null
-      - name: ms-janus-titulos
+      - name: ms-pasesbh-app
         publicaImagen: true
-        sonarProjectName: null
-        sonarProjectKey: null
-      - name: batch-janus-liquidacion
-        publicaImagen: true
-        sonarProjectName: null
-        sonarProjectKey: null
-      - name: mf-janus-operador
-        publicaImagen: true
-        sonarProjectName: null
-        sonarProjectKey: null
-      - name: lib-janus-comun
-        publicaImagen: false
         sonarProjectName: null
         sonarProjectKey: null
   - key: argus
-    name: "Mep Consolidado - Argus"
-    azdoProject: mep-consolidado-argus
+    name: Mep Consolidado - Argus
+    azdoProject: argus
     lider: Gustavo Troconis
     esPoc: false
     repos:
-      - name: ms-argus-consolidado
+      - name: ms-connector-api
         publicaImagen: true
         sonarProjectName: null
         sonarProjectKey: null
-      - name: web-argus-tablero
+      - name: ms-consolidado-api
         publicaImagen: true
         sonarProjectName: null
         sonarProjectKey: null
-      - name: ms-argus-ajustes
+      - name: ms-consolidado-app
         publicaImagen: true
-        sonarProjectName: null
-        sonarProjectKey: null
-      - name: batch-argus-cierre
-        publicaImagen: true
-        sonarProjectName: null
-        sonarProjectKey: null
-      - name: mf-argus-consultas
-        publicaImagen: true
-        sonarProjectName: null
-        sonarProjectKey: null
-      - name: lib-argus-modelo
-        publicaImagen: false
         sonarProjectName: null
         sonarProjectKey: null
   - key: afrodita
-    name: "Mep Cedin - Afrodita"
-    azdoProject: mep-cedin-afrodita
+    name: Mep Cedin - Afrodita
+    azdoProject: afrodita
     lider: Lisbeth Atencio
     esPoc: false
     repos:
-      - name: ms-afrodita-cedin
+      - name: afrodita
         publicaImagen: true
         sonarProjectName: null
         sonarProjectKey: null
-      - name: web-afrodita-portal
+      - name: ms-cedin-api
         publicaImagen: true
         sonarProjectName: null
         sonarProjectKey: null
-      - name: ms-afrodita-tenencias
+      - name: ms-cedin-app
         publicaImagen: true
-        sonarProjectName: null
-        sonarProjectKey: null
-      - name: batch-afrodita-valuacion
-        publicaImagen: true
-        sonarProjectName: null
-        sonarProjectKey: null
-      - name: lib-afrodita-comun
-        publicaImagen: false
         sonarProjectName: null
         sonarProjectKey: null
   - key: themis
-    name: "Repi - Themis"
-    azdoProject: repi-themis
+    name: Repi - Themis
+    azdoProject: themis
     lider: Braian Rosales
     esPoc: false
     repos:
-      - name: ms-themis-repi
+      - name: ms-repi-api
         publicaImagen: true
         sonarProjectName: null
         sonarProjectKey: null
-      - name: ms-themis-repi-consultas
+      - name: ms-repi-app
         publicaImagen: true
-        sonarProjectName: null
-        sonarProjectKey: null
-      - name: web-themis-repi
-        publicaImagen: true
-        sonarProjectName: null
-        sonarProjectKey: null
-      - name: batch-themis-cargas
-        publicaImagen: true
-        sonarProjectName: null
-        sonarProjectKey: null
-      - name: lib-themis-comun
-        publicaImagen: false
         sonarProjectName: null
         sonarProjectKey: null
   - key: minerva
-    name: "Niif - Minerva"
-    azdoProject: niif-minerva
+    name: Niif - Minerva
+    azdoProject: minerva
     lider: Pablo Gálvez
     esPoc: false
     repos:
-      - name: ms-minerva-niif
+      - name: ms-niif-api
         publicaImagen: true
         sonarProjectName: null
         sonarProjectKey: null
-      - name: web-minerva-estados
+      - name: ms-niif-app
         publicaImagen: true
-        sonarProjectName: null
-        sonarProjectKey: null
-      - name: ms-minerva-notas
-        publicaImagen: true
-        sonarProjectName: null
-        sonarProjectKey: null
-      - name: batch-minerva-cierre
-        publicaImagen: true
-        sonarProjectName: null
-        sonarProjectKey: null
-      - name: lib-minerva-comun
-        publicaImagen: false
         sonarProjectName: null
         sonarProjectKey: null
   - key: hades
-    name: "Mep SML - Hades"
-    azdoProject: mep-sml-hades
+    name: Mep SML - Hades
+    azdoProject: hades
     lider: Joshua García
     esPoc: false
     repos:
-      - name: ms-hades-sml
+      - name: ms-sml-api
         publicaImagen: true
         sonarProjectName: null
         sonarProjectKey: null
-      - name: web-hades-monitor
+      - name: ms-sml-app
         publicaImagen: true
-        sonarProjectName: null
-        sonarProjectKey: null
-      - name: ms-hades-mensajes
-        publicaImagen: true
-        sonarProjectName: null
-        sonarProjectKey: null
-      - name: batch-hades-reproceso
-        publicaImagen: true
-        sonarProjectName: null
-        sonarProjectKey: null
-      - name: lib-hades-comun
-        publicaImagen: false
         sonarProjectName: null
         sonarProjectKey: null
   - key: poseidon
-    name: "Mep Contingencia - Poseidón"
-    azdoProject: mep-contingencia-poseidon
+    name: Mep Contingencia - Poseidón
+    azdoProject: poseidon
     lider: Lucas Gauna
     esPoc: false
     repos:
-      - name: ms-poseidon-contingencia
+      - name: ms-contingencia-api
         publicaImagen: true
         sonarProjectName: null
         sonarProjectKey: null
-      - name: ms-poseidon-failover
+      - name: ms-contingencia-app
         publicaImagen: true
         sonarProjectName: null
         sonarProjectKey: null
-      - name: web-poseidon-panel
-        publicaImagen: true
-        sonarProjectName: null
-        sonarProjectKey: null
-      - name: lib-poseidon-comun
-        publicaImagen: false
-        sonarProjectName: null
-        sonarProjectKey: null
+

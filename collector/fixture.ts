@@ -1,5 +1,6 @@
-import type { AzdoProject, Repo, ScanSnapshot, SonarMetrics, TrivyMetrics } from "../lib/snapshot.ts";
+import type { AzdoProject, ScanSnapshot, SonarMetrics, TrivyMetrics } from "../lib/snapshot.ts";
 import { loadProjectsConfig } from "./config.ts";
+import { inventoryFromYml } from "./inventory.ts";
 
 interface GemaSeed {
   name: string;
@@ -106,28 +107,6 @@ const GEMA_SEEDS: GemaSeed[] = [
 
 function clone<T>(value: T): T {
   return JSON.parse(JSON.stringify(value)) as T;
-}
-
-function inventoryFromYml(): AzdoProject[] {
-  const file = loadProjectsConfig();
-  return file.proyectos.map(p => ({
-    key: p.key,
-    name: p.name,
-    azdoProject: p.azdoProject,
-    leader: p.lider,
-    reposTotal: p.repos.length,
-    esPoc: p.esPoc,
-    repos: p.repos.map(
-      (r): Repo => ({
-        name: r.name,
-        publicaImagen: r.publicaImagen,
-        sonarProjectName: r.sonarProjectName ?? null,
-        sonarProjectKey: r.sonarProjectKey ?? null,
-        sonar: null,
-        trivy: null,
-      }),
-    ),
-  }));
 }
 
 function applyGema(projects: AzdoProject[], fecha: string, analyzed: number, withTrivy: number): void {

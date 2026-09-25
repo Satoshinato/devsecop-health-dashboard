@@ -1,18 +1,20 @@
 import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
-import { fetchInventario } from "./azdo.ts";
-import { FIXTURE_DATES, buildFixtureSnapshot } from "./fixture.ts";
-import { enrichSonar } from "./sonar.ts";
-import { enrichTrivy } from "./trivy.ts";
 import type { ScanSnapshot } from "../lib/snapshot.ts";
+import { fetchInventario } from "./azdo.ts";
+import { loadProjectsConfig } from "./config.ts";
+import { FIXTURE_DATES, buildFixtureSnapshot } from "./fixture.ts";
+import { inventoryFromYml } from "./inventory.ts";
+import { enrichRenovate, fetchDependencyHealth, renovateHostFromEnv } from "./renovate.ts";
+import { enrichSonar, listSonarComponents, sonarHostFromEnv } from "./sonar.ts";
+import { enrichTrivy } from "./trivy.ts";
 
-function hasCreds(): boolean {
-  return Boolean(
-    process.env.SONAR_TOKEN &&
-      process.env.SONAR_ORG &&
-      process.env.AZDO_ORG &&
-      process.env.AZDO_PAT,
-  );
+function hasAzdoCreds(): boolean {
+  return Boolean(process.env.AZDO_ORG && process.env.AZDO_PAT);
+}
+
+function hasSonarCreds(): boolean {
+  return Boolean(process.env.SONAR_TOKEN && process.env.SONAR_ORG);
 }
 
 function writeScan(snapshot: ScanSnapshot, root = process.cwd()): string {
@@ -23,26 +25,82 @@ function writeScan(snapshot: ScanSnapshot, root = process.cwd()): string {
   return path;
 }
 
-async function scanReal(fecha: string): Promise<ScanSnapshot> {
-  const org = process.env.AZDO_ORG!;
-  const pat = process.env.AZDO_PAT!;
-  const projects = await fetchInventario({ org, pat });
-  for (const project of projects) {
-    await enrichSonar(project.repos, {
-      token: process.env.SONAR_TOKEN!,
-      org: process.env.SONAR_ORG!,
-      fecha,
-    });
-    await enrichTrivy(project.azdoProject, project.repos, {
-      org,
-      pat,
-      fecha,
-    });
+async function scanPartial(fecha: string): Promise<ScanSnapshot> {
+  const file = loadProjectsConfig();
+  const org = process.env.AZDO_ORG ?? file.organizacionAzdo;
+  const sonarOrg = process.env.SONAR_ORG ?? file.organizacionSonar;
+
+  const sources: string[] = [];
+  if (hasAzdoCreds()) sources.push("Azure DevOps (inventario + Trivy)");
+  else sources.push("projects.yml (inventario estático)");
+  sources.push("Dependency Health (Renovate)");
+  if (hasSonarCreds()) sources.push("SonarQube");
+  console.log(`Fuentes: ${sources.join(" · ")}`);
+
+  const projects = hasAzdoCreds()
+    ? await fetchInventario({ org, pat: process.env.AZDO_PAT! })
+    : inventoryFromYml();
+
+  let renovateScanDate: string | undefined;
+  let renovatePipelineUrl: string | undefined;
+  try {
+    const renovateHost = renovateHostFromEnv();
+    const dashboard = await fetchDependencyHealth(renovateHost);
+    renovateScanDate = dashboard.scanDate;
+    renovatePipelineUrl = dashboard.metadata?.pipelineUrl;
+    console.log(
+      `Dependency Health: ${renovateHost} (scan ${dashboard.scanDate}, ${dashboard.dependencies.length} dependencias)`,
+    );
+    for (const project of projects) {
+      enrichRenovate(project.azdoProject, project.repos, dashboard);
+    }
+  } catch (err) {
+    const detail = err instanceof Error ? err.message : String(err);
+    console.warn(`Dependency Health omitido: ${detail}`);
   }
+
+  if (hasSonarCreds()) {
+    const host = sonarHostFromEnv();
+    const token = process.env.SONAR_TOKEN!;
+    const auth = Buffer.from(`${token}:`).toString("base64");
+    const catalog = await listSonarComponents({
+      host,
+      headers: { Authorization: `Basic ${auth}`, Accept: "application/json" },
+    });
+    console.log(`Sonar host: ${host} (${catalog.length} proyectos TRK)`);
+    for (const project of projects) {
+      await enrichSonar(project.repos, {
+        token,
+        org: sonarOrg,
+        fecha,
+        host,
+        catalog,
+      });
+    }
+  } else {
+    console.warn("Sonar omitido: faltan SONAR_TOKEN o SONAR_ORG");
+  }
+
+  if (hasAzdoCreds()) {
+    const pat = process.env.AZDO_PAT!;
+    for (const project of projects) {
+      try {
+        await enrichTrivy(project.azdoProject, project.repos, { org, pat, fecha });
+      } catch (err) {
+        const detail = err instanceof Error ? err.message : String(err);
+        console.warn(`Trivy omitido (${project.azdoProject}): ${detail}`);
+      }
+    }
+  } else {
+    console.warn("Trivy omitido: faltan AZDO_ORG o AZDO_PAT");
+  }
+
   return {
     fecha,
     organizacionAzdo: org,
-    organizacionSonar: process.env.SONAR_ORG!,
+    organizacionSonar: sonarOrg,
+    renovateScanDate,
+    renovatePipelineUrl,
     projects,
   };
 }
@@ -53,25 +111,16 @@ async function main() {
     process.argv.find(a => a.startsWith("--fecha="))?.slice("--fecha=".length) ??
     new Date().toISOString().slice(0, 10);
 
-  if (fromFixture || !hasCreds()) {
-    if (!fromFixture && !hasCreds()) {
-      console.error(
-        "Faltan SONAR_TOKEN, SONAR_ORG, AZDO_ORG o AZDO_PAT. Usá --from-fixture para un scan de muestra.",
-      );
-      process.exitCode = 1;
+  if (fromFixture) {
+    const written: string[] = [];
+    for (const spec of FIXTURE_DATES) {
+      written.push(writeScan(buildFixtureSnapshot(spec.fecha, spec.analyzed, spec.withTrivy)));
     }
-    if (fromFixture) {
-      const written: string[] = [];
-      for (const spec of FIXTURE_DATES) {
-        written.push(writeScan(buildFixtureSnapshot(spec.fecha, spec.analyzed, spec.withTrivy)));
-      }
-      console.log(`Fixture escrito:\n${written.join("\n")}`);
-      return;
-    }
+    console.log(`Fixture escrito:\n${written.join("\n")}`);
     return;
   }
 
-  const snapshot = await scanReal(fecha);
+  const snapshot = await scanPartial(fecha);
   const path = writeScan(snapshot);
   console.log(`Scan escrito: ${path}`);
 }

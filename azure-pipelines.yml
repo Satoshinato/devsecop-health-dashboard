@@ -16,6 +16,8 @@ pool:
 
 variables:
   - group: devsecops-dashboard
+  - name: SONAR_HOST
+    value: https://sonarqube.shared.accusys.com.ar
   - name: imageName
     value: accusystechnology.azurecr.io/devsecops-dashboard
 
@@ -43,6 +45,7 @@ stages:
             env:
               SONAR_TOKEN: $(SONAR_TOKEN)
               SONAR_ORG: $(SONAR_ORG)
+              SONAR_HOST: $(SONAR_HOST)
               AZDO_ORG: $(AZDO_ORG)
               AZDO_PAT: $(AZDO_PAT)
 
