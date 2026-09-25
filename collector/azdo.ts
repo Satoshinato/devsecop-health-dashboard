@@ -50,7 +50,6 @@ export async function fetchInventario(opts: {
         sonarProjectKey: cfg?.sonarProjectKey ?? null,
         sonar: null,
         trivy: null,
-        renovate: null,
       };
     });
 

@@ -107,7 +107,7 @@ export default function ProjectDetailPanel({
         </div>
       ) : (
         <>
-          <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-7">
+          <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-6">
             <Metrica label="Repos analizados" value={`${fila.reposConSonar}/${fila.reposTotal}`} />
             <Metrica label="Adopción" value={`${fila.adopcionSonar} %`} />
             <Metrica
@@ -124,17 +124,6 @@ export default function ProjectDetailPanel({
               label="CVE críticos"
               value={String(fila.criticos)}
               tono={fila.criticos > 0 ? "text-rose-600" : "text-emerald-600"}
-            />
-            <Metrica
-              label="Deps. EOL / depr."
-              value={`${fila.dependenciasEol} / ${fila.dependenciasDeprecadas}`}
-              tono={
-                fila.dependenciasEol > 0
-                  ? "text-rose-600"
-                  : fila.dependenciasDeprecadas > 0
-                    ? "text-amber-600"
-                    : "text-slate-800"
-              }
             />
             <Metrica label="Líneas" value={formatearNumero(fila.ncloc)} />
           </div>
@@ -217,9 +206,7 @@ export default function ProjectDetailPanel({
                     <th className="pb-2 pr-2 text-center font-medium" title="Confiabilidad · Seguridad · Mantenibilidad">
                       C·S·M
                     </th>
-                    <th className="pb-2 pr-2 text-right font-medium">Trivy C/A/M/B</th>
-                    <th className="pb-2 pr-2 text-right font-medium">EOL</th>
-                    <th className="pb-2 text-right font-medium">Depr.</th>
+                    <th className="pb-2 text-right font-medium">Trivy C/A/M/B</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -273,7 +260,7 @@ export default function ProjectDetailPanel({
                             <RatingBadge rating={s.maintainabilityRating} title="Mantenibilidad" />
                           </div>
                         </td>
-                        <td className="py-1.5 pr-2 text-right">
+                        <td className="py-1.5 text-right">
                           {repo.trivy ? (
                             <span className="tabular-nums">
                               <span className="font-semibold text-rose-600">{repo.trivy.critical}</span>
@@ -288,36 +275,6 @@ export default function ProjectDetailPanel({
                             <span className="text-[10px] text-slate-400">
                               {repo.publicaImagen ? "sin escanear" : "no publica imagen"}
                             </span>
-                          )}
-                        </td>
-                        <td className="py-1.5 pr-2 text-right">
-                          {repo.renovate ? (
-                            <span
-                              className={
-                                repo.renovate.eol > 0
-                                  ? "font-semibold text-rose-600"
-                                  : "text-slate-500"
-                              }
-                            >
-                              {repo.renovate.eol}
-                            </span>
-                          ) : (
-                            <span className="text-[10px] text-slate-400">—</span>
-                          )}
-                        </td>
-                        <td className="py-1.5 text-right">
-                          {repo.renovate ? (
-                            <span
-                              className={
-                                repo.renovate.deprecated > 0
-                                  ? "font-semibold text-amber-600"
-                                  : "text-slate-500"
-                              }
-                            >
-                              {repo.renovate.deprecated}
-                            </span>
-                          ) : (
-                            <span className="text-[10px] text-slate-400">—</span>
                           )}
                         </td>
                       </tr>
@@ -345,11 +302,6 @@ export default function ProjectDetailPanel({
                       className="rounded border border-slate-200 bg-white px-1.5 py-0.5 text-[10px] text-slate-500"
                     >
                       {repo.name}
-                      {repo.renovate && (repo.renovate.eol > 0 || repo.renovate.deprecated > 0) && (
-                        <span className="ml-1 text-rose-500">
-                          ({repo.renovate.eol} EOL / {repo.renovate.deprecated} depr.)
-                        </span>
-                      )}
                     </span>
                   ))}
                 </div>

@@ -45,23 +45,6 @@ export interface TrivyMetrics {
   findings: TrivyFinding[];
 }
 
-export interface RenovateFinding {
-  depName: string;
-  version: string;
-  source: string;
-  kind: "eol" | "deprecated";
-  detail: string;
-}
-
-export interface RenovateMetrics {
-  dependencyCount: number;
-  eol: number;
-  deprecated: number;
-  baseImages: string[];
-  scanDate: string;
-  findings: RenovateFinding[];
-}
-
 export interface Repo {
   name: string;
   publicaImagen: boolean;
@@ -71,7 +54,6 @@ export interface Repo {
   sonarProjectKey: string | null;
   sonar: SonarMetrics | null;
   trivy: TrivyMetrics | null;
-  renovate: RenovateMetrics | null;
 }
 
 export interface AzdoProject {
@@ -90,9 +72,5 @@ export interface ScanSnapshot {
   fecha: string;
   organizacionAzdo: string;
   organizacionSonar: string;
-  /** Fecha del scan de Dependency Health (Renovate). */
-  renovateScanDate?: string;
-  /** Build de Azure DevOps que generó el scan de Renovate. */
-  renovatePipelineUrl?: string;
   projects: AzdoProject[];
 }

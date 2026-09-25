@@ -10,7 +10,6 @@ function repo(partial: Partial<Repo> & Pick<Repo, "name">): Repo {
     sonarProjectKey: null,
     sonar: null,
     trivy: null,
-    renovate: null,
     ...partial,
   };
 }

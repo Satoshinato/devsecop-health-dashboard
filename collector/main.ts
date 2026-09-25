@@ -5,7 +5,6 @@ import { fetchInventario } from "./azdo.ts";
 import { loadProjectsConfig } from "./config.ts";
 import { FIXTURE_DATES, buildFixtureSnapshot } from "./fixture.ts";
 import { inventoryFromYml } from "./inventory.ts";
-import { enrichRenovate, fetchDependencyHealth, renovateHostFromEnv } from "./renovate.ts";
 import { enrichSonar, listSonarComponents, sonarHostFromEnv } from "./sonar.ts";
 import { enrichTrivy } from "./trivy.ts";
 
@@ -33,31 +32,12 @@ async function scanPartial(fecha: string): Promise<ScanSnapshot> {
   const sources: string[] = [];
   if (hasAzdoCreds()) sources.push("Azure DevOps (inventario + Trivy)");
   else sources.push("projects.yml (inventario estático)");
-  sources.push("Dependency Health (Renovate)");
   if (hasSonarCreds()) sources.push("SonarQube");
   console.log(`Fuentes: ${sources.join(" · ")}`);
 
   const projects = hasAzdoCreds()
     ? await fetchInventario({ org, pat: process.env.AZDO_PAT! })
     : inventoryFromYml();
-
-  let renovateScanDate: string | undefined;
-  let renovatePipelineUrl: string | undefined;
-  try {
-    const renovateHost = renovateHostFromEnv();
-    const dashboard = await fetchDependencyHealth(renovateHost);
-    renovateScanDate = dashboard.scanDate;
-    renovatePipelineUrl = dashboard.metadata?.pipelineUrl;
-    console.log(
-      `Dependency Health: ${renovateHost} (scan ${dashboard.scanDate}, ${dashboard.dependencies.length} dependencias)`,
-    );
-    for (const project of projects) {
-      enrichRenovate(project.azdoProject, project.repos, dashboard);
-    }
-  } catch (err) {
-    const detail = err instanceof Error ? err.message : String(err);
-    console.warn(`Dependency Health omitido: ${detail}`);
-  }
 
   if (hasSonarCreds()) {
     try {
@@ -104,8 +84,6 @@ async function scanPartial(fecha: string): Promise<ScanSnapshot> {
     fecha,
     organizacionAzdo: org,
     organizacionSonar: sonarOrg,
-    renovateScanDate,
-    renovatePipelineUrl,
     projects,
   };
 }

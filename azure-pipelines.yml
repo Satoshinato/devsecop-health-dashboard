@@ -11,6 +11,10 @@ schedules:
         - main
     always: true
 
+# ubuntu-latest no llega a sonarqube.shared.accusys.com.ar (IPs 10.x).
+# Para métricas Sonar reales, cambiar a un self-hosted agent de la red Accusys:
+#   pool:
+#     name: <nombre-del-agent-pool>
 pool:
   vmImage: ubuntu-latest
 
@@ -35,19 +39,9 @@ stages:
             displayName: npm ci
 
           - script: |
-              set -euo pipefail
-              if [ -n "${SONAR_TOKEN:-}" ] && [ -n "${SONAR_ORG:-}" ] && [ -n "${AZDO_ORG:-}" ] && [ -n "${AZDO_PAT:-}" ]; then
-                npx tsx collector/main.ts
-              else
-                echo "Sin secretos de Sonar/AzDO: se omite el scan y se usa data/scans ya versionado."
-              fi
-            displayName: Scan (o skip si no hay secrets)
-            env:
-              SONAR_TOKEN: $(SONAR_TOKEN)
-              SONAR_ORG: $(SONAR_ORG)
-              SONAR_HOST: $(SONAR_HOST)
-              AZDO_ORG: $(AZDO_ORG)
-              AZDO_PAT: $(AZDO_PAT)
+              echo "Hosted agent no llega a Sonar interno. Se usa data/scans versionado (scan local)."
+              echo "Cuando el job corra en un pool Accusys On-Prem/Shared, reemplazar este step por: npx tsx collector/main.ts"
+            displayName: Usar snapshot versionado (Sonar local)
 
           - script: npm test
             displayName: Tests de métricas
