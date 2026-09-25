@@ -60,22 +60,27 @@ async function scanPartial(fecha: string): Promise<ScanSnapshot> {
   }
 
   if (hasSonarCreds()) {
-    const host = sonarHostFromEnv();
-    const token = process.env.SONAR_TOKEN!;
-    const auth = Buffer.from(`${token}:`).toString("base64");
-    const catalog = await listSonarComponents({
-      host,
-      headers: { Authorization: `Basic ${auth}`, Accept: "application/json" },
-    });
-    console.log(`Sonar host: ${host} (${catalog.length} proyectos TRK)`);
-    for (const project of projects) {
-      await enrichSonar(project.repos, {
-        token,
-        org: sonarOrg,
-        fecha,
+    try {
+      const host = sonarHostFromEnv();
+      const token = process.env.SONAR_TOKEN!;
+      const auth = Buffer.from(`${token}:`).toString("base64");
+      const catalog = await listSonarComponents({
         host,
-        catalog,
+        headers: { Authorization: `Basic ${auth}`, Accept: "application/json" },
       });
+      console.log(`Sonar host: ${host} (${catalog.length} proyectos TRK)`);
+      for (const project of projects) {
+        await enrichSonar(project.repos, {
+          token,
+          org: sonarOrg,
+          fecha,
+          host,
+          catalog,
+        });
+      }
+    } catch (err) {
+      const detail = err instanceof Error ? err.message : String(err);
+      console.warn(`Sonar omitido: ${detail}`);
     }
   } else {
     console.warn("Sonar omitido: faltan SONAR_TOKEN o SONAR_ORG");
