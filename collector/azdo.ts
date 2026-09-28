@@ -52,7 +52,6 @@ export async function fetchInventario(opts: {
         trivyPr: null,
         trivyBuild: null,
         trivy: null,
-        renovate: null,
       };
     });
 

@@ -7,10 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test": "tsx --test lib/metrics.test.ts collector/trivy.test.ts collector/sonar.test.ts collector/renovate.test.ts",
+    "test": "tsx --test lib/metrics.test.ts collector/trivy.test.ts collector/sonar.test.ts",
     "scan": "tsx collector/main.ts",
-    "scan:fixture": "tsx collector/main.ts --from-fixture",
-    "scan:inventario": "tsx collector/inventario-renovate.ts"
+    "scan:fixture": "tsx collector/main.ts --from-fixture"
   },
   "dependencies": {
     "next": "16.3.3",

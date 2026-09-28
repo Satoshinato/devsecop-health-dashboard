@@ -1,17 +1,13 @@
 # Inventario DevSecOps — 13 proyectos Azure DevOps.
 #
-# Los repos se sincronizan desde Dependency Health (Renovate):
-#   npm run scan:inventario
-# Fuente: https://renovate.shared.accusys.com.ar/api/data/dashboard
-# Es un piso: solo repos donde Renovate detectó dependencias (pom, package.json, Dockerfile, etc.).
+# Piso estático. Con AZDO_ORG + AZDO_PAT, fetchInventario completa repos
+# reales desde Azure DevOps y conserva las keys Sonar de este YAML.
 #
 # Las keys de Gema pueden ser placeholders: el colector las resuelve contra
 # https://sonarqube.shared.accusys.com.ar (api/components/search).
 # Formato si se cargan a mano:
 #   sonarProjectName: gema_<repo>
 #   sonarProjectKey:  <Project Key de Community>
-#
-# Cuando llegue el PAT de Azure DevOps, fetchInventario completa repos que Renovate no ve.
 organizacionAzdo: accusystechnology
 organizacionSonar: accusys
 proyectos:

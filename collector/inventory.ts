@@ -21,7 +21,6 @@ export function inventoryFromYml(root = process.cwd()): AzdoProject[] {
         trivyPr: null,
         trivyBuild: null,
         trivy: null,
-        renovate: null,
       }),
     ),
   }));

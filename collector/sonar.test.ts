@@ -12,7 +12,6 @@ function repo(partial: Partial<Repo> & Pick<Repo, "name">): Repo {
     trivyPr: null,
     trivyBuild: null,
     trivy: null,
-    renovate: null,
     ...partial,
   };
 }

@@ -5,7 +5,6 @@ import {
   adopcionSonarDe,
   adopcionTrivyDe,
   cvesTransversales,
-  dependenciasTransversales,
   deudaDiasDesdeSqale,
   filaProyecto,
   imagenesBasePorImpacto,
@@ -27,7 +26,7 @@ const inventario = loadProjectsConfig();
 const reposInventario = inventario.proyectos.reduce((s, p) => s + p.repos.length, 0);
 const gemaKeys = gema.repos.filter(r => r.sonarProjectKey).length;
 
-test("inventario: 13 proyectos desde Dependency Health", () => {
+test("inventario: 13 proyectos desde projects.yml", () => {
   assert.equal(scan.projects.length, 13);
   assert.equal(
     scan.projects.reduce((s, p) => s + p.repos.length, 0),
@@ -66,7 +65,6 @@ test("trivyPrincipal prefiere build sobre pr", () => {
     sonarProjectName: null,
     sonarProjectKey: null,
     sonar: null,
-    renovate: null,
     trivyPr: { ...base, critical: 1, high: 0, medium: 0, low: 0, fuente: "pr" },
     trivyBuild: { ...base, critical: 0, high: 2, medium: 0, low: 0, fuente: "build" },
     trivy: null,
@@ -82,7 +80,6 @@ test("tieneTrivy con solo lectura PR", () => {
     sonarProjectName: null,
     sonarProjectKey: null,
     sonar: null,
-    renovate: null,
     trivyPr: {
       image: "img",
       baseImage: "base",
@@ -161,76 +158,6 @@ test("resumen global de Gema en el fixture", () => {
   assert.equal(r.reposConTrivy, 5);
   assert.equal(r.adopcionSonar, Math.round((gemaKeys / reposInventario) * 100));
   assert.equal(r.deudaDias, Math.round(13340 / 480));
-});
-
-test("dependencias transversales agrupa por dep y cuenta repos", () => {
-  const deps = dependenciasTransversales({
-    fecha: "2026-09-25",
-    organizacionAzdo: "accusystechnology",
-    organizacionSonar: "accusys",
-    projects: [
-      {
-        key: "gema",
-        name: "Gema",
-        azdoProject: "gema",
-        leader: "x",
-        reposTotal: 2,
-        repos: [
-          {
-            name: "a",
-            publicaImagen: true,
-            sonarProjectName: null,
-            sonarProjectKey: null,
-            sonar: null,
-            trivy: null,
-            renovate: {
-              dependencyCount: 1,
-              eol: 1,
-              deprecated: 0,
-              baseImages: [],
-              scanDate: "2026-09-16",
-              findings: [
-                {
-                  depName: "spring-boot",
-                  version: "3.3.0",
-                  source: "maven",
-                  kind: "eol",
-                  detail: "eol",
-                },
-              ],
-            },
-          },
-          {
-            name: "b",
-            publicaImagen: true,
-            sonarProjectName: null,
-            sonarProjectKey: null,
-            sonar: null,
-            trivy: null,
-            renovate: {
-              dependencyCount: 1,
-              eol: 1,
-              deprecated: 0,
-              baseImages: [],
-              scanDate: "2026-09-16",
-              findings: [
-                {
-                  depName: "spring-boot",
-                  version: "3.3.0",
-                  source: "maven",
-                  kind: "eol",
-                  detail: "eol",
-                },
-              ],
-            },
-          },
-        ],
-      },
-    ],
-  });
-  assert.equal(deps.length, 1);
-  assert.equal(deps[0]?.reposAfectados, 2);
-  assert.equal(deps[0]?.kind, "eol");
 });
 
 test("CVE transversal agrupa por id y cuenta repos", () => {

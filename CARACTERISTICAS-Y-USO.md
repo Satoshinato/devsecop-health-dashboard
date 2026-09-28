@@ -4,7 +4,7 @@ Repositorio: [devsecop-health-dashboard](https://dev.azure.com/accusystechnology
 Copia local: `C:\Users\lautaro.acosta\.cursor\devsecop-health-dashboard`  
 Rama: `main` (commit `808fc19`).
 
-Tablero estático de **deuda técnica**, **adopción de SonarQube Community** (`https://sonarqube.shared.accusys.com.ar`), **dependencias en fin de soporte** ([Dependency Health](https://renovate.shared.accusys.com.ar)) y **Trivy** (imágenes de contenedor) sobre **13 proyectos** de Azure DevOps. La POC de Fase 1 es **Gema - Ophir**. El inventario de repos se sincroniza desde Dependency Health (`npm run scan:inventario`); es un piso (solo repos con dependencias detectadas).
+Tablero estático de **deuda técnica**, **adopción de SonarQube Community** (`https://sonarqube.shared.accusys.com.ar`) y **Trivy** (imágenes de contenedor) sobre **13 proyectos** de Azure DevOps. La POC de Fase 1 es **Gema - Ophir**. El inventario de repos sale de `config/projects.yml`; con PAT, `fetchInventario` completa repos desde Azure DevOps.
 
 ---
 
@@ -14,7 +14,6 @@ Da una vista ejecutiva y por proyecto de:
 
 - Cuántos repos tienen proyecto en SonarQube (adopción).
 - Cuántos repos que publican imagen tienen scan Trivy.
-- Dependencias en fin de soporte o deprecadas por repo (Dependency Health / Renovate).
 - Deuda técnica (minutos `sqale_index` → días de jornada de 8 h).
 - Bugs, vulnerabilidades, hotspots y Quality Gate.
 - CVE por severidad, imágenes base con más impacto y CVE transversales (mismo CVE en más de un repo).
@@ -75,14 +74,13 @@ Organización AzDO: `accusystechnology`. SonarQube Community: `https://sonarqube
 | hades | Mep SML - Hades | Joshua García | No |
 | poseidon | Mep Contingencia - Poseidón | Lucas Gauna | No |
 
-Los `sonarProjectKey` de Gema pueden ser placeholders: el colector las resuelve contra Community (`api/components/search`). El resto de proyectos tiene `sonarProjectKey: null` (Fase 1). Los nombres de repo salen de Dependency Health (`npm run scan:inventario`); cuando llegue el PAT de Azure DevOps, `fetchInventario` completa repos que Renovate no ve.
+Los `sonarProjectKey` de Gema pueden ser placeholders: el colector las resuelve contra Community (`api/components/search`). El resto de proyectos tiene `sonarProjectKey: null` (Fase 1). Con PAT, `fetchInventario` completa repos desde Azure DevOps.
 
 ### Colector
 
-1. **Inventario** (`config/projects.yml` + opcional `collector/azdo.ts`): lista repos desde YAML o Azure DevOps. Sincronización sin PAT: `npm run scan:inventario` lee `https://renovate.shared.accusys.com.ar/api/data/dashboard`.
-2. **Dependency Health** (`collector/renovate.ts`): enriquece cada repo con `renovate` (EOL, deprecadas, gestor). No requiere credenciales. Host `RENOVATE_HOST` (default `https://renovate.shared.accusys.com.ar`).
-3. **SonarQube Community** (`collector/sonar.ts`): catálogo TRK + `api/measures/component`. Requiere `SONAR_TOKEN` y `SONAR_ORG`.
-4. **Trivy** (`collector/trivy.ts`): requiere `AZDO_PAT`. Baja el attachment `JSON_RESULT` del **último build completado** de cada definición cuyo nombre termina en `-pr` o `-build`. Guarda `trivyPr` y `trivyBuild` por repo; los KPIs ejecutivos usan build si existe (`trivyBuild ?? trivyPr`).
+1. **Inventario** (`config/projects.yml` + opcional `collector/azdo.ts`): lista repos desde YAML o Azure DevOps.
+2. **SonarQube Community** (`collector/sonar.ts`): catálogo TRK + `api/measures/component`. Requiere `SONAR_TOKEN` y `SONAR_ORG`.
+3. **Trivy** (`collector/trivy.ts`): requiere `AZDO_PAT`. Baja el attachment `JSON_RESULT` del **último build completado** de cada definición cuyo nombre termina en `-pr` o `-build`. Guarda `trivyPr` y `trivyBuild` por repo; los KPIs ejecutivos usan build si existe (`trivyBuild ?? trivyPr`).
 
 ### Contrato de snapshot
 
@@ -93,13 +91,11 @@ Archivos `data/scans/scan-YYYY-MM-DD.json`:
   "fecha": "2026-09-23",
   "organizacionAzdo": "accusystechnology",
   "organizacionSonar": "accusys",
-  "renovateScanDate": "2026-09-16",
-  "renovatePipelineUrl": "https://dev.azure.com/.../buildId=...",
   "projects": [ { "key", "name", "azdoProject", "leader", "reposTotal", "esPoc", "repos": [...] } ]
 }
 ```
 
-Cada repo: `publicaImagen`, `sonarProjectName` / `sonarProjectKey`, `sonar` (métricas o `null`), `trivyPr` / `trivyBuild` (lecturas separadas de pipelines PR y build), `trivy` (alias `trivyBuild ?? trivyPr`), `renovate` (EOL/deprecadas o `null`).
+Cada repo: `publicaImagen`, `sonarProjectName` / `sonarProjectKey`, `sonar` (métricas o `null`), `trivyPr` / `trivyBuild` (lecturas separadas de pipelines PR y build), `trivy` (alias `trivyBuild ?? trivyPr`).
 
 ---
 
@@ -126,8 +122,7 @@ npm run build          # sale la carpeta out/
 | Comando | Qué hace |
 | --- | --- |
 | `npm run scan:fixture` | Inventario desde `config/projects.yml` + métricas **plausibles** de Gema. No llama a Sonar ni a AzDO. Sirve para build y demo local. |
-| `npm run scan:inventario` | Sincroniza `config/projects.yml` con Dependency Health (sin PAT). |
-| `npm run scan` | Sin credenciales: YAML + Renovate. Con credenciales: suma Sonar y/o AzDO (Trivy). |
+| `npm run scan` | Sin credenciales: inventario YAML. Con credenciales: suma Sonar y/o AzDO (Trivy). |
 
 `npm run scan` ya no exige PAT: escribe snapshot con lo que tenga disponible.
 
@@ -140,7 +135,6 @@ Fecha opcional: `npx tsx collector/main.ts --from-fixture` o `npx tsx collector/
 | `SONAR_TOKEN` | User token de SonarQube Community (My Account → Security) |
 | `SONAR_ORG` | Sigue siendo obligatorio para arrancar (`accusys`); no va en la URL de Community |
 | `SONAR_HOST` | Opcional. Default `https://sonarqube.shared.accusys.com.ar` |
-| `RENOVATE_HOST` | Opcional. Default `https://renovate.shared.accusys.com.ar` (sin token) |
 | `AZDO_ORG` | Organización Azure DevOps (`accusystechnology`) |
 | `AZDO_PAT` | PAT de lectura: **Code + Build + Project and team** |
 

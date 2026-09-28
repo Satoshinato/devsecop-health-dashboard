@@ -1,7 +1,6 @@
 import type {
   AzdoProject,
   Repo,
-  RenovateFinding,
   ScanSnapshot,
   SeveridadCve,
   TrivyFinding,
@@ -38,9 +37,6 @@ export interface FilaProyecto {
   hotspots: number;
   gatesOk: number;
   gatesError: number;
-  dependenciasEol: number;
-  dependenciasDeprecadas: number;
-  reposConRenovate: number;
   ultimoAnalisis: string | null;
   historial: number[];
   repos: Repo[];
@@ -70,8 +66,6 @@ export interface ResumenGlobal {
   deltaRepos: number;
   deltaCriticos: number;
   deltaDeudaDias: number;
-  dependenciasEol: number;
-  dependenciasDeprecadas: number;
 }
 
 export interface ScanHistorico {
@@ -81,8 +75,6 @@ export interface ScanHistorico {
   criticos: number;
   deudaDias: number;
   cobertura: number;
-  eol: number;
-  deprecated: number;
 }
 
 export interface ImagenBaseConImpacto {
@@ -103,15 +95,6 @@ export interface CveTransversal {
   severidad: SeveridadCve;
   reposAfectados: number;
   versionCorregida: string | null;
-}
-
-export interface DependenciaTransversal {
-  depName: string;
-  version: string;
-  source: string;
-  kind: "eol" | "deprecated";
-  reposAfectados: number;
-  detail: string;
 }
 
 export function porcentaje(parte: number, total: number): number {
@@ -202,7 +185,6 @@ export function filaProyecto(proyecto: AzdoProject, historial: ScanSnapshot[] = 
   const conSonarMedidas = proyecto.repos.filter(r => r.sonar !== null);
   const conKey = proyecto.repos.filter(r => r.sonarProjectKey);
   const conTrivy = proyecto.repos.filter(r => tieneTrivy(r));
-  const conRenovate = proyecto.repos.filter(r => r.renovate);
   const ncloc = conSonarMedidas.reduce((s, r) => s + r.sonar!.ncloc, 0);
   const deudaMin = conSonarMedidas.reduce((s, r) => s + r.sonar!.sqaleIndex, 0);
   const ultimas = conSonarMedidas.map(r => r.sonar!.lastAnalysis).sort();
@@ -235,9 +217,6 @@ export function filaProyecto(proyecto: AzdoProject, historial: ScanSnapshot[] = 
     hotspots: conSonarMedidas.reduce((s, r) => s + r.sonar!.hotspotsToReview, 0),
     gatesOk: conSonarMedidas.filter(r => r.sonar!.alertStatus === "OK").length,
     gatesError: conSonarMedidas.filter(r => r.sonar!.alertStatus !== "OK").length,
-    dependenciasEol: conRenovate.reduce((s, r) => s + (r.renovate?.eol ?? 0), 0),
-    dependenciasDeprecadas: conRenovate.reduce((s, r) => s + (r.renovate?.deprecated ?? 0), 0),
-    reposConRenovate: conRenovate.length,
     ultimoAnalisis: ultimas.length > 0 ? ultimas[ultimas.length - 1] : null,
     historial: historialProyecto(proyecto.key, historial),
     repos: proyecto.repos,
@@ -270,7 +249,6 @@ export function resumenDeScan(scan: ScanSnapshot): Omit<
   const reposConImagenTotal = filas.reduce((s, f) => s + f.reposConImagen, 0);
   const reposConTrivy = todosLosRepos.filter(r => tieneTrivy(r)).length;
   const deudaMin = conSonar.reduce((s, r) => s + r.sonar!.sqaleIndex, 0);
-  const conRenovate = todosLosRepos.filter(r => r.renovate);
 
   return {
     proyectosTotal: filas.length,
@@ -292,8 +270,6 @@ export function resumenDeScan(scan: ScanSnapshot): Omit<
     gatesOk: filas.reduce((s, f) => s + f.gatesOk, 0),
     gatesError: filas.reduce((s, f) => s + f.gatesError, 0),
     ncloc: conSonar.reduce((s, r) => s + r.sonar!.ncloc, 0),
-    dependenciasEol: conRenovate.reduce((s, r) => s + (r.renovate?.eol ?? 0), 0),
-    dependenciasDeprecadas: conRenovate.reduce((s, r) => s + (r.renovate?.deprecated ?? 0), 0),
   };
 }
 
@@ -307,8 +283,6 @@ export function historialScans(scans: ScanSnapshot[]): ScanHistorico[] {
       criticos: r.criticos,
       deudaDias: r.deudaDias,
       cobertura: r.cobertura,
-      eol: r.dependenciasEol,
-      deprecated: r.dependenciasDeprecadas,
     };
   });
 }
@@ -429,56 +403,6 @@ export function cvesTransversales(scan: ScanSnapshot): CveTransversal[] {
       versionCorregida: e.finding.fixedVersion,
     }))
     .sort((a, b) => b.reposAfectados - a.reposAfectados || a.cve.localeCompare(b.cve));
-}
-
-function hallazgosRenovateDe(scan: ScanSnapshot): {
-  repo: Repo;
-  project: AzdoProject;
-  finding: RenovateFinding;
-}[] {
-  const out: { repo: Repo; project: AzdoProject; finding: RenovateFinding }[] = [];
-  for (const project of scan.projects) {
-    for (const repo of project.repos) {
-      if (!repo.renovate) continue;
-      for (const finding of repo.renovate.findings) {
-        out.push({ repo, project, finding });
-      }
-    }
-  }
-  return out;
-}
-
-export function dependenciasTransversales(scan: ScanSnapshot): DependenciaTransversal[] {
-  const porDep = new Map<
-    string,
-    { finding: RenovateFinding; repos: Set<string> }
-  >();
-  for (const { repo, project, finding } of hallazgosRenovateDe(scan)) {
-    const key = `${finding.kind}|${finding.depName}|${finding.version}|${finding.source}`;
-    let entry = porDep.get(key);
-    if (!entry) {
-      entry = { finding, repos: new Set() };
-      porDep.set(key, entry);
-    }
-    entry.repos.add(`${project.key}/${repo.name}`);
-  }
-
-  return [...porDep.values()]
-    .filter(e => e.repos.size > 1)
-    .map(e => ({
-      depName: e.finding.depName,
-      version: e.finding.version,
-      source: e.finding.source,
-      kind: e.finding.kind,
-      reposAfectados: e.repos.size,
-      detail: e.finding.detail,
-    }))
-    .sort(
-      (a, b) =>
-        b.reposAfectados - a.reposAfectados ||
-        a.depName.localeCompare(b.depName) ||
-        a.kind.localeCompare(b.kind),
-    );
 }
 
 export function etiquetaFecha(iso: string): string {
