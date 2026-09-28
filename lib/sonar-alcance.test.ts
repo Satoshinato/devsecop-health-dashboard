@@ -5,7 +5,7 @@ import {
   aplicaSonarPorNombre,
   esNombreCarpetaDevops,
   reposEnAlcanceSonar,
-} from "./sonar-alcance.ts";
+} from "./sonar-alcance";
 
 test("aplicaSonarPorNombre: ms y mf en alcance", () => {
   assert.equal(aplicaSonarPorNombre("ms-ophir-api"), true);
