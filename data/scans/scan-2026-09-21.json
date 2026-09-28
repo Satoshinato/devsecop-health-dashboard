@@ -17,6 +17,8 @@
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
+          "trivyPr": null,
+          "trivyBuild": null,
           "trivy": null,
           "renovate": null
         },
@@ -26,6 +28,8 @@
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
+          "trivyPr": null,
+          "trivyBuild": null,
           "trivy": null,
           "renovate": null
         },
@@ -50,6 +54,8 @@
             "alertStatus": "ERROR",
             "lastAnalysis": "2026-09-21"
           },
+          "trivyPr": null,
+          "trivyBuild": null,
           "trivy": {
             "image": "accusystechnology/mf-ophir-migrador-app:0.4.2-a91c3f01",
             "baseImage": "node:20-alpine",
@@ -101,15 +107,42 @@
             "alertStatus": "OK",
             "lastAnalysis": "2026-09-21"
           },
-          "trivy": {
-            "image": "accusystechnology/ms-ophir-api:0.0.1-75ff6212",
+          "trivyPr": {
+            "image": "accusystechnology/ms-ophir-api:0.0.1-pr-75ff6212",
             "baseImage": "eclipse-temurin:17-jre-alpine",
             "critical": 0,
             "high": 0,
-            "medium": 6,
-            "low": 3,
-            "fixable": 6,
-            "unfixable": 3,
+            "medium": 2,
+            "low": 1,
+            "fixable": 2,
+            "unfixable": 1,
+            "pipeline": "ms-ophir-api-pr",
+            "fuente": "pr",
+            "rama": "feature/trivy-demo",
+            "findings": [
+              {
+                "id": "CVE-2024-38816",
+                "package": "spring-webmvc",
+                "version": "6.1.4",
+                "severity": "MEDIA",
+                "fixedVersion": "6.1.12"
+              }
+            ],
+            "scanDate": "2026-09-21",
+            "buildId": "20260921.pr"
+          },
+          "trivyBuild": {
+            "image": "accusystechnology/ms-ophir-api:0.0.1-75ff6212",
+            "baseImage": "eclipse-temurin:17-jre-alpine",
+            "critical": 0,
+            "high": 1,
+            "medium": 4,
+            "low": 1,
+            "fixable": 5,
+            "unfixable": 1,
+            "pipeline": "ms-ophir-api-build",
+            "fuente": "build",
+            "rama": "master",
             "findings": [
               {
                 "id": "CVE-2024-38816",
@@ -124,10 +157,55 @@
                 "version": "3.0.13",
                 "severity": "MEDIA",
                 "fixedVersion": "3.0.15"
+              },
+              {
+                "id": "CVE-2024-34750",
+                "package": "zlib",
+                "version": "1.3",
+                "severity": "ALTA",
+                "fixedVersion": null
               }
             ],
             "scanDate": "2026-09-21",
-            "buildId": "20260921.1"
+            "buildId": "20260921.build"
+          },
+          "trivy": {
+            "image": "accusystechnology/ms-ophir-api:0.0.1-75ff6212",
+            "baseImage": "eclipse-temurin:17-jre-alpine",
+            "critical": 0,
+            "high": 1,
+            "medium": 4,
+            "low": 1,
+            "fixable": 5,
+            "unfixable": 1,
+            "pipeline": "ms-ophir-api-build",
+            "fuente": "build",
+            "rama": "master",
+            "findings": [
+              {
+                "id": "CVE-2024-38816",
+                "package": "spring-webmvc",
+                "version": "6.1.4",
+                "severity": "MEDIA",
+                "fixedVersion": "6.1.12"
+              },
+              {
+                "id": "CVE-2024-22262",
+                "package": "openssl",
+                "version": "3.0.13",
+                "severity": "MEDIA",
+                "fixedVersion": "3.0.15"
+              },
+              {
+                "id": "CVE-2024-34750",
+                "package": "zlib",
+                "version": "1.3",
+                "severity": "ALTA",
+                "fixedVersion": null
+              }
+            ],
+            "scanDate": "2026-09-21",
+            "buildId": "20260921.build"
           },
           "renovate": null
         },
@@ -152,6 +230,8 @@
             "alertStatus": "ERROR",
             "lastAnalysis": "2026-09-21"
           },
+          "trivyPr": null,
+          "trivyBuild": null,
           "trivy": {
             "image": "accusystechnology/ms-ophir-app:2.1.0-c47ab920",
             "baseImage": "eclipse-temurin:17-jre-alpine",
@@ -210,6 +290,8 @@
             "alertStatus": "OK",
             "lastAnalysis": "2026-09-21"
           },
+          "trivyPr": null,
+          "trivyBuild": null,
           "trivy": null,
           "renovate": null
         },
@@ -219,6 +301,8 @@
           "sonarProjectName": "gema_ms-ophir-atm-ce-api",
           "sonarProjectKey": "gema_ms-ophir-atm-ce-api_7b06c3d9-52e1-4870-9af3-4c8d1e07b2a6",
           "sonar": null,
+          "trivyPr": null,
+          "trivyBuild": null,
           "trivy": null,
           "renovate": null
         },
@@ -228,6 +312,8 @@
           "sonarProjectName": "gema_ms-ophir-caja-api",
           "sonarProjectKey": "gema_ms-ophir-caja-api_e18d5a40-7f29-4c13-b0d6-93a2f5c81e7b",
           "sonar": null,
+          "trivyPr": null,
+          "trivyBuild": null,
           "trivy": null,
           "renovate": null
         },
@@ -237,6 +323,8 @@
           "sonarProjectName": "gema_ms-ophir-calendario-api",
           "sonarProjectKey": "gema_ms-ophir-calendario-api_c3a91b70-2e64-4f18-9d05-8a17e42c6b90",
           "sonar": null,
+          "trivyPr": null,
+          "trivyBuild": null,
           "trivy": null,
           "renovate": null
         },
@@ -246,6 +334,8 @@
           "sonarProjectName": "gema_ms-ophir-costos-api",
           "sonarProjectKey": "gema_ms-ophir-costos-api_1f80d4e6-5b29-4c71-a3e8-06d92f15b847",
           "sonar": null,
+          "trivyPr": null,
+          "trivyBuild": null,
           "trivy": null,
           "renovate": null
         },
@@ -255,6 +345,8 @@
           "sonarProjectName": "gema_ms-ophir-geolocation-api",
           "sonarProjectKey": "gema_ms-ophir-geolocation-api_4a16c8b2-7d03-49e5-b1f4-2c90a63e5d18",
           "sonar": null,
+          "trivyPr": null,
+          "trivyBuild": null,
           "trivy": null,
           "renovate": null
         },
@@ -264,6 +356,8 @@
           "sonarProjectName": "gema_ms-ophir-learning-api",
           "sonarProjectKey": "gema_ms-ophir-learning-api_8e27f1a4-0c56-42b9-93d7-15a80e4c6f32",
           "sonar": null,
+          "trivyPr": null,
+          "trivyBuild": null,
           "trivy": null,
           "renovate": null
         },
@@ -273,6 +367,8 @@
           "sonarProjectName": "gema_ms-ophir-messaging-api",
           "sonarProjectKey": "gema_ms-ophir-messaging-api_b90d35c1-6a48-4e12-87f0-3d15b92c7a64",
           "sonar": null,
+          "trivyPr": null,
+          "trivyBuild": null,
           "trivy": null,
           "renovate": null
         },
@@ -282,6 +378,8 @@
           "sonarProjectName": "gema_ms-ophir-migrador-api",
           "sonarProjectKey": "gema_ms-ophir-migrador-api_2c48e9d7-1b50-4a63-9c18-7e04f26d5b91",
           "sonar": null,
+          "trivyPr": null,
+          "trivyBuild": null,
           "trivy": null,
           "renovate": null
         },
@@ -291,6 +389,8 @@
           "sonarProjectName": "gema_ms-ophir-proyecciones-api",
           "sonarProjectKey": "gema_ms-ophir-proyecciones-api_6d15a0b8-3c72-4f91-a6e4-09b83d27c150",
           "sonar": null,
+          "trivyPr": null,
+          "trivyBuild": null,
           "trivy": null,
           "renovate": null
         },
@@ -300,6 +400,8 @@
           "sonarProjectName": "gema_ms-ophir-remesa-api",
           "sonarProjectKey": "gema_ms-ophir-remesa-api_9f31c6e2-8d14-45a0-b2c7-4e68a01d93f5",
           "sonar": null,
+          "trivyPr": null,
+          "trivyBuild": null,
           "trivy": null,
           "renovate": null
         },
@@ -309,6 +411,8 @@
           "sonarProjectName": "gema_ms-ophir-reportes-api",
           "sonarProjectKey": "gema_ms-ophir-reportes-api_0a74b5d3-9e21-48c6-81f2-5d07c39a16e8",
           "sonar": null,
+          "trivyPr": null,
+          "trivyBuild": null,
           "trivy": null,
           "renovate": null
         },
@@ -318,6 +422,8 @@
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
+          "trivyPr": null,
+          "trivyBuild": null,
           "trivy": null,
           "renovate": null
         }
@@ -337,6 +443,8 @@
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
+          "trivyPr": null,
+          "trivyBuild": null,
           "trivy": null,
           "renovate": null
         },
@@ -346,6 +454,8 @@
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
+          "trivyPr": null,
+          "trivyBuild": null,
           "trivy": null,
           "renovate": null
         },
@@ -355,6 +465,8 @@
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
+          "trivyPr": null,
+          "trivyBuild": null,
           "trivy": null,
           "renovate": null
         },
@@ -364,6 +476,8 @@
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
+          "trivyPr": null,
+          "trivyBuild": null,
           "trivy": null,
           "renovate": null
         },
@@ -373,6 +487,8 @@
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
+          "trivyPr": null,
+          "trivyBuild": null,
           "trivy": null,
           "renovate": null
         },
@@ -382,6 +498,8 @@
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
+          "trivyPr": null,
+          "trivyBuild": null,
           "trivy": null,
           "renovate": null
         },
@@ -391,6 +509,8 @@
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
+          "trivyPr": null,
+          "trivyBuild": null,
           "trivy": null,
           "renovate": null
         },
@@ -400,6 +520,8 @@
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
+          "trivyPr": null,
+          "trivyBuild": null,
           "trivy": null,
           "renovate": null
         },
@@ -409,6 +531,8 @@
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
+          "trivyPr": null,
+          "trivyBuild": null,
           "trivy": null,
           "renovate": null
         },
@@ -418,6 +542,8 @@
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
+          "trivyPr": null,
+          "trivyBuild": null,
           "trivy": null,
           "renovate": null
         },
@@ -427,6 +553,8 @@
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
+          "trivyPr": null,
+          "trivyBuild": null,
           "trivy": null,
           "renovate": null
         },
@@ -436,6 +564,8 @@
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
+          "trivyPr": null,
+          "trivyBuild": null,
           "trivy": null,
           "renovate": null
         },
@@ -445,6 +575,8 @@
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
+          "trivyPr": null,
+          "trivyBuild": null,
           "trivy": null,
           "renovate": null
         },
@@ -454,6 +586,8 @@
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
+          "trivyPr": null,
+          "trivyBuild": null,
           "trivy": null,
           "renovate": null
         },
@@ -463,6 +597,8 @@
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
+          "trivyPr": null,
+          "trivyBuild": null,
           "trivy": null,
           "renovate": null
         },
@@ -472,6 +608,8 @@
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
+          "trivyPr": null,
+          "trivyBuild": null,
           "trivy": null,
           "renovate": null
         },
@@ -481,6 +619,8 @@
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
+          "trivyPr": null,
+          "trivyBuild": null,
           "trivy": null,
           "renovate": null
         },
@@ -490,6 +630,8 @@
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
+          "trivyPr": null,
+          "trivyBuild": null,
           "trivy": null,
           "renovate": null
         },
@@ -499,6 +641,8 @@
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
+          "trivyPr": null,
+          "trivyBuild": null,
           "trivy": null,
           "renovate": null
         },
@@ -508,6 +652,8 @@
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
+          "trivyPr": null,
+          "trivyBuild": null,
           "trivy": null,
           "renovate": null
         },
@@ -517,6 +663,8 @@
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
+          "trivyPr": null,
+          "trivyBuild": null,
           "trivy": null,
           "renovate": null
         },
@@ -526,6 +674,8 @@
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
+          "trivyPr": null,
+          "trivyBuild": null,
           "trivy": null,
           "renovate": null
         },
@@ -535,6 +685,8 @@
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
+          "trivyPr": null,
+          "trivyBuild": null,
           "trivy": null,
           "renovate": null
         },
@@ -544,6 +696,8 @@
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
+          "trivyPr": null,
+          "trivyBuild": null,
           "trivy": null,
           "renovate": null
         }
@@ -563,6 +717,8 @@
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
+          "trivyPr": null,
+          "trivyBuild": null,
           "trivy": null,
           "renovate": null
         },
@@ -572,6 +728,8 @@
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
+          "trivyPr": null,
+          "trivyBuild": null,
           "trivy": null,
           "renovate": null
         },
@@ -581,6 +739,8 @@
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
+          "trivyPr": null,
+          "trivyBuild": null,
           "trivy": null,
           "renovate": null
         },
@@ -590,6 +750,8 @@
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
+          "trivyPr": null,
+          "trivyBuild": null,
           "trivy": null,
           "renovate": null
         },
@@ -599,6 +761,8 @@
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
+          "trivyPr": null,
+          "trivyBuild": null,
           "trivy": null,
           "renovate": null
         },
@@ -608,6 +772,8 @@
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
+          "trivyPr": null,
+          "trivyBuild": null,
           "trivy": null,
           "renovate": null
         },
@@ -617,6 +783,8 @@
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
+          "trivyPr": null,
+          "trivyBuild": null,
           "trivy": null,
           "renovate": null
         },
@@ -626,6 +794,8 @@
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
+          "trivyPr": null,
+          "trivyBuild": null,
           "trivy": null,
           "renovate": null
         },
@@ -635,6 +805,8 @@
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
+          "trivyPr": null,
+          "trivyBuild": null,
           "trivy": null,
           "renovate": null
         },
@@ -644,6 +816,8 @@
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
+          "trivyPr": null,
+          "trivyBuild": null,
           "trivy": null,
           "renovate": null
         },
@@ -653,6 +827,8 @@
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
+          "trivyPr": null,
+          "trivyBuild": null,
           "trivy": null,
           "renovate": null
         },
@@ -662,6 +838,8 @@
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
+          "trivyPr": null,
+          "trivyBuild": null,
           "trivy": null,
           "renovate": null
         }
@@ -681,6 +859,8 @@
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
+          "trivyPr": null,
+          "trivyBuild": null,
           "trivy": null,
           "renovate": null
         },
@@ -690,6 +870,8 @@
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
+          "trivyPr": null,
+          "trivyBuild": null,
           "trivy": null,
           "renovate": null
         },
@@ -699,6 +881,8 @@
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
+          "trivyPr": null,
+          "trivyBuild": null,
           "trivy": null,
           "renovate": null
         },
@@ -708,6 +892,8 @@
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
+          "trivyPr": null,
+          "trivyBuild": null,
           "trivy": null,
           "renovate": null
         },
@@ -717,6 +903,8 @@
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
+          "trivyPr": null,
+          "trivyBuild": null,
           "trivy": null,
           "renovate": null
         },
@@ -726,6 +914,8 @@
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
+          "trivyPr": null,
+          "trivyBuild": null,
           "trivy": null,
           "renovate": null
         },
@@ -735,6 +925,8 @@
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
+          "trivyPr": null,
+          "trivyBuild": null,
           "trivy": null,
           "renovate": null
         },
@@ -744,6 +936,8 @@
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
+          "trivyPr": null,
+          "trivyBuild": null,
           "trivy": null,
           "renovate": null
         },
@@ -753,6 +947,8 @@
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
+          "trivyPr": null,
+          "trivyBuild": null,
           "trivy": null,
           "renovate": null
         },
@@ -762,6 +958,8 @@
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
+          "trivyPr": null,
+          "trivyBuild": null,
           "trivy": null,
           "renovate": null
         },
@@ -771,6 +969,8 @@
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
+          "trivyPr": null,
+          "trivyBuild": null,
           "trivy": null,
           "renovate": null
         }
@@ -790,6 +990,8 @@
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
+          "trivyPr": null,
+          "trivyBuild": null,
           "trivy": null,
           "renovate": null
         },
@@ -799,6 +1001,8 @@
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
+          "trivyPr": null,
+          "trivyBuild": null,
           "trivy": null,
           "renovate": null
         },
@@ -808,6 +1012,8 @@
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
+          "trivyPr": null,
+          "trivyBuild": null,
           "trivy": null,
           "renovate": null
         }
@@ -827,6 +1033,8 @@
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
+          "trivyPr": null,
+          "trivyBuild": null,
           "trivy": null,
           "renovate": null
         },
@@ -836,6 +1044,8 @@
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
+          "trivyPr": null,
+          "trivyBuild": null,
           "trivy": null,
           "renovate": null
         }
@@ -855,6 +1065,8 @@
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
+          "trivyPr": null,
+          "trivyBuild": null,
           "trivy": null,
           "renovate": null
         },
@@ -864,6 +1076,8 @@
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
+          "trivyPr": null,
+          "trivyBuild": null,
           "trivy": null,
           "renovate": null
         },
@@ -873,6 +1087,8 @@
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
+          "trivyPr": null,
+          "trivyBuild": null,
           "trivy": null,
           "renovate": null
         },
@@ -882,6 +1098,8 @@
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
+          "trivyPr": null,
+          "trivyBuild": null,
           "trivy": null,
           "renovate": null
         }
@@ -901,6 +1119,8 @@
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
+          "trivyPr": null,
+          "trivyBuild": null,
           "trivy": null,
           "renovate": null
         },
@@ -910,6 +1130,8 @@
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
+          "trivyPr": null,
+          "trivyBuild": null,
           "trivy": null,
           "renovate": null
         },
@@ -919,6 +1141,8 @@
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
+          "trivyPr": null,
+          "trivyBuild": null,
           "trivy": null,
           "renovate": null
         }
@@ -938,6 +1162,8 @@
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
+          "trivyPr": null,
+          "trivyBuild": null,
           "trivy": null,
           "renovate": null
         },
@@ -947,6 +1173,8 @@
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
+          "trivyPr": null,
+          "trivyBuild": null,
           "trivy": null,
           "renovate": null
         },
@@ -956,6 +1184,8 @@
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
+          "trivyPr": null,
+          "trivyBuild": null,
           "trivy": null,
           "renovate": null
         }
@@ -975,6 +1205,8 @@
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
+          "trivyPr": null,
+          "trivyBuild": null,
           "trivy": null,
           "renovate": null
         },
@@ -984,6 +1216,8 @@
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
+          "trivyPr": null,
+          "trivyBuild": null,
           "trivy": null,
           "renovate": null
         }
@@ -1003,6 +1237,8 @@
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
+          "trivyPr": null,
+          "trivyBuild": null,
           "trivy": null,
           "renovate": null
         },
@@ -1012,6 +1248,8 @@
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
+          "trivyPr": null,
+          "trivyBuild": null,
           "trivy": null,
           "renovate": null
         }
@@ -1031,6 +1269,8 @@
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
+          "trivyPr": null,
+          "trivyBuild": null,
           "trivy": null,
           "renovate": null
         },
@@ -1040,6 +1280,8 @@
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
+          "trivyPr": null,
+          "trivyBuild": null,
           "trivy": null,
           "renovate": null
         }
@@ -1059,6 +1301,8 @@
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
+          "trivyPr": null,
+          "trivyBuild": null,
           "trivy": null,
           "renovate": null
         },
@@ -1068,6 +1312,8 @@
           "sonarProjectName": null,
           "sonarProjectKey": null,
           "sonar": null,
+          "trivyPr": null,
+          "trivyBuild": null,
           "trivy": null,
           "renovate": null
         }

@@ -49,6 +49,8 @@ export async function fetchInventario(opts: {
         sonarProjectName: cfg?.sonarProjectName ?? null,
         sonarProjectKey: cfg?.sonarProjectKey ?? null,
         sonar: null,
+        trivyPr: null,
+        trivyBuild: null,
         trivy: null,
         renovate: null,
       };

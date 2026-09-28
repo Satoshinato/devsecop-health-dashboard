@@ -15,7 +15,6 @@ type Columna =
   | "deudaDias"
   | "cobertura"
   | "criticos"
-  | "dependenciasEol"
   | "ultimoAnalisis";
 
 type CriterioBusqueda = "proyecto" | "referente";
@@ -38,11 +37,10 @@ const COLUMNAS_COMPLETAS: { key: Columna; label: string; align: string; ayuda?: 
   { key: "deudaDias", label: "Deuda total", align: "text-right", ayuda: "sqale_index convertido a días de 8 h" },
   { key: "cobertura", label: "Cobertura", align: "text-right" },
   { key: "criticos", label: "Críticos Trivy", align: "text-right" },
-  { key: "dependenciasEol", label: "EOL Renovate", align: "text-right", ayuda: "Dependencias en fin de soporte (Dependency Health)" },
   { key: "ultimoAnalisis", label: "Último análisis", align: "text-right" },
 ];
 
-const COLUMNAS_COMPACTAS: Columna[] = ["nombre", "reposConSonar", "adopcionSonar", "criticos", "dependenciasEol"];
+const COLUMNAS_COMPACTAS: Columna[] = ["nombre", "reposConSonar", "adopcionSonar", "criticos"];
 
 function valorOrden(fila: FilaProyecto, columna: Columna): string | number {
   if (columna === "nombre") return fila.nombre.toLowerCase();
@@ -284,22 +282,6 @@ export default function ProjectsTable({
                         }
                       >
                         {fila.criticos}
-                      </span>
-                    )}
-                  </td>
-
-                  <td className="py-2 pr-3 text-right">
-                    {fila.reposConRenovate === 0 ? (
-                      <span className="text-slate-300">—</span>
-                    ) : (
-                      <span
-                        className={
-                          fila.dependenciasEol > 0
-                            ? "font-semibold text-rose-600"
-                            : "text-slate-600"
-                        }
-                      >
-                        {fila.dependenciasEol}
                       </span>
                     )}
                   </td>

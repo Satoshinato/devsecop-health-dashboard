@@ -10,9 +10,13 @@ import {
   filaProyecto,
   imagenesBasePorImpacto,
   impactoImagen,
+  lecturasTrivy,
   MINUTOS_POR_DIA,
   resumenDeScan,
+  tieneTrivy,
+  trivyPrincipal,
 } from "./metrics.ts";
+import type { Repo, TrivyMetrics } from "./snapshot.ts";
 import { loadProjectsConfig } from "../collector/config.ts";
 
 const latest = FIXTURE_DATES[FIXTURE_DATES.length - 1];
@@ -40,10 +44,84 @@ test("adopción Sonar de Gema = repos con sonarProjectKey / reposTotal", () => {
 
 test("adopción Trivy usa solo publicaImagen como denominador", () => {
   const conImagen = gema.repos.filter(r => r.publicaImagen).length;
-  const conTrivy = gema.repos.filter(r => r.trivy !== null).length;
+  const conTrivy = gema.repos.filter(r => tieneTrivy(r)).length;
   assert.equal(conTrivy, 5);
   assert.equal(adopcionTrivyDe(gema), Math.round((conTrivy / conImagen) * 100));
   assert.equal(fila.adopcionTrivy, Math.round((conTrivy / conImagen) * 100));
+});
+
+test("trivyPrincipal prefiere build sobre pr", () => {
+  const base: Omit<TrivyMetrics, "critical" | "high" | "medium" | "low"> = {
+    image: "img",
+    baseImage: "base",
+    fixable: 0,
+    unfixable: 0,
+    buildId: "1",
+    scanDate: "2026-09-23",
+    findings: [],
+  };
+  const repo: Repo = {
+    name: "demo",
+    publicaImagen: true,
+    sonarProjectName: null,
+    sonarProjectKey: null,
+    sonar: null,
+    renovate: null,
+    trivyPr: { ...base, critical: 1, high: 0, medium: 0, low: 0, fuente: "pr" },
+    trivyBuild: { ...base, critical: 0, high: 2, medium: 0, low: 0, fuente: "build" },
+    trivy: null,
+  };
+  assert.equal(trivyPrincipal(repo)?.high, 2);
+  assert.equal(trivyPrincipal(repo)?.critical, 0);
+});
+
+test("tieneTrivy con solo lectura PR", () => {
+  const repo: Repo = {
+    name: "demo",
+    publicaImagen: true,
+    sonarProjectName: null,
+    sonarProjectKey: null,
+    sonar: null,
+    renovate: null,
+    trivyPr: {
+      image: "img",
+      baseImage: "base",
+      critical: 0,
+      high: 0,
+      medium: 1,
+      low: 0,
+      fixable: 0,
+      unfixable: 1,
+      buildId: "1",
+      scanDate: "2026-09-23",
+      findings: [],
+    },
+    trivyBuild: null,
+    trivy: null,
+  };
+  assert.equal(tieneTrivy(repo), true);
+});
+
+test("ms-ophir-api expone lecturas PR y build en fixture", () => {
+  const ophir = gema.repos.find(r => r.name === "ms-ophir-api");
+  assert.ok(ophir);
+  const lecturas = lecturasTrivy(ophir!);
+  assert.equal(lecturas.legacy, false);
+  assert.ok(lecturas.pr);
+  assert.ok(lecturas.build);
+  assert.equal(lecturas.pr!.pipeline, "ms-ophir-api-pr");
+  assert.equal(lecturas.build!.pipeline, "ms-ophir-api-build");
+  assert.equal(trivyPrincipal(ophir!)!.fuente, "build");
+});
+
+test("KPI de severidad no duplica PR y build del mismo repo", () => {
+  const ophir = gema.repos.find(r => r.name === "ms-ophir-api");
+  assert.ok(ophir);
+  const pr = ophir!.trivyPr!;
+  const build = ophir!.trivyBuild!;
+  assert.equal(pr.high + build.high, 1);
+  assert.equal(trivyPrincipal(ophir!)?.high, build.high);
+  assert.equal(fila.altos, gema.repos.reduce((s, r) => s + (trivyPrincipal(r)?.high ?? 0), 0));
 });
 
 test("deuda días = sqale_index / 480", () => {

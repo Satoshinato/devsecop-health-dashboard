@@ -1,12 +1,21 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { isContainerImageReport, parseTrivyReport, repoNameFromPrDefinition } from "./trivy.ts";
+import {
+  isContainerImageReport,
+  parseTrivyReport,
+  repoNameFromPipelineDefinition,
+  repoNameFromPrDefinition,
+} from "./trivy.ts";
 
 test("ms-ophir-api-pr → repo ms-ophir-api", () => {
-  assert.equal(repoNameFromPrDefinition("ms-ophir-api-pr"), "ms-ophir-api");
-  assert.equal(repoNameFromPrDefinition("mf-ophir-migrador-app-pr"), "mf-ophir-migrador-app");
-  assert.equal(repoNameFromPrDefinition("ms-ophir-api"), null);
-  assert.equal(repoNameFromPrDefinition("ms-ophir-api-build"), null);
+  assert.equal(repoNameFromPipelineDefinition("ms-ophir-api-pr"), "ms-ophir-api");
+  assert.equal(repoNameFromPipelineDefinition("mf-ophir-migrador-app-pr"), "mf-ophir-migrador-app");
+  assert.equal(repoNameFromPipelineDefinition("ms-ophir-api"), null);
+});
+
+test("ms-ophir-api-build → repo ms-ophir-api", () => {
+  assert.equal(repoNameFromPipelineDefinition("ms-ophir-api-build"), "ms-ophir-api");
+  assert.equal(repoNameFromPrDefinition("ms-ophir-api-build"), "ms-ophir-api");
 });
 
 const imageReport = {
@@ -73,4 +82,16 @@ test("parse ignora secretos y reportes que no son container_image", () => {
   assert.equal(metrics!.buildId, "99");
 
   assert.equal(parseTrivyReport(filesystemReport, "fallback", "2026-09-23", "1"), null);
+});
+
+test("parse incluye metadata de pipeline", () => {
+  const metrics = parseTrivyReport(imageReport, "fallback", "2026-09-23", "42", {
+    fuente: "build",
+    pipeline: "ms-ophir-api-build",
+    rama: "master",
+  });
+  assert.ok(metrics);
+  assert.equal(metrics!.fuente, "build");
+  assert.equal(metrics!.pipeline, "ms-ophir-api-build");
+  assert.equal(metrics!.rama, "master");
 });

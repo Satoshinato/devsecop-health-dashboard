@@ -30,6 +30,8 @@ export interface TrivyFinding {
   fixedVersion: string | null;
 }
 
+export type TrivyFuente = "pr" | "build";
+
 export interface TrivyMetrics {
   image: string;
   /** Imagen base para el top transversal (p. ej. eclipse-temurin:17-jre-alpine). */
@@ -43,6 +45,11 @@ export interface TrivyMetrics {
   buildId: string;
   scanDate: string;
   findings: TrivyFinding[];
+  /** Pipeline ADO de origen (p. ej. ms-ophir-api-build). */
+  pipeline?: string;
+  /** Rama del build (p. ej. master). */
+  rama?: string;
+  fuente?: TrivyFuente;
 }
 
 export interface RenovateFinding {
@@ -70,6 +77,11 @@ export interface Repo {
   /** `projectname_repository-name_uuid` */
   sonarProjectKey: string | null;
   sonar: SonarMetrics | null;
+  /** Último scan del pipeline *-pr. */
+  trivyPr?: TrivyMetrics | null;
+  /** Último scan del pipeline *-build (master). */
+  trivyBuild?: TrivyMetrics | null;
+  /** Alias: trivyBuild ?? trivyPr (compat. snapshots viejos con solo `trivy`). */
   trivy: TrivyMetrics | null;
   renovate: RenovateMetrics | null;
 }

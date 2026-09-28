@@ -5,6 +5,7 @@ import type {
   ScanSnapshot,
   SeveridadCve,
   TrivyFinding,
+  TrivyMetrics,
 } from "./snapshot";
 
 /** Minutos de una jornada de 8 h, para pasar sqale_index a días. */
@@ -118,6 +119,35 @@ export function porcentaje(parte: number, total: number): number {
   return Math.round((parte / total) * 100);
 }
 
+/** Lectura preferida para KPIs: build (master) si existe, si no PR, si no snapshot legacy. */
+export function trivyPrincipal(repo: Repo): TrivyMetrics | null {
+  return repo.trivyBuild ?? repo.trivyPr ?? repo.trivy ?? null;
+}
+
+/** Repo con al menos un scan Trivy (PR, build o legacy). */
+export function tieneTrivy(repo: Repo): boolean {
+  return !!(repo.trivyPr || repo.trivyBuild || repo.trivy);
+}
+
+export interface LecturasTrivy {
+  pr: TrivyMetrics | null;
+  build: TrivyMetrics | null;
+  /** Snapshot antiguo con solo `trivy` (sin trivyPr/trivyBuild). */
+  legacy: boolean;
+}
+
+export function lecturasTrivy(repo: Repo): LecturasTrivy {
+  const hasExplicitSlots = repo.trivyPr !== undefined || repo.trivyBuild !== undefined;
+  if (!hasExplicitSlots && repo.trivy != null) {
+    return { pr: repo.trivy, build: null, legacy: true };
+  }
+  return {
+    pr: repo.trivyPr ?? null,
+    build: repo.trivyBuild ?? null,
+    legacy: false,
+  };
+}
+
 export function deudaDiasDesdeSqale(sqaleIndex: number): number {
   return sqaleIndex / MINUTOS_POR_DIA;
 }
@@ -150,7 +180,7 @@ export function adopcionSonarDe(proyecto: AzdoProject): number {
 
 /** Adopción Trivy = repos con scan Trivy / repos que publican imagen. */
 export function adopcionTrivyDe(proyecto: AzdoProject): number {
-  const conTrivy = proyecto.repos.filter(r => r.trivy !== null).length;
+  const conTrivy = proyecto.repos.filter(r => tieneTrivy(r)).length;
   return porcentaje(conTrivy, reposConImagen(proyecto));
 }
 
@@ -171,7 +201,7 @@ function actividadRepo(projectKey: string, repoName: string, historial: ScanSnap
 export function filaProyecto(proyecto: AzdoProject, historial: ScanSnapshot[] = []): FilaProyecto {
   const conSonarMedidas = proyecto.repos.filter(r => r.sonar !== null);
   const conKey = proyecto.repos.filter(r => r.sonarProjectKey);
-  const conTrivy = proyecto.repos.filter(r => r.trivy !== null);
+  const conTrivy = proyecto.repos.filter(r => tieneTrivy(r));
   const conRenovate = proyecto.repos.filter(r => r.renovate);
   const ncloc = conSonarMedidas.reduce((s, r) => s + r.sonar!.ncloc, 0);
   const deudaMin = conSonarMedidas.reduce((s, r) => s + r.sonar!.sqaleIndex, 0);
@@ -196,10 +226,10 @@ export function filaProyecto(proyecto: AzdoProject, historial: ScanSnapshot[] = 
     deudaPor1kLineas: ncloc > 0 ? Math.round(deudaMin / (ncloc / 1000)) : 0,
     cobertura: promedioPonderado(conSonarMedidas, "coverage"),
     coberturaNueva: promedioPonderado(conSonarMedidas, "newCoverage"),
-    criticos: conTrivy.reduce((s, r) => s + r.trivy!.critical, 0),
-    altos: conTrivy.reduce((s, r) => s + r.trivy!.high, 0),
-    medios: conTrivy.reduce((s, r) => s + r.trivy!.medium, 0),
-    bajos: conTrivy.reduce((s, r) => s + r.trivy!.low, 0),
+    criticos: conTrivy.reduce((s, r) => s + (trivyPrincipal(r)?.critical ?? 0), 0),
+    altos: conTrivy.reduce((s, r) => s + (trivyPrincipal(r)?.high ?? 0), 0),
+    medios: conTrivy.reduce((s, r) => s + (trivyPrincipal(r)?.medium ?? 0), 0),
+    bajos: conTrivy.reduce((s, r) => s + (trivyPrincipal(r)?.low ?? 0), 0),
     bugs: conSonarMedidas.reduce((s, r) => s + r.sonar!.bugs, 0),
     vulnerabilidades: conSonarMedidas.reduce((s, r) => s + r.sonar!.vulnerabilities, 0),
     hotspots: conSonarMedidas.reduce((s, r) => s + r.sonar!.hotspotsToReview, 0),
@@ -238,7 +268,7 @@ export function resumenDeScan(scan: ScanSnapshot): Omit<
   const conKey = todosLosRepos.filter(r => r.sonarProjectKey);
   const reposTotal = filas.reduce((s, f) => s + f.reposTotal, 0);
   const reposConImagenTotal = filas.reduce((s, f) => s + f.reposConImagen, 0);
-  const reposConTrivy = todosLosRepos.filter(r => r.trivy !== null).length;
+  const reposConTrivy = todosLosRepos.filter(r => tieneTrivy(r)).length;
   const deudaMin = conSonar.reduce((s, r) => s + r.sonar!.sqaleIndex, 0);
   const conRenovate = todosLosRepos.filter(r => r.renovate);
 
@@ -306,8 +336,9 @@ function hallazgosDe(scan: ScanSnapshot): {
   const out: { repo: Repo; project: AzdoProject; finding: TrivyFinding }[] = [];
   for (const project of scan.projects) {
     for (const repo of project.repos) {
-      if (!repo.trivy) continue;
-      for (const finding of repo.trivy.findings) {
+      const trivy = trivyPrincipal(repo);
+      if (!trivy) continue;
+      for (const finding of trivy.findings) {
         out.push({ repo, project, finding });
       }
     }
@@ -322,8 +353,9 @@ export function imagenesBasePorImpacto(scans: ScanSnapshot[]): ImagenBaseConImpa
   const grupos = new Map<string, { repos: Set<string>; proyectos: Set<string>; findings: TrivyFinding[] }>();
   for (const project of actual.projects) {
     for (const repo of project.repos) {
-      if (!repo.trivy) continue;
-      const key = repo.trivy.baseImage || repo.trivy.image;
+      const trivy = trivyPrincipal(repo);
+      if (!trivy) continue;
+      const key = trivy.baseImage || trivy.image;
       let grupo = grupos.get(key);
       if (!grupo) {
         grupo = { repos: new Set(), proyectos: new Set(), findings: [] };
@@ -331,7 +363,7 @@ export function imagenesBasePorImpacto(scans: ScanSnapshot[]): ImagenBaseConImpa
       }
       grupo.repos.add(`${project.key}/${repo.name}`);
       grupo.proyectos.add(project.key);
-      grupo.findings.push(...repo.trivy.findings);
+      grupo.findings.push(...trivy.findings);
     }
   }
 
@@ -345,10 +377,11 @@ export function imagenesBasePorImpacto(scans: ScanSnapshot[]): ImagenBaseConImpa
       const ids = new Set<string>();
       for (const project of scan.projects) {
         for (const repo of project.repos) {
-          if (!repo.trivy) continue;
-          const key = repo.trivy.baseImage || repo.trivy.image;
+          const trivy = trivyPrincipal(repo);
+          if (!trivy) continue;
+          const key = trivy.baseImage || trivy.image;
           if (key !== imagen) continue;
-          for (const f of repo.trivy.findings) {
+          for (const f of trivy.findings) {
             if (f.severity === "CRÍTICA") ids.add(f.id);
           }
         }

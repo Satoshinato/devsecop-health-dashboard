@@ -13,7 +13,7 @@ export const QUALITY_GATE = {
   ],
 };
 
-export const ALCANCE_TRIVY = "Solo imágenes de contenedor";
+export const ALCANCE_TRIVY = "Imágenes de contenedor · pipelines *-pr y *-build";
 
 export const AZDO_ORG_DEFAULT = "accusystechnology";
 export const SONAR_ORG_DEFAULT = "accusys";

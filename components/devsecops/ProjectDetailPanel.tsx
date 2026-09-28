@@ -4,8 +4,58 @@ import Heatmap from "@/components/charts/Heatmap";
 import Sparkline from "@/components/charts/Sparkline";
 import { GateBadge, RatingBadge } from "@/components/devsecops/Badges";
 import type { FilaProyecto, ScanHistorico } from "@/lib/metrics";
-import { etiquetaFecha, formatearDeuda, formatearNumero } from "@/lib/metrics";
+import { etiquetaFecha, formatearDeuda, formatearNumero, lecturasTrivy } from "@/lib/metrics";
 import { ALCANCE_TRIVY, AZDO_BASE_URL, SONAR_BASE_URL } from "@/lib/quality-gate";
+import type { TrivyMetrics } from "@/lib/snapshot";
+
+function ConteoTrivy({
+  trivy,
+  azdoProject,
+}: {
+  trivy: TrivyMetrics;
+  azdoProject: string;
+}) {
+  const buildUrl = `${AZDO_BASE_URL}/${encodeURIComponent(azdoProject)}/_build/results?buildId=${trivy.buildId}&view=AquaSecurityOfficial.trivy-official.build-results-tab`;
+  return (
+    <div className="flex flex-col items-end gap-0.5">
+      <span className="tabular-nums">
+        <span className="font-semibold text-rose-600">{trivy.critical}</span>
+        <span className="text-slate-300"> / </span>
+        <span className="text-orange-600">{trivy.high}</span>
+        <span className="text-slate-300"> / </span>
+        <span className="text-amber-600">{trivy.medium}</span>
+        <span className="text-slate-300"> / </span>
+        <span className="text-slate-500">{trivy.low}</span>
+      </span>
+      <a
+        href={buildUrl}
+        className="text-[9px] text-teal-600 hover:underline"
+        title={trivy.pipeline ?? `build ${trivy.buildId}`}
+      >
+        {trivy.rama ? `${trivy.rama} · ` : ""}#{trivy.buildId}
+      </a>
+    </div>
+  );
+}
+
+function CeldaTrivy({
+  trivy,
+  publicaImagen,
+  azdoProject,
+}: {
+  trivy: TrivyMetrics | null;
+  publicaImagen: boolean;
+  azdoProject: string;
+}) {
+  if (!trivy) {
+    return (
+      <span className="text-[10px] text-slate-400">
+        {publicaImagen ? "sin escanear" : "no publica imagen"}
+      </span>
+    );
+  }
+  return <ConteoTrivy trivy={trivy} azdoProject={azdoProject} />;
+}
 
 function Metrica({
   label,
@@ -107,7 +157,7 @@ export default function ProjectDetailPanel({
         </div>
       ) : (
         <>
-          <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-7">
+          <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-6">
             <Metrica label="Repos analizados" value={`${fila.reposConSonar}/${fila.reposTotal}`} />
             <Metrica label="Adopción" value={`${fila.adopcionSonar} %`} />
             <Metrica
@@ -124,17 +174,6 @@ export default function ProjectDetailPanel({
               label="CVE críticos"
               value={String(fila.criticos)}
               tono={fila.criticos > 0 ? "text-rose-600" : "text-emerald-600"}
-            />
-            <Metrica
-              label="Deps. EOL / depr."
-              value={`${fila.dependenciasEol} / ${fila.dependenciasDeprecadas}`}
-              tono={
-                fila.dependenciasEol > 0
-                  ? "text-rose-600"
-                  : fila.dependenciasDeprecadas > 0
-                    ? "text-amber-600"
-                    : "text-slate-800"
-              }
             />
             <Metrica label="Líneas" value={formatearNumero(fila.ncloc)} />
           </div>
@@ -217,14 +256,18 @@ export default function ProjectDetailPanel({
                     <th className="pb-2 pr-2 text-center font-medium" title="Confiabilidad · Seguridad · Mantenibilidad">
                       C·S·M
                     </th>
-                    <th className="pb-2 pr-2 text-right font-medium">Trivy C/A/M/B</th>
-                    <th className="pb-2 pr-2 text-right font-medium">EOL</th>
-                    <th className="pb-2 text-right font-medium">Depr.</th>
+                    <th className="pb-2 pr-2 text-right font-medium" title="Pipeline *-pr">
+                      Trivy PR
+                    </th>
+                    <th className="pb-2 pr-2 text-right font-medium" title="Pipeline *-build (master)">
+                      Trivy Build
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
                   {conSonar.map(repo => {
                     const s = repo.sonar!;
+                    const trivyLecturas = lecturasTrivy(repo);
                     return (
                       <tr key={repo.name} className="border-b border-slate-100">
                         <td className="py-1.5 pr-2">
@@ -274,50 +317,21 @@ export default function ProjectDetailPanel({
                           </div>
                         </td>
                         <td className="py-1.5 pr-2 text-right">
-                          {repo.trivy ? (
-                            <span className="tabular-nums">
-                              <span className="font-semibold text-rose-600">{repo.trivy.critical}</span>
-                              <span className="text-slate-300"> / </span>
-                              <span className="text-orange-600">{repo.trivy.high}</span>
-                              <span className="text-slate-300"> / </span>
-                              <span className="text-amber-600">{repo.trivy.medium}</span>
-                              <span className="text-slate-300"> / </span>
-                              <span className="text-slate-500">{repo.trivy.low}</span>
-                            </span>
-                          ) : (
-                            <span className="text-[10px] text-slate-400">
-                              {repo.publicaImagen ? "sin escanear" : "no publica imagen"}
-                            </span>
-                          )}
+                          <CeldaTrivy
+                            trivy={trivyLecturas.pr}
+                            publicaImagen={repo.publicaImagen}
+                            azdoProject={fila.azdoProject}
+                          />
                         </td>
                         <td className="py-1.5 pr-2 text-right">
-                          {repo.renovate ? (
-                            <span
-                              className={
-                                repo.renovate.eol > 0
-                                  ? "font-semibold text-rose-600"
-                                  : "text-slate-500"
-                              }
-                            >
-                              {repo.renovate.eol}
-                            </span>
+                          {trivyLecturas.legacy ? (
+                            <span className="text-[10px] text-slate-300">—</span>
                           ) : (
-                            <span className="text-[10px] text-slate-400">—</span>
-                          )}
-                        </td>
-                        <td className="py-1.5 text-right">
-                          {repo.renovate ? (
-                            <span
-                              className={
-                                repo.renovate.deprecated > 0
-                                  ? "font-semibold text-amber-600"
-                                  : "text-slate-500"
-                              }
-                            >
-                              {repo.renovate.deprecated}
-                            </span>
-                          ) : (
-                            <span className="text-[10px] text-slate-400">—</span>
+                            <CeldaTrivy
+                              trivy={trivyLecturas.build}
+                              publicaImagen={repo.publicaImagen}
+                              azdoProject={fila.azdoProject}
+                            />
                           )}
                         </td>
                       </tr>
@@ -345,11 +359,6 @@ export default function ProjectDetailPanel({
                       className="rounded border border-slate-200 bg-white px-1.5 py-0.5 text-[10px] text-slate-500"
                     >
                       {repo.name}
-                      {repo.renovate && (repo.renovate.eol > 0 || repo.renovate.deprecated > 0) && (
-                        <span className="ml-1 text-rose-500">
-                          ({repo.renovate.eol} EOL / {repo.renovate.deprecated} depr.)
-                        </span>
-                      )}
                     </span>
                   ))}
                 </div>

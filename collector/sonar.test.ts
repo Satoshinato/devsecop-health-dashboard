@@ -9,6 +9,8 @@ function repo(partial: Partial<Repo> & Pick<Repo, "name">): Repo {
     sonarProjectName: null,
     sonarProjectKey: null,
     sonar: null,
+    trivyPr: null,
+    trivyBuild: null,
     trivy: null,
     renovate: null,
     ...partial,

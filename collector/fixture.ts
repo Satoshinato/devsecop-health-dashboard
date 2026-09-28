@@ -6,6 +6,8 @@ interface GemaSeed {
   name: string;
   sonar?: Omit<SonarMetrics, "lastAnalysis">;
   trivy?: Omit<TrivyMetrics, "scanDate" | "buildId">;
+  trivyPr?: Omit<TrivyMetrics, "scanDate" | "buildId">;
+  trivyBuild?: Omit<TrivyMetrics, "scanDate" | "buildId">;
 }
 
 const GEMA_SEEDS: GemaSeed[] = [
@@ -33,13 +35,28 @@ const GEMA_SEEDS: GemaSeed[] = [
       bugs: 3, vulnerabilities: 1, hotspotsToReview: 2, codeSmells: 187,
       reliabilityRating: "A", securityRating: "A", maintainabilityRating: "A", alertStatus: "OK",
     },
-    trivy: {
+    trivyPr: {
+      image: "accusystechnology/ms-ophir-api:0.0.1-pr-75ff6212",
+      baseImage: "eclipse-temurin:17-jre-alpine",
+      critical: 0, high: 0, medium: 2, low: 1, fixable: 2, unfixable: 1,
+      pipeline: "ms-ophir-api-pr",
+      fuente: "pr",
+      rama: "feature/trivy-demo",
+      findings: [
+        { id: "CVE-2024-38816", package: "spring-webmvc", version: "6.1.4", severity: "MEDIA", fixedVersion: "6.1.12" },
+      ],
+    },
+    trivyBuild: {
       image: "accusystechnology/ms-ophir-api:0.0.1-75ff6212",
       baseImage: "eclipse-temurin:17-jre-alpine",
-      critical: 0, high: 0, medium: 6, low: 3, fixable: 6, unfixable: 3,
+      critical: 0, high: 1, medium: 4, low: 1, fixable: 5, unfixable: 1,
+      pipeline: "ms-ophir-api-build",
+      fuente: "build",
+      rama: "master",
       findings: [
         { id: "CVE-2024-38816", package: "spring-webmvc", version: "6.1.4", severity: "MEDIA", fixedVersion: "6.1.12" },
         { id: "CVE-2024-22262", package: "openssl", version: "3.0.13", severity: "MEDIA", fixedVersion: "3.0.15" },
+        { id: "CVE-2024-34750", package: "zlib", version: "1.3", severity: "ALTA", fixedVersion: null },
       ],
     },
   },
@@ -120,11 +137,30 @@ function applyGema(projects: AzdoProject[], fecha: string, analyzed: number, wit
       repo.sonar = { ...seed.sonar, lastAnalysis: fecha };
     }
   }
-  const trivySeeds = GEMA_SEEDS.filter(s => s.trivy).slice(0, withTrivy);
+  const trivySeeds = GEMA_SEEDS.filter(s => s.trivy || s.trivyPr || s.trivyBuild).slice(0, withTrivy);
   for (const seed of trivySeeds) {
     const repo = gema.repos.find(r => r.name === seed.name);
-    if (!repo || !seed.trivy) continue;
-    repo.trivy = { ...clone(seed.trivy), scanDate: fecha, buildId: `${fecha.replaceAll("-", "")}.1` };
+    if (!repo) continue;
+    const buildSuffix = fecha.replaceAll("-", "");
+    if (seed.trivyPr) {
+      repo.trivyPr = {
+        ...clone(seed.trivyPr),
+        scanDate: fecha,
+        buildId: `${buildSuffix}.pr`,
+      };
+    }
+    if (seed.trivyBuild) {
+      repo.trivyBuild = {
+        ...clone(seed.trivyBuild),
+        scanDate: fecha,
+        buildId: `${buildSuffix}.build`,
+      };
+    }
+    if (seed.trivy) {
+      repo.trivy = { ...clone(seed.trivy), scanDate: fecha, buildId: `${buildSuffix}.1` };
+    } else {
+      repo.trivy = repo.trivyBuild ?? repo.trivyPr ?? null;
+    }
   }
 }
 
@@ -145,4 +181,5 @@ export const FIXTURE_DATES: { fecha: string; analyzed: number; withTrivy: number
   { fecha: "2026-09-21", analyzed: 4, withTrivy: 3 },
   { fecha: "2026-09-22", analyzed: 5, withTrivy: 4 },
   { fecha: "2026-09-23", analyzed: 6, withTrivy: 5 },
+  { fecha: "2026-09-26", analyzed: 6, withTrivy: 5 },
 ];

@@ -82,7 +82,7 @@ Los `sonarProjectKey` de Gema pueden ser placeholders: el colector las resuelve 
 1. **Inventario** (`config/projects.yml` + opcional `collector/azdo.ts`): lista repos desde YAML o Azure DevOps. Sincronización sin PAT: `npm run scan:inventario` lee `https://renovate.shared.accusys.com.ar/api/data/dashboard`.
 2. **Dependency Health** (`collector/renovate.ts`): enriquece cada repo con `renovate` (EOL, deprecadas, gestor). No requiere credenciales. Host `RENOVATE_HOST` (default `https://renovate.shared.accusys.com.ar`).
 3. **SonarQube Community** (`collector/sonar.ts`): catálogo TRK + `api/measures/component`. Requiere `SONAR_TOKEN` y `SONAR_ORG`.
-4. **Trivy** (`collector/trivy.ts`): requiere `AZDO_PAT`. Baja el attachment `JSON_RESULT` del **último build completado** de cada definición cuyo nombre termina en `-pr`.
+4. **Trivy** (`collector/trivy.ts`): requiere `AZDO_PAT`. Baja el attachment `JSON_RESULT` del **último build completado** de cada definición cuyo nombre termina en `-pr` o `-build`. Guarda `trivyPr` y `trivyBuild` por repo; los KPIs ejecutivos usan build si existe (`trivyBuild ?? trivyPr`).
 
 ### Contrato de snapshot
 
@@ -99,7 +99,7 @@ Archivos `data/scans/scan-YYYY-MM-DD.json`:
 }
 ```
 
-Cada repo: `publicaImagen`, `sonarProjectName` / `sonarProjectKey`, `sonar` (métricas o `null`), `trivy` (métricas + `findings` o `null`), `renovate` (EOL/deprecadas o `null`).
+Cada repo: `publicaImagen`, `sonarProjectName` / `sonarProjectKey`, `sonar` (métricas o `null`), `trivyPr` / `trivyBuild` (lecturas separadas de pipelines PR y build), `trivy` (alias `trivyBuild ?? trivyPr`), `renovate` (EOL/deprecadas o `null`).
 
 ---
 
@@ -183,7 +183,7 @@ Aplicar (cuando la imagen ya esté en ACR):
 kubectl apply -f k8s/deployment.yaml
 ```
 
-Trivy Fase 1 **no** pide cambios de YAML de los productos: el colector lee el `JSON_RESULT` que ya publica Aqua en los `*-pr`.
+Trivy Fase 1 **no** pide cambios de YAML de los productos: el colector lee el `JSON_RESULT` que ya publica Aqua en los pipelines `*-pr` y `*-build` (mismo origen que el mail del Trivy Notifier).
 
 ---
 

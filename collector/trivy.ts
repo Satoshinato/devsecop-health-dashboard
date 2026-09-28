@@ -1,4 +1,4 @@
-import type { Repo, SeveridadCve, TrivyFinding, TrivyMetrics } from "../lib/snapshot.ts";
+import type { Repo, SeveridadCve, TrivyFinding, TrivyFuente, TrivyMetrics } from "../lib/snapshot.ts";
 
 const API = "7.1";
 const ATTACHMENT_TYPE = "JSON_RESULT";
@@ -43,10 +43,16 @@ type TrivyDoc = {
   report?: TrivyDoc;
 };
 
-/** Pipeline `ms-ophir-api-pr` → repo `ms-ophir-api`. */
+/** Pipeline `ms-ophir-api-pr` o `ms-ophir-api-build` → repo `ms-ophir-api`. */
+export function repoNameFromPipelineDefinition(definitionName: string): string | null {
+  if (definitionName.endsWith("-pr")) return definitionName.slice(0, -"-pr".length);
+  if (definitionName.endsWith("-build")) return definitionName.slice(0, -"-build".length);
+  return null;
+}
+
+/** @deprecated Usar repoNameFromPipelineDefinition */
 export function repoNameFromPrDefinition(definitionName: string): string | null {
-  if (!definitionName.endsWith("-pr")) return null;
-  return definitionName.slice(0, -"-pr".length);
+  return repoNameFromPipelineDefinition(definitionName);
 }
 
 export function isContainerImageReport(raw: unknown): boolean {
@@ -83,11 +89,18 @@ function isContainerResult(result: TrivyResult): boolean {
   return true;
 }
 
+export interface TrivyReportMeta {
+  fuente?: TrivyFuente;
+  pipeline?: string;
+  rama?: string;
+}
+
 export function parseTrivyReport(
   report: unknown,
   fallbackImage: string,
   fecha: string,
   buildId: string,
+  meta?: TrivyReportMeta,
 ): TrivyMetrics | null {
   const docs = flattenReports(report);
   if (docs.length === 0) return null;
@@ -131,6 +144,7 @@ export function parseTrivyReport(
     buildId,
     scanDate: fecha,
     findings,
+    ...meta,
   };
 }
 
@@ -141,12 +155,23 @@ function inferBaseImage(image: string, resultType?: string): string {
   return image.split("/").pop() ?? image;
 }
 
-async function listPrDefinitions(opts: {
+function fuenteFromDefinition(name: string): TrivyFuente | null {
+  if (name.endsWith("-build")) return "build";
+  if (name.endsWith("-pr")) return "pr";
+  return null;
+}
+
+function ramaFromSourceBranch(sourceBranch?: string): string | undefined {
+  if (!sourceBranch) return undefined;
+  return sourceBranch.replace(/^refs\/heads\//, "");
+}
+
+async function listTrivyDefinitions(opts: {
   org: string;
   project: string;
   pat: string;
-}): Promise<{ id: number; name: string; repoName?: string }[]> {
-  const found: { id: number; name: string; repoName?: string }[] = [];
+}): Promise<{ id: number; name: string; repoName?: string; fuente: TrivyFuente }[]> {
+  const found: { id: number; name: string; repoName?: string; fuente: TrivyFuente }[] = [];
   let continuation: string | undefined;
   do {
     const url = new URL(
@@ -164,7 +189,9 @@ async function listPrDefinitions(opts: {
       value?: { id: number; name: string; repository?: { name?: string } }[];
     };
     for (const def of body.value ?? []) {
-      if (def.name.endsWith("-pr")) found.push({ id: def.id, name: def.name, repoName: def.repository?.name });
+      const fuente = fuenteFromDefinition(def.name);
+      if (!fuente) continue;
+      found.push({ id: def.id, name: def.name, repoName: def.repository?.name, fuente });
     }
     continuation = res.headers.get("x-ms-continuationtoken") ?? undefined;
   } while (continuation);
@@ -176,7 +203,7 @@ async function recentCompletedBuilds(opts: {
   project: string;
   definitionId: number;
   pat: string;
-}): Promise<{ id: number }[]> {
+}): Promise<{ id: number; sourceBranch?: string }[]> {
   const url = new URL(
     `https://dev.azure.com/${opts.org}/${encodeURIComponent(opts.project)}/_apis/build/builds`,
   );
@@ -187,7 +214,7 @@ async function recentCompletedBuilds(opts: {
   url.searchParams.set("api-version", API);
   const res = await fetch(url, { headers: azdoHeaders(opts.pat) });
   if (!res.ok) return [];
-  const body = (await res.json()) as { value?: { id: number }[] };
+  const body = (await res.json()) as { value?: { id: number; sourceBranch?: string }[] };
   return body.value ?? [];
 }
 
@@ -279,62 +306,94 @@ async function downloadJson(opts: {
   }
 }
 
+async function fetchLatestTrivyForDefinition(opts: {
+  org: string;
+  project: string;
+  pat: string;
+  fecha: string;
+  definition: { id: number; name: string; fuente: TrivyFuente };
+  fallbackImage: string;
+}): Promise<TrivyMetrics | null> {
+  const builds = await recentCompletedBuilds({
+    org: opts.org,
+    project: opts.project,
+    definitionId: opts.definition.id,
+    pat: opts.pat,
+  });
+
+  for (const build of builds) {
+    const attachments = await listJsonResultAttachments({
+      org: opts.org,
+      project: opts.project,
+      buildId: build.id,
+      pat: opts.pat,
+    });
+    if (attachments.length === 0) continue;
+
+    for (const attachment of attachments) {
+      const report = await downloadJson({
+        org: opts.org,
+        project: opts.project,
+        buildId: build.id,
+        pat: opts.pat,
+        attachment,
+      });
+      if (!report) continue;
+      const parsed = parseTrivyReport(report, opts.fallbackImage, opts.fecha, String(build.id), {
+        fuente: opts.definition.fuente,
+        pipeline: opts.definition.name,
+        rama: ramaFromSourceBranch(build.sourceBranch),
+      });
+      if (parsed) return parsed;
+    }
+  }
+  return null;
+}
+
+function syncTrivyAlias(repo: Repo): void {
+  repo.trivy = repo.trivyBuild ?? repo.trivyPr ?? null;
+}
+
 export async function enrichTrivy(
   projectAzdo: string,
   repos: Repo[],
   opts: { org: string; pat: string; fecha: string },
 ): Promise<void> {
   const byName = new Map(repos.map(r => [r.name, r]));
-  for (const repo of repos) repo.trivy = null;
+  for (const repo of repos) {
+    repo.trivyPr = null;
+    repo.trivyBuild = null;
+    repo.trivy = null;
+  }
 
-  const definitions = await listPrDefinitions({
+  const definitions = await listTrivyDefinitions({
     org: opts.org,
     project: projectAzdo,
     pat: opts.pat,
   });
 
   for (const def of definitions) {
-    const repoName = def.repoName ?? repoNameFromPrDefinition(def.name);
+    const repoName = def.repoName ?? repoNameFromPipelineDefinition(def.name);
     if (!repoName) continue;
     const repo = byName.get(repoName);
     if (!repo || !repo.publicaImagen) continue;
 
-    const builds = await recentCompletedBuilds({
+    const slot = def.fuente === "build" ? "trivyBuild" : "trivyPr";
+    if (repo[slot]) continue;
+
+    const parsed = await fetchLatestTrivyForDefinition({
       org: opts.org,
       project: projectAzdo,
-      definitionId: def.id,
       pat: opts.pat,
+      fecha: opts.fecha,
+      definition: def,
+      fallbackImage: `accusystechnology/${repo.name}:latest`,
     });
-    for (const build of builds) {
-      const attachments = await listJsonResultAttachments({
-        org: opts.org,
-        project: projectAzdo,
-        buildId: build.id,
-        pat: opts.pat,
-      });
-      if (attachments.length === 0) continue;
-
-      for (const attachment of attachments) {
-        const report = await downloadJson({
-          org: opts.org,
-          project: projectAzdo,
-          buildId: build.id,
-          pat: opts.pat,
-          attachment,
-        });
-        if (!report) continue;
-        const parsed = parseTrivyReport(
-          report,
-          `accusystechnology/${repo.name}:latest`,
-          opts.fecha,
-          String(build.id),
-        );
-        if (parsed) {
-          repo.trivy = parsed;
-          break;
-        }
-      }
-      if (repo.trivy) break;
+    if (parsed) {
+      repo[slot] = parsed;
+      syncTrivyAlias(repo);
     }
   }
+
+  for (const repo of repos) syncTrivyAlias(repo);
 }

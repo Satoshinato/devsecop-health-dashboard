@@ -18,6 +18,8 @@ export function inventoryFromYml(root = process.cwd()): AzdoProject[] {
         sonarProjectName: r.sonarProjectName ?? null,
         sonarProjectKey: r.sonarProjectKey ?? null,
         sonar: null,
+        trivyPr: null,
+        trivyBuild: null,
         trivy: null,
         renovate: null,
       }),

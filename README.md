@@ -49,8 +49,8 @@ El colector lista proyectos TRK en Community y matchea por key/nombre de repo (l
 
 1. Pipeline `azure-pipelines.yml` (variable group `devsecops-dashboard`): `npm ci`, scan (o skip), tests, `next build`, imagen Docker nginx que sirve `out/`.
 2. Manifiestos en `k8s/` (Deployment + Service + Ingress, host de ejemplo `devsecops.shared.accusys.com.ar`).
-3. Trivy Fase 1 no pide cambios de YAML: el colector lee el attachment `JSON_RESULT` que ya publica la task Aqua en los pipelines `*-pr` (p. ej. `ms-ophir-api-pr` → repo `ms-ophir-api`).
+3. Trivy Fase 1 no pide cambios de YAML: el colector lee el attachment `JSON_RESULT` que ya publica la task Aqua en los pipelines `*-pr` y `*-build` (p. ej. `ms-ophir-api-pr` y `ms-ophir-api-build` → repo `ms-ophir-api`). El detalle por repo muestra ambas lecturas; los KPIs ejecutivos usan el scan de build si existe.
 
 ## Contrato de datos
 
-El front no hardcodea métricas: lee el último snapshot y hasta 14 anteriores en `data/scans/`. Las agregaciones están en `lib/metrics.ts` (adopción Trivy solo sobre `publicaImagen`, deuda en días = `sqale_index / 480`, top = críticos × repos). El colector de Trivy no usa Pipeline Artifacts: baja el attachment `JSON_RESULT` del último build completado de cada definición cuyo nombre termina en `-pr`.
+El front no hardcodea métricas: lee el último snapshot y hasta 14 anteriores en `data/scans/`. Las agregaciones están en `lib/metrics.ts` (adopción Trivy solo sobre `publicaImagen`, deuda en días = `sqale_index / 480`, top = críticos × repos). El colector de Trivy no usa Pipeline Artifacts: baja el attachment `JSON_RESULT` del último build completado de cada definición cuyo nombre termina en `-pr` o `-build`.
