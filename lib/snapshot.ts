@@ -54,6 +54,8 @@ export interface TrivyMetrics {
 
 export interface Repo {
   name: string;
+  /** Si el repo entra al inventario Sonar (ms/mf o carpeta devops en raíz). */
+  aplicaSonar?: boolean;
   publicaImagen: boolean;
   /** `projectname_repository-name` */
   sonarProjectName: string | null;

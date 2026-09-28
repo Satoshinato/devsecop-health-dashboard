@@ -23,7 +23,7 @@ export default function RankingProyectosPage() {
     {
       label: "Proyectos en el inventario",
       value: String(resumen.proyectosTotal),
-      sub: `${resumen.reposTotal} repos en Azure DevOps`,
+      sub: `${resumen.reposInventario} repos en Azure DevOps (${resumen.reposTotal} en alcance Sonar)`,
     },
     {
       label: "Con adopción iniciada",

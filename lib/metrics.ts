@@ -1,3 +1,4 @@
+import { reposEnAlcanceSonar } from "./sonar-alcance";
 import type {
   AzdoProject,
   Repo,
@@ -17,6 +18,8 @@ export interface FilaProyecto {
   lider: string;
   esPoc: boolean;
   reposTotal: number;
+  /** Total de repos en Azure DevOps (incluye fuera de alcance Sonar). */
+  reposInventario: number;
   reposConImagen: number;
   reposConSonar: number;
   reposConTrivy: number;
@@ -48,6 +51,8 @@ export interface ResumenGlobal {
   proyectosConAdopcion: number;
   proyectosSinAdopcion: number;
   reposTotal: number;
+  /** Total de repos en Azure DevOps (incluye fuera de alcance Sonar). */
+  reposInventario: number;
   reposConImagen: number;
   reposConSonar: number;
   reposConTrivy: number;
@@ -155,10 +160,20 @@ function reposConImagen(proyecto: AzdoProject): number {
   return proyecto.repos.filter(r => r.publicaImagen).length;
 }
 
-/** Adopción Sonar = repos con project key / total del inventario. */
+function reposAlcance(proyecto: AzdoProject): Repo[] {
+  return reposEnAlcanceSonar(proyecto.repos);
+}
+
+function reposTotalSonar(proyecto: AzdoProject): number {
+  const enAlcance = reposAlcance(proyecto);
+  return enAlcance.length > 0 ? enAlcance.length : proyecto.reposTotal;
+}
+
+/** Adopción Sonar = repos con project key / repos en alcance Sonar. */
 export function adopcionSonarDe(proyecto: AzdoProject): number {
-  const conKey = proyecto.repos.filter(r => r.sonarProjectKey).length;
-  return porcentaje(conKey, proyecto.reposTotal);
+  const alcance = reposAlcance(proyecto);
+  const conKey = alcance.filter(r => r.sonarProjectKey).length;
+  return porcentaje(conKey, reposTotalSonar(proyecto));
 }
 
 /** Adopción Trivy = repos con scan Trivy / repos que publican imagen. */
@@ -168,10 +183,11 @@ export function adopcionTrivyDe(proyecto: AzdoProject): number {
 }
 
 function historialProyecto(key: string, historial: ScanSnapshot[]): number[] {
-  return historial.map(
-    scan =>
-      scan.projects.find(p => p.key === key)?.repos.filter(r => r.sonar !== null).length ?? 0,
-  );
+  return historial.map(scan => {
+    const proyecto = scan.projects.find(p => p.key === key);
+    if (!proyecto) return 0;
+    return reposAlcance(proyecto).filter(r => r.sonar !== null).length;
+  });
 }
 
 function actividadRepo(projectKey: string, repoName: string, historial: ScanSnapshot[]): number[] {
@@ -182,8 +198,10 @@ function actividadRepo(projectKey: string, repoName: string, historial: ScanSnap
 }
 
 export function filaProyecto(proyecto: AzdoProject, historial: ScanSnapshot[] = []): FilaProyecto {
-  const conSonarMedidas = proyecto.repos.filter(r => r.sonar !== null);
-  const conKey = proyecto.repos.filter(r => r.sonarProjectKey);
+  const alcance = reposAlcance(proyecto);
+  const totalSonar = reposTotalSonar(proyecto);
+  const conSonarMedidas = alcance.filter(r => r.sonar !== null);
+  const conKey = alcance.filter(r => r.sonarProjectKey);
   const conTrivy = proyecto.repos.filter(r => tieneTrivy(r));
   const ncloc = conSonarMedidas.reduce((s, r) => s + r.sonar!.ncloc, 0);
   const deudaMin = conSonarMedidas.reduce((s, r) => s + r.sonar!.sqaleIndex, 0);
@@ -196,11 +214,12 @@ export function filaProyecto(proyecto: AzdoProject, historial: ScanSnapshot[] = 
     azdoProject: proyecto.azdoProject,
     lider: proyecto.leader,
     esPoc: proyecto.esPoc ?? false,
-    reposTotal: proyecto.reposTotal,
+    reposTotal: totalSonar,
+    reposInventario: proyecto.repos.length,
     reposConImagen: imagenes,
     reposConSonar: conSonarMedidas.length,
     reposConTrivy: conTrivy.length,
-    adopcionSonar: porcentaje(conKey.length, proyecto.reposTotal),
+    adopcionSonar: porcentaje(conKey.length, totalSonar),
     adopcionTrivy: porcentaje(conTrivy.length, imagenes),
     ncloc,
     deudaMin,
@@ -219,8 +238,8 @@ export function filaProyecto(proyecto: AzdoProject, historial: ScanSnapshot[] = 
     gatesError: conSonarMedidas.filter(r => r.sonar!.alertStatus !== "OK").length,
     ultimoAnalisis: ultimas.length > 0 ? ultimas[ultimas.length - 1] : null,
     historial: historialProyecto(proyecto.key, historial),
-    repos: proyecto.repos,
-    actividad: proyecto.repos.map(r => actividadRepo(proyecto.key, r.name, historial)),
+    repos: alcance,
+    actividad: alcance.map(r => actividadRepo(proyecto.key, r.name, historial)),
   };
 }
 
@@ -242,10 +261,11 @@ export function resumenDeScan(scan: ScanSnapshot): Omit<
   "deltaRepos" | "deltaCriticos" | "deltaDeudaDias"
 > {
   const filas = filasProyectos(scan, [scan]);
-  const todosLosRepos = scan.projects.flatMap(p => p.repos);
+  const todosLosRepos = scan.projects.flatMap(p => reposAlcance(p));
   const conSonar = todosLosRepos.filter(r => r.sonar !== null);
   const conKey = todosLosRepos.filter(r => r.sonarProjectKey);
   const reposTotal = filas.reduce((s, f) => s + f.reposTotal, 0);
+  const reposInventario = filas.reduce((s, f) => s + f.reposInventario, 0);
   const reposConImagenTotal = filas.reduce((s, f) => s + f.reposConImagen, 0);
   const reposConTrivy = todosLosRepos.filter(r => tieneTrivy(r)).length;
   const deudaMin = conSonar.reduce((s, r) => s + r.sonar!.sqaleIndex, 0);
@@ -255,6 +275,7 @@ export function resumenDeScan(scan: ScanSnapshot): Omit<
     proyectosConAdopcion: filas.filter(f => f.adopcionSonar > 0).length,
     proyectosSinAdopcion: filas.filter(f => f.adopcionSonar === 0).length,
     reposTotal,
+    reposInventario,
     reposConImagen: reposConImagenTotal,
     reposConSonar: conSonar.length,
     reposConTrivy,

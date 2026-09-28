@@ -99,7 +99,7 @@ export default function ProjectDetailPanel({
             )}
           </div>
           <p className="mt-1 text-[11px] text-slate-500">
-            Líder técnico: {fila.lider} · {fila.reposTotal} repos en el inventario (
+            Líder técnico: {fila.lider} · {fila.reposTotal} repos en alcance Sonar (
             {fila.reposConImagen} publican imagen) ·{" "}
             {fila.ultimoAnalisis
               ? `último análisis ${fila.ultimoAnalisis}`

@@ -15,6 +15,7 @@ import {
   tieneTrivy,
   trivyPrincipal,
 } from "./metrics.ts";
+import { reposEnAlcanceSonar } from "./sonar-alcance.ts";
 import type { Repo, TrivyMetrics } from "./snapshot.ts";
 import { loadProjectsConfig } from "../collector/config.ts";
 
@@ -24,7 +25,9 @@ const gema = scan.projects.find(p => p.key === "gema")!;
 const fila = filaProyecto(gema);
 const inventario = loadProjectsConfig();
 const reposInventario = inventario.proyectos.reduce((s, p) => s + p.repos.length, 0);
-const gemaKeys = gema.repos.filter(r => r.sonarProjectKey).length;
+const gemaAlcance = reposEnAlcanceSonar(gema.repos);
+const gemaKeys = gemaAlcance.filter(r => r.sonarProjectKey).length;
+const reposTotalSonar = scan.projects.reduce((s, p) => s + p.reposTotal, 0);
 
 test("inventario: 13 proyectos desde projects.yml", () => {
   assert.equal(scan.projects.length, 13);
@@ -35,10 +38,14 @@ test("inventario: 13 proyectos desde projects.yml", () => {
   assert.equal(gema.repos.length, inventario.proyectos.find(p => p.key === "gema")!.repos.length);
 });
 
-test("adopción Sonar de Gema = repos con sonarProjectKey / reposTotal", () => {
+test("adopción Sonar de Gema = repos con sonarProjectKey / repos en alcance", () => {
+  assert.equal(gemaAlcance.length, 15);
   assert.equal(gemaKeys, 15);
-  assert.equal(adopcionSonarDe(gema), Math.round((gemaKeys / gema.repos.length) * 100));
-  assert.equal(fila.adopcionSonar, Math.round((gemaKeys / gema.repos.length) * 100));
+  assert.equal(gema.reposTotal, 15);
+  assert.equal(adopcionSonarDe(gema), Math.round((gemaKeys / gema.reposTotal) * 100));
+  assert.equal(fila.adopcionSonar, Math.round((gemaKeys / gema.reposTotal) * 100));
+  assert.equal(fila.repos.length, 15);
+  assert.ok(!fila.repos.some(r => ["db", "legacy", "ophir"].includes(r.name)));
 });
 
 test("adopción Trivy usa solo publicaImagen como denominador", () => {
@@ -152,11 +159,12 @@ test("top hallazgos = critical únicos × repos afectados", () => {
 
 test("resumen global de Gema en el fixture", () => {
   const r = resumenDeScan(scan);
-  assert.equal(r.reposTotal, reposInventario);
+  assert.ok(r.reposTotal < reposInventario);
+  assert.equal(r.reposTotal, reposTotalSonar);
   assert.equal(r.proyectosConAdopcion, 1);
   assert.equal(r.reposConSonar, 6);
   assert.equal(r.reposConTrivy, 5);
-  assert.equal(r.adopcionSonar, Math.round((gemaKeys / reposInventario) * 100));
+  assert.equal(r.adopcionSonar, Math.round((gemaKeys / reposTotalSonar) * 100));
   assert.equal(r.deudaDias, Math.round(13340 / 480));
 });
 

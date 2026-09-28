@@ -46,7 +46,7 @@ El front **no hardcodea métricas**: lee snapshots JSON en `data/scans/` (el úl
 
 ### Métricas que muestra
 
-- **Adopción Sonar** = repos con `sonarProjectKey` / total de repos del inventario.
+- **Adopción Sonar** = repos con `sonarProjectKey` / repos en alcance Sonar. Entran siempre los que empiezan con `ms-` o `mf-`; el resto (helm, db, legacy, etc.) solo si el repo tiene carpeta `devops` o `.devops` en la raíz (el colector lo verifica en Azure DevOps).
 - **Adopción Trivy** = repos con scan Trivy / repos con `publicaImagen`.
 - **Deuda en días** = `sqale_index` / 480 (minutos de una jornada de 8 h).
 - **Deuda / 1k líneas** = minutos de deuda cada 1.000 líneas (para comparar proyectos de distinto tamaño).
@@ -60,7 +60,7 @@ Organización AzDO: `accusystechnology`. SonarQube Community: `https://sonarqube
 
 | Key | Nombre | Líder | POC |
 | --- | --- | --- | --- |
-| gema | Gema - Ophir | Sebastián Denezio | Sí (18 repos; 15 con keys Sonar de muestra) |
+| gema | Gema - Ophir | Sebastián Denezio | Sí (18 repos ADO; 15 en alcance Sonar ms/mf) |
 | probatch | Probatch | Leonardo Orellana | No |
 | cronos | Mep - Cronos | Fernando Luna | No |
 | iris | Accusys Link - Iris | Ivette Guevara | No |
@@ -78,7 +78,7 @@ Los `sonarProjectKey` de Gema pueden ser placeholders: el colector las resuelve 
 
 ### Colector
 
-1. **Inventario** (`config/projects.yml` + opcional `collector/azdo.ts`): lista repos desde YAML o Azure DevOps.
+1. **Inventario** (`config/projects.yml` + opcional `collector/azdo.ts`): lista repos desde YAML o Azure DevOps. Marca `aplicaSonar` por repo (`lib/sonar-alcance.ts`): `ms-*` / `mf-*` siempre; el resto solo si hay carpeta `devops` o `.devops` en la raíz (Items API). `reposTotal` del snapshot = repos en alcance Sonar.
 2. **SonarQube Community** (`collector/sonar.ts`): catálogo TRK + `api/measures/component`. Requiere `SONAR_TOKEN` y `SONAR_ORG`.
 3. **Trivy** (`collector/trivy.ts`): requiere `AZDO_PAT`. Baja el attachment `JSON_RESULT` del **último build completado** de cada definición cuyo nombre termina en `-pr` o `-build`. Guarda `trivyPr` y `trivyBuild` por repo; los KPIs ejecutivos usan build si existe (`trivyBuild ?? trivyPr`).
 
@@ -95,7 +95,7 @@ Archivos `data/scans/scan-YYYY-MM-DD.json`:
 }
 ```
 
-Cada repo: `publicaImagen`, `sonarProjectName` / `sonarProjectKey`, `sonar` (métricas o `null`), `trivyPr` / `trivyBuild` (lecturas separadas de pipelines PR y build), `trivy` (alias `trivyBuild ?? trivyPr`).
+Cada repo: `aplicaSonar`, `publicaImagen`, `sonarProjectName` / `sonarProjectKey`, `sonar` (métricas o `null`), `trivyPr` / `trivyBuild` (lecturas separadas de pipelines PR y build), `trivy` (alias `trivyBuild ?? trivyPr`).
 
 ---
 

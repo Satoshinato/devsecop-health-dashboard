@@ -53,7 +53,7 @@ export function AdopcionPanel({ resumen }: { resumen: ResumenGlobal }) {
         <div>
           <dt className="text-slate-400">Repos que publican imagen</dt>
           <dd className="font-semibold text-slate-700">
-            {resumen.reposConImagen} de {resumen.reposTotal}
+            {resumen.reposConImagen} de {resumen.reposInventario}
           </dd>
         </div>
       </dl>

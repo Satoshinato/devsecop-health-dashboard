@@ -1,4 +1,5 @@
 import { SONAR_HOST_DEFAULT } from "../lib/quality-gate.ts";
+import { aplicaSonarDe } from "../lib/sonar-alcance.ts";
 import type { Rating, Repo, SonarMetrics } from "../lib/snapshot.ts";
 
 const METRICS = [
@@ -165,6 +166,12 @@ export async function enrichSonar(
   }
 
   for (const repo of repos) {
+    if (!aplicaSonarDe(repo)) {
+      repo.sonar = null;
+      repo.sonarProjectKey = null;
+      repo.sonarProjectName = null;
+      continue;
+    }
     const matched = catalog.length > 0 ? resolveSonarComponent(repo, catalog) : null;
     const key = matched?.key ?? repo.sonarProjectKey;
     if (!key) {
