@@ -1,5 +1,6 @@
-# Collect on AccusysShared (Sonar) + hosted (Azure/Trivy). Publish to S3 is opt-in
-# (forma 1, like Renovate) and stays off until qa has the AWS service connection.
+# Collect on AccusysShared (Sonar) + hosted (Azure/Trivy).
+# Single bucket accusys-devsecops (JSON under data/ + out/ at root). No CloudFront.
+# S3 publish stays off until qa has the AWS service connection (ticket).
 trigger:
   branches:
     include:
@@ -19,11 +20,11 @@ parameters:
     type: string
     default: AccusysShared
   - name: publishDashboard
-    displayName: Publish JSON to the data S3 bucket (needs AWS connection in qa)
+    displayName: Publish JSON to s3://accusys-devsecops/data/ (needs AWS connection in qa)
     type: boolean
     default: false
   - name: publishWeb
-    displayName: Sync out/ to the web S3 bucket (needs AWS connection in qa)
+    displayName: Sync out/ to s3://accusys-devsecops/ (needs AWS connection in qa)
     type: boolean
     default: false
 
@@ -31,6 +32,8 @@ variables:
   - group: devsecops-dashboard
   - name: SONAR_HOST
     value: https://sonarqube.shared.accusys.com.ar
+  - name: dashboardBucket
+    value: accusys-devsecops
 
 jobs:
   - job: collect_sonar
@@ -145,7 +148,6 @@ jobs:
             inlineScript: bash "$(Build.SourcesDirectory)/scripts/publish-data-s3.sh"
           env:
             DASHBOARD_BUCKET: $(dashboardBucket)
-            CLOUDFRONT_DISTRIBUTION: $(cloudFrontDistribution)
             REPORT_DIR: $(Build.ArtifactStagingDirectory)/report
       - task: PublishBuildArtifacts@1
         displayName: Artifact dashboard-data
@@ -188,13 +190,12 @@ jobs:
         displayName: next build (export)
       - ${{ if eq(parameters.publishWeb, true) }}:
         - task: AWSShellScript@1
-          displayName: Sync out/ to web bucket
+          displayName: Sync out/ to accusys-devsecops
           inputs:
             awsCredentials: $(awsCredentials)
             regionName: $(regionName)
             scriptType: inline
             inlineScript: bash "$(Build.SourcesDirectory)/scripts/publish-web-s3.sh"
           env:
-            DASHBOARD_WEB_BUCKET: $(dashboardWebBucket)
-            CLOUDFRONT_DISTRIBUTION: $(cloudFrontDistribution)
+            DASHBOARD_BUCKET: $(dashboardBucket)
             WEB_DIR: $(Build.SourcesDirectory)/out

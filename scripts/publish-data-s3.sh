@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# Publish already-merged dashboard.json + history.json to the data bucket.
-# Pulls previous history from S3 when present (Renovate-style).
+# Publish dashboard.json + history.json to s3://accusys-devsecops/data/
+# Pulls previous history from S3 when present. No CloudFront.
 set -euo pipefail
 : "${DASHBOARD_BUCKET:?DASHBOARD_BUCKET is required}"
 : "${REPORT_DIR:?REPORT_DIR is required}"
@@ -33,9 +33,3 @@ aws s3 cp "$report/history.json" \
 aws s3 cp "$report/dashboard.json" \
   "s3://$DASHBOARD_BUCKET/runs/$scan_date/dashboard.json" \
   --content-type application/json --cache-control "public,max-age=31536000,immutable"
-
-if [ -n "${CLOUDFRONT_DISTRIBUTION:-}" ]; then
-  aws cloudfront create-invalidation \
-    --distribution-id "$CLOUDFRONT_DISTRIBUTION" \
-    --paths "/data/dashboard.json" "/data/history.json"
-fi

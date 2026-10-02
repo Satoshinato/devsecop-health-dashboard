@@ -55,7 +55,19 @@ Variables para el scan real (Library group **`devsecops-dashboard`**):
 | `publish_data` | hosted | Merge a `dashboard.json` + `history.json`. Artifact `dashboard-data`. **S3 solo si** `publishDashboard=true`. |
 | `publish_web` | hosted | Tests + `next build`. **S3 web solo si** `publishWeb=true`. |
 
-`publishDashboard` y `publishWeb` default **false** hasta que qa tenga la service connection AWS (la de Renovate vive en devops; hay que compartirla). Variables a agregar entonces: `awsCredentials`, `regionName`, `dashboardBucket`, `dashboardWebBucket`, `cloudFrontDistribution` (group `Dev` ya tiene las dos primeras).
+Bucket único **`accusys-devsecops`** (confirmado). Layout:
+
+```
+s3://accusys-devsecops/
+  index.html ranking/ gema/ _next/   ← out/ (sitio)
+  data/dashboard.json
+  data/history.json
+  runs/<fecha>/dashboard.json
+```
+
+Sin CloudFront. El sync de `out/` no borra `data/` ni `runs/`.
+
+`publishDashboard` y `publishWeb` default **false** hasta la service connection AWS en **qa**. El group **Dev** ya tiene `awsCredentials` y `regionName`; falta la connection en Project settings.
 
 Schedule diario y trigger `main` no suben a S3 mientras esos flags estén en false.
 
@@ -63,6 +75,28 @@ Schedule diario y trigger `main` no suben a S3 mientras esos flags estén en fal
 
 El front no hardcodea métricas: `fetch("/data/dashboard.json")` y `history.json` (hasta 14 scans). Agregaciones en `lib/metrics.ts`. Trivy se lee del attachment `JSON_RESULT` de pipelines `*-pr` y `*-build`.
 
-## Pedido AWS (cuando toque)
+## Ticket: service connection AWS en qa
 
-Compartir a **qa** la connection AWS del ambiente Dev, nombre exacto de **accusysdevsecops** (bucket o prefijo), y si hay bucket web + CloudFront para este tablero. Docker/ACR/AKS no son el camino de publicación.
+Copiar al tracker de DevOps / infra:
+
+```
+Proyecto Azure DevOps: accusystechnology / qa
+Pipeline: devsecop-health-dashboard (azure-pipelines.yml)
+
+Pedido: crear o compartir al proyecto qa una Service connection AWS
+(tipo AWS, mismo principal que ambiente Dev / Accusys Dev) para que
+AWSShellScript@1 pueda escribir en s3://accusys-devsecops.
+
+La pipeline publica:
+- s3://accusys-devsecops/data/dashboard.json
+- s3://accusys-devsecops/data/history.json
+- s3://accusys-devsecops/runs/<fecha>/dashboard.json
+- s3://accusys-devsecops/  (sync del export Next, out/)
+
+No hace falta CloudFront. El bucket ya existe y es de uso exclusivo de este tablero.
+Group Library "Dev" en qa ya declara awsCredentials y regionName; hoy no hay
+ninguna service connection en qa.
+
+Permisos S3 mínimos: ListBucket sobre accusys-devsecops;
+GetObject/PutObject/DeleteObject sobre el prefijo del bucket.
+```
