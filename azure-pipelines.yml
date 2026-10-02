@@ -1,3 +1,5 @@
+# Collect on AccusysShared (Sonar) + hosted (Azure/Trivy). Publish to S3 is opt-in
+# (forma 1, like Renovate) and stays off until qa has the AWS service connection.
 trigger:
   branches:
     include:
@@ -11,50 +13,188 @@ schedules:
         - main
     always: true
 
-# ubuntu-latest no llega a sonarqube.shared.accusys.com.ar (IPs 10.x).
-# Para métricas Sonar reales, cambiar a un self-hosted agent de la red Accusys:
-#   pool:
-#     name: <nombre-del-agent-pool>
-pool:
-  vmImage: ubuntu-latest
+parameters:
+  - name: sonarPoolName
+    displayName: Agent pool with reach to Sonar Community
+    type: string
+    default: AccusysShared
+  - name: publishDashboard
+    displayName: Publish JSON to the data S3 bucket (needs AWS connection in qa)
+    type: boolean
+    default: false
+  - name: publishWeb
+    displayName: Sync out/ to the web S3 bucket (needs AWS connection in qa)
+    type: boolean
+    default: false
 
 variables:
   - group: devsecops-dashboard
   - name: SONAR_HOST
     value: https://sonarqube.shared.accusys.com.ar
-  - name: imageName
-    value: accusystechnology.azurecr.io/devsecops-dashboard
 
-stages:
-  - stage: ScanAndBuild
-    jobs:
-      - job: scan_build_image
-        displayName: Colector, export estático e imagen nginx
-        steps:
-          - task: NodeTool@0
-            inputs:
-              versionSpec: "20.x"
+jobs:
+  - job: collect_sonar
+    displayName: Collect SonarQube
+    continueOnError: true
+    timeoutInMinutes: 60
+    pool:
+      name: ${{ parameters.sonarPoolName }}
+    steps:
+      - task: NodeTool@0
+        inputs:
+          versionSpec: "20.x"
+      - script: npm ci
+        displayName: npm ci
+      - bash: |
+          set -euo pipefail
+          OUT_DIR="$(Build.ArtifactStagingDirectory)/sonar"
+          mkdir -p "$OUT_DIR"
+          OUT_DIR="$OUT_DIR" bash scripts/collect-sonar.sh
+        displayName: Query Sonar Community
+        env:
+          SONAR_TOKEN: $(SONAR_TOKEN)
+          SONAR_ORG: $(SONAR_ORG)
+          SONAR_HOST: $(SONAR_HOST)
+      - task: PublishBuildArtifacts@1
+        displayName: Artifact sonar-partial
+        condition: succeededOrFailed()
+        inputs:
+          PathtoPublish: $(Build.ArtifactStagingDirectory)/sonar
+          ArtifactName: sonar-partial
+          publishLocation: Container
 
-          - script: npm ci
-            displayName: npm ci
+  - job: collect_azure
+    displayName: Collect Azure DevOps + Trivy
+    timeoutInMinutes: 60
+    pool:
+      vmImage: ubuntu-latest
+    steps:
+      - task: NodeTool@0
+        inputs:
+          versionSpec: "20.x"
+      - script: npm ci
+        displayName: npm ci
+      - bash: |
+          set -euo pipefail
+          OUT_DIR="$(Build.ArtifactStagingDirectory)/azure"
+          mkdir -p "$OUT_DIR"
+          OUT_DIR="$OUT_DIR" bash scripts/collect-azure.sh
+        displayName: Query Azure DevOps
+        env:
+          AZDO_ORG: $(AZDO_ORG)
+          AZDO_PAT: $(AZDO_PAT)
+      - task: PublishBuildArtifacts@1
+        displayName: Artifact azure-partial
+        inputs:
+          PathtoPublish: $(Build.ArtifactStagingDirectory)/azure
+          ArtifactName: azure-partial
+          publishLocation: Container
 
-          - script: |
-              echo "Hosted agent no llega a Sonar interno. Se usa data/scans versionado (scan local)."
-              echo "Cuando el job corra en un pool Accusys On-Prem/Shared, reemplazar este step por: npx tsx collector/main.ts"
-            displayName: Usar snapshot versionado (Sonar local)
+  - job: publish_data
+    displayName: Merge snapshots
+    dependsOn:
+      - collect_sonar
+      - collect_azure
+    condition: or(
+      in(dependencies.collect_azure.result, 'Succeeded', 'SucceededWithIssues'),
+      in(dependencies.collect_sonar.result, 'Succeeded', 'SucceededWithIssues')
+    )
+    pool:
+      vmImage: ubuntu-latest
+    steps:
+      - task: NodeTool@0
+        inputs:
+          versionSpec: "20.x"
+      - script: npm ci
+        displayName: npm ci
+      - task: DownloadBuildArtifacts@0
+        displayName: Download azure-partial
+        inputs:
+          artifactName: azure-partial
+          downloadPath: $(Build.ArtifactStagingDirectory)
+      - task: DownloadBuildArtifacts@0
+        displayName: Download sonar-partial
+        continueOnError: true
+        inputs:
+          artifactName: sonar-partial
+          downloadPath: $(Build.ArtifactStagingDirectory)
+      - bash: |
+          set -euo pipefail
+          report="$(Build.ArtifactStagingDirectory)/report"
+          mkdir -p "$report/azure" "$report/sonar"
+          if [ -f "$(Build.ArtifactStagingDirectory)/azure-partial/dashboard.json" ]; then
+            cp "$(Build.ArtifactStagingDirectory)/azure-partial/dashboard.json" "$report/azure/"
+          fi
+          if [ -f "$(Build.ArtifactStagingDirectory)/sonar-partial/dashboard.json" ]; then
+            cp "$(Build.ArtifactStagingDirectory)/sonar-partial/dashboard.json" "$report/sonar/"
+          fi
+          azure=""
+          sonar=""
+          [ -f "$report/azure/dashboard.json" ] && azure="--azure-file $report/azure/dashboard.json"
+          [ -f "$report/sonar/dashboard.json" ] && sonar="--sonar-file $report/sonar/dashboard.json"
+          npx tsx collector/main.ts --merge $azure $sonar --out "$report"
+          test -s "$report/dashboard.json"
+        displayName: Merge azure + sonar into public/data contract
+      - ${{ if eq(parameters.publishDashboard, true) }}:
+        - task: AWSShellScript@1
+          displayName: Publishing Dashboard Data to S3
+          inputs:
+            awsCredentials: $(awsCredentials)
+            regionName: $(regionName)
+            scriptType: inline
+            inlineScript: bash "$(Build.SourcesDirectory)/scripts/publish-data-s3.sh"
+          env:
+            DASHBOARD_BUCKET: $(dashboardBucket)
+            CLOUDFRONT_DISTRIBUTION: $(cloudFrontDistribution)
+            REPORT_DIR: $(Build.ArtifactStagingDirectory)/report
+      - task: PublishBuildArtifacts@1
+        displayName: Artifact dashboard-data
+        inputs:
+          PathtoPublish: $(Build.ArtifactStagingDirectory)/report
+          ArtifactName: dashboard-data
+          publishLocation: Container
 
-          - script: npm test
-            displayName: Tests de métricas
-
-          - script: npm run build
-            displayName: next build (export)
-
-          - task: Docker@2
-            displayName: Docker build nginx que sirve out/
-            inputs:
-              command: build
-              Dockerfile: Dockerfile
-              repository: $(imageName)
-              tags: |
-                $(Build.BuildId)
-                latest
+  - job: publish_web
+    displayName: Test and static export
+    dependsOn: publish_data
+    condition: succeeded()
+    pool:
+      vmImage: ubuntu-latest
+    steps:
+      - task: NodeTool@0
+        inputs:
+          versionSpec: "20.x"
+      - script: npm ci
+        displayName: npm ci
+      - task: DownloadBuildArtifacts@0
+        displayName: Download dashboard-data
+        continueOnError: true
+        inputs:
+          artifactName: dashboard-data
+          downloadPath: $(Build.ArtifactStagingDirectory)
+      - bash: |
+          set -euo pipefail
+          mkdir -p public/data
+          if [ -f "$(Build.ArtifactStagingDirectory)/dashboard-data/dashboard.json" ]; then
+            cp "$(Build.ArtifactStagingDirectory)/dashboard-data/"dashboard.json public/data/
+            cp "$(Build.ArtifactStagingDirectory)/dashboard-data/"history.json public/data/ || true
+          else
+            npm run scan:fixture
+          fi
+        displayName: Place JSON in public/data
+      - script: npm test
+        displayName: Tests
+      - script: npm run build
+        displayName: next build (export)
+      - ${{ if eq(parameters.publishWeb, true) }}:
+        - task: AWSShellScript@1
+          displayName: Sync out/ to web bucket
+          inputs:
+            awsCredentials: $(awsCredentials)
+            regionName: $(regionName)
+            scriptType: inline
+            inlineScript: bash "$(Build.SourcesDirectory)/scripts/publish-web-s3.sh"
+          env:
+            DASHBOARD_WEB_BUCKET: $(dashboardWebBucket)
+            CLOUDFRONT_DISTRIBUTION: $(cloudFrontDistribution)
+            WEB_DIR: $(Build.SourcesDirectory)/out

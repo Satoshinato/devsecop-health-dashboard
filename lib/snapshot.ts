@@ -1,4 +1,4 @@
-/** Contrato del snapshot diario `data/scans/scan-YYYY-MM-DD.json`. */
+/** Contrato del snapshot diario (`public/data/dashboard.json` + `history.json`). */
 
 export type Rating = "A" | "B" | "C" | "D" | "E";
 export type EstadoGate = "OK" | "ERROR" | "WARN";

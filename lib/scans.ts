@@ -1,25 +1,24 @@
-import { readdirSync, readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import type { ScanSnapshot } from "@/lib/snapshot";
+import { rollHistory } from "./history";
 
-const SCANS_DIR = join(process.cwd(), "data/scans");
-const SCAN_FILE = /^scan-(\d{4}-\d{2}-\d{2})\.json$/;
+const PUBLIC_DASHBOARD = join(process.cwd(), "public/data/dashboard.json");
+const PUBLIC_HISTORY = join(process.cwd(), "public/data/history.json");
 
+function readJson<T>(path: string): T {
+  return JSON.parse(readFileSync(path, "utf8")) as T;
+}
+
+/** Scans para tests y build: public/data (contrato S3). */
 export function cargarScans(limite = 14): ScanSnapshot[] {
-  const archivos = readdirSync(SCANS_DIR)
-    .filter(nombre => SCAN_FILE.test(nombre))
-    .sort();
-  const recientes = archivos.slice(-limite);
-  return recientes.map(nombre => {
-    const crudo = readFileSync(join(SCANS_DIR, nombre), "utf8");
-    return JSON.parse(crudo) as ScanSnapshot;
-  });
+  if (!existsSync(PUBLIC_DASHBOARD)) {
+    throw new Error("No hay public/data/dashboard.json. Corré `npm run scan:fixture`.");
+  }
+  const dashboard = readJson<ScanSnapshot>(PUBLIC_DASHBOARD);
+  const history = existsSync(PUBLIC_HISTORY) ? readJson<ScanSnapshot[]>(PUBLIC_HISTORY) : [];
+  const list = Array.isArray(history) ? history : [];
+  return rollHistory(list, dashboard, limite);
 }
 
-export function scanActual(scans: ScanSnapshot[]): ScanSnapshot {
-  const ultimo = scans[scans.length - 1];
-  if (!ultimo) {
-    throw new Error("No hay snapshots en data/scans. Corré `npm run scan:fixture`.");
-  }
-  return ultimo;
-}
+export { scanActual } from "./history";

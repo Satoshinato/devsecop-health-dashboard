@@ -12,10 +12,12 @@ Rutas:
 
 ```bash
 npm ci
-npm run scan:fixture   # genera data/scans/scan-YYYY-MM-DD.json
+npm run scan:fixture   # genera public/data/dashboard.json y history.json
 npm test
 npm run dev            # http://localhost:4317
 ```
+
+El browser lee `/data/dashboard.json` y `/data/history.json` (archivos en `public/data/`). No hace falta S3.
 
 Export estático:
 
@@ -27,48 +29,40 @@ npm run build          # sale `out/`
 
 | Comando | Qué hace |
 | --- | --- |
-| `npm run scan:fixture` | Arma el inventario desde `config/projects.yml` y rellena métricas **plausibles** de Gema. No llama a Sonar ni a Azure DevOps. Sirve para el build y la validación local. |
-| `npm run scan` | Sin credenciales: inventario YAML. Con credenciales: suma Sonar y/o Azure DevOps (Trivy + inventario remoto). |
+| `npm run scan:fixture` | Inventario desde `config/projects.yml` y métricas plausibles de Gema. Escribe `public/data/`. |
+| `npm run scan` | `--source=all` (default). Sin credenciales: YAML. Con credenciales: Sonar y/o Azure DevOps. |
+| `npm run scan -- --source=sonar` | Solo Sonar (pool AccusysShared). |
+| `npm run scan -- --source=azure` | Inventario + Trivy (agente hosted). |
+| `npm run scan -- --merge --azure-file … --sonar-file …` | Une ambos parciales. |
 
-Variables de entorno para el scan real:
+Variables para el scan real (Library group **`devsecops-dashboard`**):
 
 | Variable | Uso |
 | --- | --- |
-| `SONAR_TOKEN` | User token de [SonarQube Community](https://sonarqube.shared.accusys.com.ar) (My Account → Security). |
-| `SONAR_ORG` | Obligatorio para arrancar el scan (`accusys`). En Community no va en la URL. |
+| `SONAR_TOKEN` | User token de SonarQube Community. |
+| `SONAR_ORG` | `accusys`. |
 | `SONAR_HOST` | Opcional. Default `https://sonarqube.shared.accusys.com.ar`. |
-| `AZDO_ORG` / `AZDO_PAT` | Inventario remoto y Trivy. PAT de lectura: **Code + Build + Project and team**. |
+| `AZDO_ORG` / `AZDO_PAT` | Inventario remoto y Trivy. PAT: **Code + Build + Project and team**. |
 
-En Azure DevOps van en el Library group **`devsecops-dashboard`**. Sin PAT, `npm run scan` escribe snapshot con inventario YAML. Sonar requiere `SONAR_TOKEN` y `SONAR_ORG`.
+## Pipeline (forma 1, publish apagado)
 
-El colector lista proyectos TRK en Community y matchea por key/nombre de repo (las UUID de muestra del YAML no bloquean). Un 400 de Trivy/AzDO **no aborta** el scan: se omite ese proyecto y se escribe el snapshot.
+`azure-pipelines.yml` en el proyecto **qa**. No usa repos de devops/Renovate.
 
-## Deploy
+| Job | Pool | Qué hace |
+| --- | --- | --- |
+| `collect_sonar` | **AccusysShared** | Queries a Community. Artifact `sonar-partial`. `continueOnError`. |
+| `collect_azure` | `ubuntu-latest` | Inventario + Trivy. Artifact `azure-partial`. |
+| `publish_data` | hosted | Merge a `dashboard.json` + `history.json`. Artifact `dashboard-data`. **S3 solo si** `publishDashboard=true`. |
+| `publish_web` | hosted | Tests + `next build`. **S3 web solo si** `publishWeb=true`. |
 
-1. Pipeline `azure-pipelines.yml` (variable group `devsecops-dashboard`): `npm ci`, scan (o skip), tests, `next build`, imagen Docker nginx que sirve `out/`.
-2. Manifiestos en `k8s/` (Deployment + Service + Ingress, host de ejemplo `devsecops.shared.accusys.com.ar`).
-3. Trivy Fase 1 no pide cambios de YAML: el colector lee el attachment `JSON_RESULT` que ya publica la task Aqua en los pipelines `*-pr` y `*-build` (p. ej. `ms-ophir-api-pr` y `ms-ophir-api-build` → repo `ms-ophir-api`). El detalle por repo muestra ambas lecturas; los KPIs ejecutivos usan el scan de build si existe.
+`publishDashboard` y `publishWeb` default **false** hasta que qa tenga la service connection AWS (la de Renovate vive en devops; hay que compartirla). Variables a agregar entonces: `awsCredentials`, `regionName`, `dashboardBucket`, `dashboardWebBucket`, `cloudFrontDistribution` (group `Dev` ya tiene las dos primeras).
 
-### SonarQube desde la pipeline
-
-`sonarqube.shared.accusys.com.ar` resuelve a IPs internas `10.x`. El agente hosted `ubuntu-latest` no llega: el scan escribe snapshot igual, pero omite Sonar.
-
-Para métricas reales en CI hay que correr el job en un **self-hosted agent** de la red Accusys (mismo alcance que usa tu PC local). En `azure-pipelines.yml` reemplazar:
-
-```yaml
-pool:
-  vmImage: ubuntu-latest
-```
-
-por el pool interno, por ejemplo:
-
-```yaml
-pool:
-  name: <nombre-del-agent-pool>
-```
-
-El variable group `devsecops-dashboard` no cambia: `SONAR_TOKEN`, `SONAR_ORG`, `AZDO_ORG`, `AZDO_PAT`.
+Schedule diario y trigger `main` no suben a S3 mientras esos flags estén en false.
 
 ## Contrato de datos
 
-El front no hardcodea métricas: lee el último snapshot y hasta 14 anteriores en `data/scans/`. Las agregaciones están en `lib/metrics.ts` (adopción Trivy solo sobre `publicaImagen`, deuda en días = `sqale_index / 480`, top = críticos × repos). El colector de Trivy no usa Pipeline Artifacts: baja el attachment `JSON_RESULT` del último build completado de cada definición cuyo nombre termina en `-pr` o `-build`.
+El front no hardcodea métricas: `fetch("/data/dashboard.json")` y `history.json` (hasta 14 scans). Agregaciones en `lib/metrics.ts`. Trivy se lee del attachment `JSON_RESULT` de pipelines `*-pr` y `*-build`.
+
+## Pedido AWS (cuando toque)
+
+Compartir a **qa** la connection AWS del ambiente Dev, nombre exacto de **accusysdevsecops** (bucket o prefijo), y si hay bucket web + CloudFront para este tablero. Docker/ACR/AKS no son el camino de publicación.
