@@ -18,7 +18,7 @@ parameters:
   - name: collectSonar
     displayName: Collect Sonar metrics (needs self-hosted pool authorized for this pipeline)
     type: boolean
-    default: true
+    default: false
   - name: sonarPoolName
     displayName: Agent pool with reach to Sonar Community (only if Collect Sonar is true)
     type: string
@@ -45,37 +45,6 @@ variables:
     value: sa-east-1
 
 jobs:
-  - job: collect_sonar
-    displayName: Collect SonarQube
-    condition: ${{ eq(parameters.collectSonar, true) }}
-    continueOnError: true
-    timeoutInMinutes: 60
-    pool:
-      name: ${{ parameters.sonarPoolName }}
-    steps:
-      - task: NodeTool@0
-        inputs:
-          versionSpec: "20.x"
-      - script: npm ci
-        displayName: npm ci
-      - bash: |
-          set -euo pipefail
-          OUT_DIR="$(Build.ArtifactStagingDirectory)/sonar"
-          mkdir -p "$OUT_DIR"
-          OUT_DIR="$OUT_DIR" bash scripts/collect-sonar.sh
-        displayName: Query Sonar Community
-        env:
-          SONAR_TOKEN: $(SONAR_TOKEN)
-          SONAR_ORG: $(SONAR_ORG)
-          SONAR_HOST: $(SONAR_HOST)
-      - task: PublishBuildArtifacts@1
-        displayName: Artifact sonar-partial
-        condition: succeededOrFailed()
-        inputs:
-          PathtoPublish: $(Build.ArtifactStagingDirectory)/sonar
-          ArtifactName: sonar-partial
-          publishLocation: Container
-
   - job: collect_azure
     displayName: Collect Azure DevOps + Trivy
     timeoutInMinutes: 60
@@ -103,12 +72,47 @@ jobs:
           ArtifactName: azure-partial
           publishLocation: Container
 
+  - ${{ if eq(parameters.collectSonar, true) }}:
+    - job: collect_sonar
+      displayName: Collect SonarQube
+      continueOnError: true
+      timeoutInMinutes: 60
+      pool:
+        name: ${{ parameters.sonarPoolName }}
+      steps:
+        - task: NodeTool@0
+          inputs:
+            versionSpec: "20.x"
+        - script: npm ci
+          displayName: npm ci
+        - bash: |
+            set -euo pipefail
+            OUT_DIR="$(Build.ArtifactStagingDirectory)/sonar"
+            mkdir -p "$OUT_DIR"
+            OUT_DIR="$OUT_DIR" bash scripts/collect-sonar.sh
+          displayName: Query Sonar Community
+          env:
+            SONAR_TOKEN: $(SONAR_TOKEN)
+            SONAR_ORG: $(SONAR_ORG)
+            SONAR_HOST: $(SONAR_HOST)
+        - task: PublishBuildArtifacts@1
+          displayName: Artifact sonar-partial
+          condition: succeededOrFailed()
+          inputs:
+            PathtoPublish: $(Build.ArtifactStagingDirectory)/sonar
+            ArtifactName: sonar-partial
+            publishLocation: Container
+
   - job: publish_data
     displayName: Merge snapshots
     dependsOn:
-      - collect_sonar
       - collect_azure
+      ${{ if eq(parameters.collectSonar, true) }}:
+      - collect_sonar
+    ${{ if eq(parameters.collectSonar, true) }}:
     condition: or(in(dependencies.collect_azure.result, 'Succeeded', 'SucceededWithIssues'), in(dependencies.collect_sonar.result, 'Succeeded', 'SucceededWithIssues'))
+    ${{ else }}:
+    condition: in(dependencies.collect_azure.result, 'Succeeded', 'SucceededWithIssues')
     pool:
       vmImage: ubuntu-latest
     steps:

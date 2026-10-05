@@ -100,7 +100,7 @@ El front no hardcodea métricas: `fetch("/data/dashboard.json")` y `history.json
 
 El job `collect_sonar` usa un pool **self-hosted** con red hacia Sonar Community. Si al encolar ves *Could not find a pool with name AccusysShared* o falta autorización:
 
-1. **Smoke test / publish sin Sonar:** ejecutar el pipeline con **`collectSonar` = false** (siguen Azure/Trivy, merge, build y S3).
+1. **Smoke test / publish sin Sonar:** dejar **`collectSonar` desmarcado** (default `false`). El job Sonar **no se genera** en el YAML; ADO igual valida el pool si el job existe con `condition: false`.
 2. **Producción con Sonar:** pedir a DevOps que autorice el pool para el pipeline o el proyecto **qa** ([YAML auth](https://aka.ms/yamlauthz)) — *Organization settings → Agent pools → AccusysShared → Security* → permitir *Queue builds* al identity del pipeline.
 
 ## Service connection AWS (qa)
