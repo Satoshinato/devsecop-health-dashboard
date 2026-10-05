@@ -1,5 +1,15 @@
 # DevSecOps health (Deuda Técnica)
 
+## Cambios en el repo (Azure DevOps)
+
+La rama `main` está protegida: no hacer push directo. Flujo Accusys (TBD): rama corta → PR → merge a `main` (Conventional Commits, p. ej. `ci: …`, `feat: …`).
+
+```bash
+git checkout -b ci/mi-cambio
+git push -u origin ci/mi-cambio
+# Crear PR en ADO o: ./scripts/ado-create-pr.ps1 -SourceBranch ci/mi-cambio
+```
+
 Tablero estático de deuda técnica, adopción de SonarQube (Community: `https://sonarqube.shared.accusys.com.ar`) y Trivy (imágenes de contenedor) sobre los 13 proyectos de Azure DevOps. La POC de Fase 1 es **Gema - Ophir**.
 
 Rutas:
