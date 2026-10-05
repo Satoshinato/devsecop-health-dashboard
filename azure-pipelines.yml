@@ -105,14 +105,15 @@ jobs:
 
   - job: publish_data
     displayName: Merge snapshots
-    dependsOn:
-      - collect_azure
-      ${{ if eq(parameters.collectSonar, true) }}:
-      - collect_sonar
     ${{ if eq(parameters.collectSonar, true) }}:
-    condition: or(in(dependencies.collect_azure.result, 'Succeeded', 'SucceededWithIssues'), in(dependencies.collect_sonar.result, 'Succeeded', 'SucceededWithIssues'))
+      dependsOn:
+        - collect_azure
+        - collect_sonar
+      condition: or(in(dependencies.collect_azure.result, 'Succeeded', 'SucceededWithIssues'), in(dependencies.collect_sonar.result, 'Succeeded', 'SucceededWithIssues'))
     ${{ else }}:
-    condition: in(dependencies.collect_azure.result, 'Succeeded', 'SucceededWithIssues')
+      dependsOn:
+        - collect_azure
+      condition: in(dependencies.collect_azure.result, 'Succeeded', 'SucceededWithIssues')
     pool:
       vmImage: ubuntu-latest
     steps:
