@@ -43,8 +43,12 @@ Variables para el scan real (Library group **`devsecops-dashboard`**):
 | `SONAR_ORG` | `accusys`. |
 | `SONAR_HOST` | Opcional. Default `https://sonarqube.shared.accusys.com.ar`. |
 | `AZDO_ORG` / `AZDO_PAT` | Inventario remoto y Trivy. PAT: **Code + Build + Project and team**. |
+| `awsCredentials` | Nombre de la service connection AWS en qa (`Accusys Dev`). También definido en el YAML. |
+| `regionName` | Región del bucket `accusys-devsecops` (p. ej. `sa-east-1`). También definido en el YAML. |
 
-## Pipeline (forma 1, publish apagado)
+Tras crear la connection en qa, en el primer run con `AWSShellScript@1` puede pedirse **Permit** para `Accusys Dev` y para el variable group en el pipeline.
+
+## Pipeline
 
 `azure-pipelines.yml` en el proyecto **qa**. No usa repos de devops/Renovate.
 
@@ -67,36 +71,21 @@ s3://accusys-devsecops/
 
 Sin CloudFront. El sync de `out/` no borra `data/` ni `runs/`.
 
-`publishDashboard` y `publishWeb` default **false** hasta la service connection AWS en **qa**. El group **Dev** ya tiene `awsCredentials` y `regionName`; falta la connection en Project settings.
+La service connection **Accusys Dev** debe existir en **Project settings → Service connections** (proyecto qa). `publishDashboard` y `publishWeb` controlan la subida a S3 (ver parámetros del pipeline).
 
-Schedule diario y trigger `main` no suben a S3 mientras esos flags estén en false.
+Primer publish manual (recomendado): **Run pipeline** con `publishDashboard=true` y `publishWeb=true`, o:
+
+```powershell
+$env:AZURE_DEVOPS_EXT_PAT = "<PAT con Build Execute>"
+./scripts/ado-queue-publish-run.ps1
+```
+
+Por defecto `publishDashboard` y `publishWeb` están en **true** (schedule y push a `main` publican en S3). Para un run de prueba sin subir, desmarcar ambos al ejecutar el pipeline.
 
 ## Contrato de datos
 
 El front no hardcodea métricas: `fetch("/data/dashboard.json")` y `history.json` (hasta 14 scans). Agregaciones en `lib/metrics.ts`. Trivy se lee del attachment `JSON_RESULT` de pipelines `*-pr` y `*-build`.
 
-## Ticket: service connection AWS en qa
+## Service connection AWS (qa)
 
-Copiar al tracker de DevOps / infra:
-
-```
-Proyecto Azure DevOps: accusystechnology / qa
-Pipeline: devsecop-health-dashboard (azure-pipelines.yml)
-
-Pedido: crear o compartir al proyecto qa una Service connection AWS
-(tipo AWS, mismo principal que ambiente Dev / Accusys Dev) para que
-AWSShellScript@1 pueda escribir en s3://accusys-devsecops.
-
-La pipeline publica:
-- s3://accusys-devsecops/data/dashboard.json
-- s3://accusys-devsecops/data/history.json
-- s3://accusys-devsecops/runs/<fecha>/dashboard.json
-- s3://accusys-devsecops/  (sync del export Next, out/)
-
-No hace falta CloudFront. El bucket ya existe y es de uso exclusivo de este tablero.
-Group Library "Dev" en qa ya declara awsCredentials y regionName; hoy no hay
-ninguna service connection en qa.
-
-Permisos S3 mínimos: ListBucket sobre accusys-devsecops;
-GetObject/PutObject/DeleteObject sobre el prefijo del bucket.
-```
+Connection **Accusys Dev** en Project settings. Permisos S3 mínimos en `accusys-devsecops`: `ListBucket`; `GetObject` / `PutObject` / `DeleteObject` en el bucket.

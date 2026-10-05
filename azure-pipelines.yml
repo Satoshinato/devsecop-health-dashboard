@@ -1,6 +1,6 @@
 # Collect on AccusysShared (Sonar) + hosted (Azure/Trivy).
 # Single bucket accusys-devsecops (JSON under data/ + out/ at root). No CloudFront.
-# S3 publish stays off until qa has the AWS service connection (ticket).
+# AWS: service connection "Accusys Dev" in project qa (AWSShellScript@1).
 trigger:
   branches:
     include:
@@ -20,13 +20,13 @@ parameters:
     type: string
     default: AccusysShared
   - name: publishDashboard
-    displayName: Publish JSON to s3://accusys-devsecops/data/ (needs AWS connection in qa)
+    displayName: Publish JSON to s3://accusys-devsecops/data/
     type: boolean
-    default: false
+    default: true
   - name: publishWeb
-    displayName: Sync out/ to s3://accusys-devsecops/ (needs AWS connection in qa)
+    displayName: Sync out/ to s3://accusys-devsecops/
     type: boolean
-    default: false
+    default: true
 
 variables:
   - group: devsecops-dashboard
@@ -34,6 +34,11 @@ variables:
     value: https://sonarqube.shared.accusys.com.ar
   - name: dashboardBucket
     value: accusys-devsecops
+  # Override Library if missing; must match Project settings → Service connections.
+  - name: awsCredentials
+    value: Accusys Dev
+  - name: regionName
+    value: sa-east-1
 
 jobs:
   - job: collect_sonar
