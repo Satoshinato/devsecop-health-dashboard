@@ -36,7 +36,7 @@ variables:
     value: accusys-devsecops
   # Override Library if missing; must match Project settings → Service connections.
   - name: awsCredentials
-    value: Accusys Dev
+    value: "Accusys Dev"
   - name: regionName
     value: sa-east-1
 
@@ -103,10 +103,7 @@ jobs:
     dependsOn:
       - collect_sonar
       - collect_azure
-    condition: or(
-      in(dependencies.collect_azure.result, 'Succeeded', 'SucceededWithIssues'),
-      in(dependencies.collect_sonar.result, 'Succeeded', 'SucceededWithIssues')
-    )
+    condition: or(in(dependencies.collect_azure.result, 'Succeeded', 'SucceededWithIssues'), in(dependencies.collect_sonar.result, 'Succeeded', 'SucceededWithIssues'))
     pool:
       vmImage: ubuntu-latest
     steps:
