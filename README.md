@@ -64,7 +64,7 @@ Tras crear la connection en qa, en el primer run con `AWSShellScript@1` puede pe
 
 | Job | Pool | Qué hace |
 | --- | --- | --- |
-| `collect_sonar` | **AccusysShared** | Queries a Community. Artifact `sonar-partial`. `continueOnError`. |
+| `collect_sonar` | **AccusysShared** (opcional) | Queries a Community. Desactivar con parámetro `collectSonar=false` si el pool no está autorizado para el pipeline. |
 | `collect_azure` | `ubuntu-latest` | Inventario + Trivy. Artifact `azure-partial`. |
 | `publish_data` | hosted | Merge a `dashboard.json` + `history.json`. Artifact `dashboard-data`. **S3 solo si** `publishDashboard=true`. |
 | `publish_web` | hosted | Tests + `next build`. **S3 web solo si** `publishWeb=true`. |
@@ -95,6 +95,13 @@ Por defecto `publishDashboard` y `publishWeb` están en **true** (schedule y pus
 ## Contrato de datos
 
 El front no hardcodea métricas: `fetch("/data/dashboard.json")` y `history.json` (hasta 14 scans). Agregaciones en `lib/metrics.ts`. Trivy se lee del attachment `JSON_RESULT` de pipelines `*-pr` y `*-build`.
+
+## Agent pool Sonar (`AccusysShared`)
+
+El job `collect_sonar` usa un pool **self-hosted** con red hacia Sonar Community. Si al encolar ves *Could not find a pool with name AccusysShared* o falta autorización:
+
+1. **Smoke test / publish sin Sonar:** ejecutar el pipeline con **`collectSonar` = false** (siguen Azure/Trivy, merge, build y S3).
+2. **Producción con Sonar:** pedir a DevOps que autorice el pool para el pipeline o el proyecto **qa** ([YAML auth](https://aka.ms/yamlauthz)) — *Organization settings → Agent pools → AccusysShared → Security* → permitir *Queue builds* al identity del pipeline.
 
 ## Service connection AWS (qa)
 

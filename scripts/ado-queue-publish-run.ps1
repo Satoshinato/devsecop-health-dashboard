@@ -1,5 +1,9 @@
 # Queue a manual pipeline run with S3 publish enabled.
 # Requires AZURE_DEVOPS_EXT_PAT or ADO_PAT with Build (read & execute) on project qa.
+param(
+  [bool]$CollectSonar = $false
+)
+
 $ErrorActionPreference = "Stop"
 $org = "accusystechnology"
 $project = "qa"
@@ -15,7 +19,7 @@ Run manually in Azure DevOps:
   Branch: main
   publishDashboard: true
   publishWeb: true
-  sonarPoolName: AccusysShared
+  collectSonar: false   (true only if AccusysShared is authorized)
 
 On first AWS step, approve service connection 'Accusys Dev' if prompted.
 "@
@@ -44,6 +48,7 @@ $body = @{
   templateParameters = @{
     publishDashboard = $true
     publishWeb       = $true
+    collectSonar     = $CollectSonar
     sonarPoolName    = "AccusysShared"
   }
 } | ConvertTo-Json -Depth 6

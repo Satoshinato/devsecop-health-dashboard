@@ -15,8 +15,12 @@ schedules:
     always: true
 
 parameters:
+  - name: collectSonar
+    displayName: Collect Sonar metrics (needs self-hosted pool authorized for this pipeline)
+    type: boolean
+    default: true
   - name: sonarPoolName
-    displayName: Agent pool with reach to Sonar Community
+    displayName: Agent pool with reach to Sonar Community (only if Collect Sonar is true)
     type: string
     default: AccusysShared
   - name: publishDashboard
@@ -43,6 +47,7 @@ variables:
 jobs:
   - job: collect_sonar
     displayName: Collect SonarQube
+    condition: ${{ eq(parameters.collectSonar, true) }}
     continueOnError: true
     timeoutInMinutes: 60
     pool:
