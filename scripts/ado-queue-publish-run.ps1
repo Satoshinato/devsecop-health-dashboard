@@ -19,7 +19,7 @@ Run manually in Azure DevOps:
   Branch: main
   publishDashboard: true
   publishWeb: true
-  collectSonar: false   (true only if AccusysShared is authorized)
+  collectSonar: false   (true only if Accusys Shared is authorized)
 
 On first AWS step, approve service connection 'Accusys Dev' if prompted.
 "@
@@ -49,7 +49,7 @@ $body = @{
     publishDashboard = $true
     publishWeb       = $true
     collectSonar     = $CollectSonar
-    sonarPoolName    = "AccusysShared"
+    sonarPoolName    = "Accusys Shared"
   }
 } | ConvertTo-Json -Depth 6
 

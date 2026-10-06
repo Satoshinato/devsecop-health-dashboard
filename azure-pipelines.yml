@@ -1,4 +1,4 @@
-# Collect on AccusysShared (Sonar) + hosted (Azure/Trivy).
+# Collect on Accusys Shared (Sonar) + hosted (Azure/Trivy).
 # Single bucket accusys-devsecops (JSON under data/ + out/ at root). No CloudFront.
 # AWS: service connection "Accusys Dev" in project qa (AWSShellScript@1).
 trigger:
@@ -22,7 +22,7 @@ parameters:
   - name: sonarPoolName
     displayName: Agent pool with reach to Sonar Community (only if Collect Sonar is true)
     type: string
-    default: AccusysShared
+    default: "Accusys Shared"
   - name: publishDashboard
     displayName: Publish JSON to s3://accusys-devsecops/data/
     type: boolean

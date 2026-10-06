@@ -41,7 +41,7 @@ npm run build          # sale `out/`
 | --- | --- |
 | `npm run scan:fixture` | Inventario desde `config/projects.yml` y métricas plausibles de Gema. Escribe `public/data/`. |
 | `npm run scan` | `--source=all` (default). Sin credenciales: YAML. Con credenciales: Sonar y/o Azure DevOps. |
-| `npm run scan -- --source=sonar` | Solo Sonar (pool AccusysShared). |
+| `npm run scan -- --source=sonar` | Solo Sonar (pool Accusys Shared). |
 | `npm run scan -- --source=azure` | Inventario + Trivy (agente hosted). |
 | `npm run scan -- --merge --azure-file … --sonar-file …` | Une ambos parciales. |
 
@@ -64,7 +64,7 @@ Tras crear la connection en qa, en el primer run con `AWSShellScript@1` puede pe
 
 | Job | Pool | Qué hace |
 | --- | --- | --- |
-| `collect_sonar` | **AccusysShared** (opcional) | Queries a Community. Desactivar con parámetro `collectSonar=false` si el pool no está autorizado para el pipeline. |
+| `collect_sonar` | **Accusys Shared** (opcional) | Queries a Community. Desactivar con parámetro `collectSonar=false` si el pool no está autorizado para el pipeline. |
 | `collect_azure` | `ubuntu-latest` | Inventario + Trivy. Artifact `azure-partial`. |
 | `publish_data` | hosted | Merge a `dashboard.json` + `history.json`. Artifact `dashboard-data`. **S3 solo si** `publishDashboard=true`. |
 | `publish_web` | hosted | Tests + `next build`. **S3 web solo si** `publishWeb=true`. |
@@ -96,12 +96,11 @@ Por defecto `publishDashboard` y `publishWeb` están en **true** (schedule y pus
 
 El front no hardcodea métricas: `fetch("/data/dashboard.json")` y `history.json` (hasta 14 scans). Agregaciones en `lib/metrics.ts`. Trivy se lee del attachment `JSON_RESULT` de pipelines `*-pr` y `*-build`.
 
-## Agent pool Sonar (`AccusysShared`)
+## Agent pool Sonar (`Accusys Shared`)
 
-El job `collect_sonar` usa un pool **self-hosted** con red hacia Sonar Community. Si al encolar ves *Could not find a pool with name AccusysShared* o falta autorización:
+El job `collect_sonar` usa un pool **self-hosted** con red hacia Sonar Community. El nombre exacto del pool es **Accusys Shared** (con espacio). El pipeline debe estar autorizado en **qa → Agent pools → Accusys Shared → Security**.
 
-1. **Smoke test / publish sin Sonar:** dejar **`collectSonar` desmarcado** (default `false`). El job Sonar **no se genera** en el YAML; ADO igual valida el pool si el job existe con `condition: false`.
-2. **Producción con Sonar:** pedir a DevOps que autorice el pool para el pipeline o el proyecto **qa** ([YAML auth](https://aka.ms/yamlauthz)) — *Organization settings → Agent pools → AccusysShared → Security* → permitir *Queue builds* al identity del pipeline.
+Para un run sin Sonar: **collectSonar** desmarcado (default `false`).
 
 ## Service connection AWS (qa)
 
