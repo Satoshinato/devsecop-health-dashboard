@@ -127,12 +127,13 @@ jobs:
         inputs:
           artifactName: azure-partial
           downloadPath: $(Build.ArtifactStagingDirectory)
-      - task: DownloadBuildArtifacts@0
-        displayName: Download sonar-partial
-        continueOnError: true
-        inputs:
-          artifactName: sonar-partial
-          downloadPath: $(Build.ArtifactStagingDirectory)
+      - ${{ if eq(parameters.collectSonar, true) }}:
+        - task: DownloadBuildArtifacts@0
+          displayName: Download sonar-partial
+          continueOnError: true
+          inputs:
+            artifactName: sonar-partial
+            downloadPath: $(Build.ArtifactStagingDirectory)
       - bash: |
           set -euo pipefail
           report="$(Build.ArtifactStagingDirectory)/report"
@@ -143,11 +144,15 @@ jobs:
           if [ -f "$(Build.ArtifactStagingDirectory)/sonar-partial/dashboard.json" ]; then
             cp "$(Build.ArtifactStagingDirectory)/sonar-partial/dashboard.json" "$report/sonar/"
           fi
-          azure=""
-          sonar=""
-          [ -f "$report/azure/dashboard.json" ] && azure="--azure-file $report/azure/dashboard.json"
-          [ -f "$report/sonar/dashboard.json" ] && sonar="--sonar-file $report/sonar/dashboard.json"
-          npx tsx collector/main.ts --merge $azure $sonar --out "$report"
+          azure_args=()
+          sonar_args=()
+          if [ -f "$report/azure/dashboard.json" ]; then
+            azure_args+=(--azure-file="$report/azure/dashboard.json")
+          fi
+          if [ -f "$report/sonar/dashboard.json" ]; then
+            sonar_args+=(--sonar-file="$report/sonar/dashboard.json")
+          fi
+          npx tsx collector/main.ts --merge "${azure_args[@]}" "${sonar_args[@]}" --out="$report"
           test -s "$report/dashboard.json"
         displayName: Merge azure + sonar into public/data contract
       - ${{ if eq(parameters.publishDashboard, true) }}:

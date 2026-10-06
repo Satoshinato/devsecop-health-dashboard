@@ -26,7 +26,15 @@ function hasSonarCreds(): boolean {
 }
 
 function argValue(prefix: string): string | undefined {
-  return process.argv.find(a => a.startsWith(prefix))?.slice(prefix.length);
+  const eq = prefix.endsWith("=") ? prefix : `${prefix}=`;
+  const flag = eq.slice(0, -1);
+  const argv = process.argv;
+  for (let i = 0; i < argv.length; i++) {
+    const arg = argv[i];
+    if (arg.startsWith(eq)) return arg.slice(eq.length);
+    if (arg === flag && argv[i + 1] && !argv[i + 1].startsWith("-")) return argv[i + 1];
+  }
+  return undefined;
 }
 
 function parseSource(): Source {
