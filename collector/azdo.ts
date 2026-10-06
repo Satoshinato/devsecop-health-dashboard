@@ -17,31 +17,61 @@ interface AdoRepoRef {
   name: string;
 }
 
+function repoBaseUrl(opts: { org: string; project: string; repoId: string }): string {
+  return (
+    `https://dev.azure.com/${opts.org}/${encodeURIComponent(opts.project)}` +
+    `/_apis/git/repositories/${opts.repoId}`
+  );
+}
+
 async function repoTieneCarpetaDevops(opts: {
   org: string;
   project: string;
   repoId: string;
   headers: HeadersInit;
 }): Promise<boolean> {
-  const url =
-    `https://dev.azure.com/${opts.org}/${encodeURIComponent(opts.project)}` +
-    `/_apis/git/repositories/${opts.repoId}/items` +
-    `?scopePath=/&recursionLevel=One&api-version=${API}`;
-  const res = await fetch(url, { headers: opts.headers });
-  if (!res.ok) {
+  const base = repoBaseUrl(opts);
+  // Items with recursionLevel=One returns 400 (valid enum is OneLevel) and
+  // scopePath=/ + OneLevel often returns only the root tree, not children.
+  const rootRes = await fetch(`${base}/items?path=/&api-version=${API}`, {
+    headers: opts.headers,
+  });
+  if (!rootRes.ok) {
     console.warn(
-      `Azure DevOps items (${opts.project}/${opts.repoId}): ${res.status} — asumiendo sin carpeta devops`,
+      `Azure DevOps items (${opts.project}/${opts.repoId}): ${rootRes.status} — asumiendo sin carpeta devops`,
     );
     return false;
   }
-  const body = (await res.json()) as {
-    value?: { path: string; isFolder?: boolean; gitObjectType?: string }[];
+  const rootBody = (await rootRes.json()) as {
+    objectId?: string;
+    value?: { objectId?: string; gitObjectType?: string }[];
   };
-  return (body.value ?? []).some(item => {
-    const isFolder = item.isFolder === true || item.gitObjectType === "tree";
-    if (!isFolder) return false;
-    const segment = item.path.replace(/^\/+/, "").split("/").filter(Boolean)[0] ?? "";
-    return esNombreCarpetaDevops(segment);
+  const treeId =
+    rootBody.objectId ??
+    rootBody.value?.find(item => item.objectId)?.objectId;
+  if (!treeId) {
+    console.warn(
+      `Azure DevOps items (${opts.project}/${opts.repoId}): sin objectId de tree — asumiendo sin carpeta devops`,
+    );
+    return false;
+  }
+
+  const treeRes = await fetch(`${base}/trees/${treeId}?api-version=${API}`, {
+    headers: opts.headers,
+  });
+  if (!treeRes.ok) {
+    console.warn(
+      `Azure DevOps trees (${opts.project}/${opts.repoId}): ${treeRes.status} — asumiendo sin carpeta devops`,
+    );
+    return false;
+  }
+  const treeBody = (await treeRes.json()) as {
+    treeEntries?: { relativePath?: string; path?: string; gitObjectType?: string }[];
+  };
+  return (treeBody.treeEntries ?? []).some(entry => {
+    if (entry.gitObjectType !== "tree") return false;
+    const name = entry.relativePath ?? entry.path ?? "";
+    return esNombreCarpetaDevops(name);
   });
 }
 
