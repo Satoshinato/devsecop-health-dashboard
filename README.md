@@ -104,4 +104,4 @@ Para un run sin Sonar: **collectSonar** desmarcado (default `false`).
 
 ## Service connection AWS (qa)
 
-Connection **Accusys Dev** en Project settings. Permisos S3 mínimos en `accusys-devsecops`: `ListBucket`; `GetObject` / `PutObject` / `DeleteObject` en el bucket.
+Connection **Accusys Dev** en Project settings. Permisos S3 mínimos en `accusys-devsecops`: `ListBucket`; `GetObject` / `PutObject` en el bucket (`s3:DeleteObject` no se usa: el sync web no borra objetos).
