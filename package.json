@@ -9,7 +9,9 @@
     "lint": "eslint",
     "test": "tsx --test lib/metrics.test.ts lib/sonar-alcance.test.ts collector/trivy.test.ts collector/sonar.test.ts collector/merge.test.ts",
     "scan": "tsx collector/main.ts",
-    "scan:fixture": "tsx collector/main.ts --from-fixture"
+    "scan:fixture": "tsx collector/main.ts --from-fixture",
+    "gema:export": "tsx scripts/gema-daily.ts export",
+    "gema:delta": "tsx scripts/gema-daily.ts delta"
   },
   "dependencies": {
     "next": "16.3.3",

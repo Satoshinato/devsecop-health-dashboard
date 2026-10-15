@@ -1,0 +1,1735 @@
+[
+  {
+    "fecha": "2026-10-14",
+    "organizacionAzdo": "accusystechnology",
+    "organizacionSonar": "accusys",
+    "projects": [
+      {
+        "key": "gema",
+        "name": "Gema - Ophir",
+        "azdoProject": "gema",
+        "leader": "Sebastián Denezio",
+        "reposTotal": 15,
+        "esPoc": true,
+        "repos": [
+          {
+            "name": "legacy",
+            "publicaImagen": true,
+            "sonarProjectName": null,
+            "sonarProjectKey": null,
+            "sonar": null,
+            "trivyPr": null,
+            "trivyBuild": null,
+            "trivy": null,
+            "aplicaSonar": false
+          },
+          {
+            "name": "ms-ophir-costos-api",
+            "publicaImagen": true,
+            "sonarProjectName": "gema_ms-ophir-costos-api",
+            "sonarProjectKey": "gema_ms-ophir-costos-api_679f9936-c931-4b17-9696-4ad5a25fa490",
+            "sonar": {
+              "ncloc": 2163,
+              "coverage": 0,
+              "newCoverage": 0,
+              "duplications": 7.4,
+              "sqaleIndex": 324,
+              "bugs": 0,
+              "vulnerabilities": 0,
+              "hotspotsToReview": 1,
+              "codeSmells": 67,
+              "reliabilityRating": "A",
+              "securityRating": "A",
+              "maintainabilityRating": "A",
+              "alertStatus": "OK",
+              "lastAnalysis": "2026-10-14"
+            },
+            "trivyPr": {
+              "image": "accusystechnology/ms-ophir-costos-api:36843",
+              "baseImage": "ms-ophir-costos-api:36843",
+              "critical": 0,
+              "high": 0,
+              "medium": 0,
+              "low": 0,
+              "fixable": 0,
+              "unfixable": 0,
+              "buildId": "36843",
+              "scanDate": "2026-10-14",
+              "findings": [],
+              "fuente": "pr",
+              "pipeline": "ms-ophir-costos-api-pr",
+              "rama": "refs/pull/12112/merge"
+            },
+            "trivyBuild": {
+              "image": "accusystechnology/ms-ophir-costos-api:0.0.1-056b1e1d",
+              "baseImage": "ms-ophir-costos-api:0.0.1-056b1e1d",
+              "critical": 0,
+              "high": 0,
+              "medium": 0,
+              "low": 0,
+              "fixable": 0,
+              "unfixable": 0,
+              "buildId": "36845",
+              "scanDate": "2026-10-14",
+              "findings": [],
+              "fuente": "build",
+              "pipeline": "ms-ophir-costos-api-build",
+              "rama": "master"
+            },
+            "trivy": {
+              "image": "accusystechnology/ms-ophir-costos-api:0.0.1-056b1e1d",
+              "baseImage": "ms-ophir-costos-api:0.0.1-056b1e1d",
+              "critical": 0,
+              "high": 0,
+              "medium": 0,
+              "low": 0,
+              "fixable": 0,
+              "unfixable": 0,
+              "buildId": "36845",
+              "scanDate": "2026-10-14",
+              "findings": [],
+              "fuente": "build",
+              "pipeline": "ms-ophir-costos-api-build",
+              "rama": "master"
+            },
+            "aplicaSonar": true
+          },
+          {
+            "name": "mf-ophir-migrador-app",
+            "publicaImagen": true,
+            "sonarProjectName": "gema_mf-ophir-migrador-app",
+            "sonarProjectKey": "gema_mf-ophir-migrador-app_0108c441-fbfd-4f57-8ed2-40f0b96d8b77",
+            "sonar": {
+              "ncloc": 9011,
+              "coverage": 0,
+              "newCoverage": 0,
+              "duplications": 4.2,
+              "sqaleIndex": 225,
+              "bugs": 0,
+              "vulnerabilities": 0,
+              "hotspotsToReview": 1,
+              "codeSmells": 58,
+              "reliabilityRating": "A",
+              "securityRating": "A",
+              "maintainabilityRating": "A",
+              "alertStatus": "ERROR",
+              "lastAnalysis": "2026-10-14"
+            },
+            "trivyPr": {
+              "image": "accusystechnology/mf-ophir-migrador-app:36864",
+              "baseImage": "alpine",
+              "critical": 0,
+              "high": 1,
+              "medium": 1,
+              "low": 0,
+              "fixable": 2,
+              "unfixable": 0,
+              "buildId": "36864",
+              "scanDate": "2026-10-14",
+              "findings": [
+                {
+                  "id": "CVE-2026-4775",
+                  "package": "tiff",
+                  "version": "4.7.1-r0",
+                  "severity": "ALTA",
+                  "fixedVersion": "4.7.2-r0"
+                },
+                {
+                  "id": "CVE-2026-85091",
+                  "package": "zlib",
+                  "version": "1.3.2-r0",
+                  "severity": "MEDIA",
+                  "fixedVersion": "1.3.2-r1"
+                }
+              ],
+              "fuente": "pr",
+              "pipeline": "mf-ophir-migrador-app-pr",
+              "rama": "refs/pull/12125/merge"
+            },
+            "trivyBuild": {
+              "image": "accusystechnology/mf-ophir-migrador-app:0.0.1-943e893f",
+              "baseImage": "alpine",
+              "critical": 0,
+              "high": 1,
+              "medium": 1,
+              "low": 0,
+              "fixable": 2,
+              "unfixable": 0,
+              "buildId": "36882",
+              "scanDate": "2026-10-14",
+              "findings": [
+                {
+                  "id": "CVE-2026-4775",
+                  "package": "tiff",
+                  "version": "4.7.1-r0",
+                  "severity": "ALTA",
+                  "fixedVersion": "4.7.2-r0"
+                },
+                {
+                  "id": "CVE-2026-85091",
+                  "package": "zlib",
+                  "version": "1.3.2-r0",
+                  "severity": "MEDIA",
+                  "fixedVersion": "1.3.2-r1"
+                }
+              ],
+              "fuente": "build",
+              "pipeline": "mf-ophir-migrador-app-build",
+              "rama": "master"
+            },
+            "trivy": {
+              "image": "accusystechnology/mf-ophir-migrador-app:0.0.1-943e893f",
+              "baseImage": "alpine",
+              "critical": 0,
+              "high": 1,
+              "medium": 1,
+              "low": 0,
+              "fixable": 2,
+              "unfixable": 0,
+              "buildId": "36882",
+              "scanDate": "2026-10-14",
+              "findings": [
+                {
+                  "id": "CVE-2026-4775",
+                  "package": "tiff",
+                  "version": "4.7.1-r0",
+                  "severity": "ALTA",
+                  "fixedVersion": "4.7.2-r0"
+                },
+                {
+                  "id": "CVE-2026-85091",
+                  "package": "zlib",
+                  "version": "1.3.2-r0",
+                  "severity": "MEDIA",
+                  "fixedVersion": "1.3.2-r1"
+                }
+              ],
+              "fuente": "build",
+              "pipeline": "mf-ophir-migrador-app-build",
+              "rama": "master"
+            },
+            "aplicaSonar": true
+          },
+          {
+            "name": "helm",
+            "publicaImagen": true,
+            "sonarProjectName": null,
+            "sonarProjectKey": null,
+            "sonar": null,
+            "trivyPr": null,
+            "trivyBuild": null,
+            "trivy": null,
+            "aplicaSonar": false
+          },
+          {
+            "name": "ms-ophir-atm-ce-api",
+            "publicaImagen": true,
+            "sonarProjectName": "gema_ms-ophir-atm-ce-api",
+            "sonarProjectKey": "gema_ms-ophir-atm-ce-api_06988f31-39c0-4ad5-958a-5c7555a6a81f",
+            "sonar": {
+              "ncloc": 10760,
+              "coverage": 0,
+              "newCoverage": 0,
+              "duplications": 4.4,
+              "sqaleIndex": 814,
+              "bugs": 0,
+              "vulnerabilities": 0,
+              "hotspotsToReview": 1,
+              "codeSmells": 162,
+              "reliabilityRating": "A",
+              "securityRating": "A",
+              "maintainabilityRating": "A",
+              "alertStatus": "ERROR",
+              "lastAnalysis": "2026-10-14"
+            },
+            "trivyPr": {
+              "image": "accusystechnology/ms-ophir-atm-ce-api:36629",
+              "baseImage": "ms-ophir-atm-ce-api:36629",
+              "critical": 0,
+              "high": 0,
+              "medium": 0,
+              "low": 0,
+              "fixable": 0,
+              "unfixable": 0,
+              "buildId": "36629",
+              "scanDate": "2026-10-14",
+              "findings": [],
+              "fuente": "pr",
+              "pipeline": "ms-ophir-atm-ce-api-pr",
+              "rama": "refs/pull/12003/merge"
+            },
+            "trivyBuild": {
+              "image": "accusystechnology/ms-ophir-atm-ce-api:0.0.1-dc937122",
+              "baseImage": "ms-ophir-atm-ce-api:0.0.1-dc937122",
+              "critical": 0,
+              "high": 0,
+              "medium": 0,
+              "low": 0,
+              "fixable": 0,
+              "unfixable": 0,
+              "buildId": "36638",
+              "scanDate": "2026-10-14",
+              "findings": [],
+              "fuente": "build",
+              "pipeline": "ms-ophir-atm-ce-api-build",
+              "rama": "master"
+            },
+            "trivy": {
+              "image": "accusystechnology/ms-ophir-atm-ce-api:0.0.1-dc937122",
+              "baseImage": "ms-ophir-atm-ce-api:0.0.1-dc937122",
+              "critical": 0,
+              "high": 0,
+              "medium": 0,
+              "low": 0,
+              "fixable": 0,
+              "unfixable": 0,
+              "buildId": "36638",
+              "scanDate": "2026-10-14",
+              "findings": [],
+              "fuente": "build",
+              "pipeline": "ms-ophir-atm-ce-api-build",
+              "rama": "master"
+            },
+            "aplicaSonar": true
+          },
+          {
+            "name": "ms-ophir-arqueo-atm-api",
+            "publicaImagen": true,
+            "sonarProjectName": "gema_ms-ophir-arqueo-atm-api",
+            "sonarProjectKey": "gema_ms-ophir-arqueo-atm-api_d48d3568-b8b4-442e-99cf-2b554c7981ed",
+            "sonar": {
+              "ncloc": 8916,
+              "coverage": 0,
+              "newCoverage": 0,
+              "duplications": 3.7,
+              "sqaleIndex": 1017,
+              "bugs": 0,
+              "vulnerabilities": 0,
+              "hotspotsToReview": 1,
+              "codeSmells": 152,
+              "reliabilityRating": "A",
+              "securityRating": "A",
+              "maintainabilityRating": "A",
+              "alertStatus": "ERROR",
+              "lastAnalysis": "2026-10-14"
+            },
+            "trivyPr": {
+              "image": "accusystechnology/ms-ophir-arqueo-atm-api:36862",
+              "baseImage": "ms-ophir-arqueo-atm-api:36862",
+              "critical": 0,
+              "high": 0,
+              "medium": 0,
+              "low": 0,
+              "fixable": 0,
+              "unfixable": 0,
+              "buildId": "36862",
+              "scanDate": "2026-10-14",
+              "findings": [],
+              "fuente": "pr",
+              "pipeline": "ms-ophir-arqueo-atm-api-pr",
+              "rama": "refs/pull/12123/merge"
+            },
+            "trivyBuild": {
+              "image": "accusystechnology/ms-ophir-arqueo-atm-api:0.0.1-deedf826",
+              "baseImage": "ms-ophir-arqueo-atm-api:0.0.1-deedf826",
+              "critical": 0,
+              "high": 0,
+              "medium": 0,
+              "low": 0,
+              "fixable": 0,
+              "unfixable": 0,
+              "buildId": "36866",
+              "scanDate": "2026-10-14",
+              "findings": [],
+              "fuente": "build",
+              "pipeline": "ms-ophir-arqueo-atm-api-build",
+              "rama": "master"
+            },
+            "trivy": {
+              "image": "accusystechnology/ms-ophir-arqueo-atm-api:0.0.1-deedf826",
+              "baseImage": "ms-ophir-arqueo-atm-api:0.0.1-deedf826",
+              "critical": 0,
+              "high": 0,
+              "medium": 0,
+              "low": 0,
+              "fixable": 0,
+              "unfixable": 0,
+              "buildId": "36866",
+              "scanDate": "2026-10-14",
+              "findings": [],
+              "fuente": "build",
+              "pipeline": "ms-ophir-arqueo-atm-api-build",
+              "rama": "master"
+            },
+            "aplicaSonar": true
+          },
+          {
+            "name": "ms-ophir-app",
+            "publicaImagen": true,
+            "sonarProjectName": "gema_ms-ophir-app",
+            "sonarProjectKey": "gema_ms-ophir-app_932e0f64-4ced-47cf-97c5-7f62b18bc2ee",
+            "sonar": {
+              "ncloc": 127284,
+              "coverage": 0,
+              "newCoverage": 0,
+              "duplications": 7,
+              "sqaleIndex": 7823,
+              "bugs": 16,
+              "vulnerabilities": 0,
+              "hotspotsToReview": 1,
+              "codeSmells": 1429,
+              "reliabilityRating": "D",
+              "securityRating": "A",
+              "maintainabilityRating": "A",
+              "alertStatus": "ERROR",
+              "lastAnalysis": "2026-10-14"
+            },
+            "trivyPr": {
+              "image": "accusystechnology/ms-ophir-app:37387",
+              "baseImage": "alpine",
+              "critical": 0,
+              "high": 0,
+              "medium": 1,
+              "low": 0,
+              "fixable": 1,
+              "unfixable": 0,
+              "buildId": "37387",
+              "scanDate": "2026-10-14",
+              "findings": [
+                {
+                  "id": "CVE-2026-85091",
+                  "package": "zlib",
+                  "version": "1.3.2-r0",
+                  "severity": "MEDIA",
+                  "fixedVersion": "1.3.2-r1"
+                }
+              ],
+              "fuente": "pr",
+              "pipeline": "ms-ophir-app-pr",
+              "rama": "refs/pull/12293/merge"
+            },
+            "trivyBuild": {
+              "image": "accusystechnology/ms-ophir-app:1.0.0-eb7b4708",
+              "baseImage": "alpine",
+              "critical": 0,
+              "high": 0,
+              "medium": 1,
+              "low": 0,
+              "fixable": 1,
+              "unfixable": 0,
+              "buildId": "37389",
+              "scanDate": "2026-10-14",
+              "findings": [
+                {
+                  "id": "CVE-2026-85091",
+                  "package": "zlib",
+                  "version": "1.3.2-r0",
+                  "severity": "MEDIA",
+                  "fixedVersion": "1.3.2-r1"
+                }
+              ],
+              "fuente": "build",
+              "pipeline": "ms-ophir-app-build",
+              "rama": "master"
+            },
+            "trivy": {
+              "image": "accusystechnology/ms-ophir-app:1.0.0-eb7b4708",
+              "baseImage": "alpine",
+              "critical": 0,
+              "high": 0,
+              "medium": 1,
+              "low": 0,
+              "fixable": 1,
+              "unfixable": 0,
+              "buildId": "37389",
+              "scanDate": "2026-10-14",
+              "findings": [
+                {
+                  "id": "CVE-2026-85091",
+                  "package": "zlib",
+                  "version": "1.3.2-r0",
+                  "severity": "MEDIA",
+                  "fixedVersion": "1.3.2-r1"
+                }
+              ],
+              "fuente": "build",
+              "pipeline": "ms-ophir-app-build",
+              "rama": "master"
+            },
+            "aplicaSonar": true
+          },
+          {
+            "name": "ms-ophir-messaging-api",
+            "publicaImagen": true,
+            "sonarProjectName": "gema_ms-ophir-messaging-api",
+            "sonarProjectKey": "gema_ms-ophir-messaging-api_80a5dd3d-9bc2-4b7d-a94a-63dddd087f36",
+            "sonar": {
+              "ncloc": 2360,
+              "coverage": 13.9,
+              "newCoverage": 0,
+              "duplications": 1.2,
+              "sqaleIndex": 171,
+              "bugs": 0,
+              "vulnerabilities": 0,
+              "hotspotsToReview": 0,
+              "codeSmells": 75,
+              "reliabilityRating": "A",
+              "securityRating": "A",
+              "maintainabilityRating": "A",
+              "alertStatus": "ERROR",
+              "lastAnalysis": "2026-10-14"
+            },
+            "trivyPr": {
+              "image": "accusystechnology/ms-ophir-messaging-api:36061",
+              "baseImage": "ms-ophir-messaging-api:36061",
+              "critical": 0,
+              "high": 2,
+              "medium": 6,
+              "low": 10,
+              "fixable": 18,
+              "unfixable": 0,
+              "buildId": "36061",
+              "scanDate": "2026-10-14",
+              "findings": [
+                {
+                  "id": "CVE-2026-19499",
+                  "package": "libc6",
+                  "version": "2.39-0ubuntu8.8",
+                  "severity": "MEDIA",
+                  "fixedVersion": "2.39-0ubuntu8.9"
+                },
+                {
+                  "id": "CVE-2026-19542",
+                  "package": "libc6",
+                  "version": "2.39-0ubuntu8.8",
+                  "severity": "MEDIA",
+                  "fixedVersion": "2.39-0ubuntu8.9"
+                },
+                {
+                  "id": "CVE-2026-6368",
+                  "package": "libc6",
+                  "version": "2.39-0ubuntu8.8",
+                  "severity": "MEDIA",
+                  "fixedVersion": "2.39-0ubuntu8.9"
+                },
+                {
+                  "id": "CVE-2026-6791",
+                  "package": "libc6",
+                  "version": "2.39-0ubuntu8.8",
+                  "severity": "MEDIA",
+                  "fixedVersion": "2.39-0ubuntu8.9"
+                },
+                {
+                  "id": "CVE-2026-77117",
+                  "package": "libc6",
+                  "version": "2.39-0ubuntu8.8",
+                  "severity": "MEDIA",
+                  "fixedVersion": "2.39-0ubuntu8.9"
+                },
+                {
+                  "id": "CVE-2026-80489",
+                  "package": "libc6",
+                  "version": "2.39-0ubuntu8.8",
+                  "severity": "MEDIA",
+                  "fixedVersion": "2.39-0ubuntu8.9"
+                },
+                {
+                  "id": "CVE-2026-84782",
+                  "package": "libssl3t64",
+                  "version": "3.0.13-0ubuntu3.15",
+                  "severity": "ALTA",
+                  "fixedVersion": "3.0.13-0ubuntu3.16"
+                },
+                {
+                  "id": "CVE-2026-35189",
+                  "package": "libssl3t64",
+                  "version": "3.0.13-0ubuntu3.15",
+                  "severity": "BAJA",
+                  "fixedVersion": "3.0.13-0ubuntu3.16"
+                },
+                {
+                  "id": "CVE-2026-54872",
+                  "package": "libssl3t64",
+                  "version": "3.0.13-0ubuntu3.15",
+                  "severity": "BAJA",
+                  "fixedVersion": "3.0.13-0ubuntu3.16"
+                },
+                {
+                  "id": "CVE-2026-75805",
+                  "package": "libssl3t64",
+                  "version": "3.0.13-0ubuntu3.15",
+                  "severity": "BAJA",
+                  "fixedVersion": "3.0.13-0ubuntu3.16"
+                },
+                {
+                  "id": "CVE-2026-75806",
+                  "package": "libssl3t64",
+                  "version": "3.0.13-0ubuntu3.15",
+                  "severity": "BAJA",
+                  "fixedVersion": "3.0.13-0ubuntu3.16"
+                },
+                {
+                  "id": "CVE-2026-77696",
+                  "package": "libssl3t64",
+                  "version": "3.0.13-0ubuntu3.15",
+                  "severity": "BAJA",
+                  "fixedVersion": "3.0.13-0ubuntu3.16"
+                },
+                {
+                  "id": "CVE-2026-84782",
+                  "package": "openssl",
+                  "version": "3.0.13-0ubuntu3.15",
+                  "severity": "ALTA",
+                  "fixedVersion": "3.0.13-0ubuntu3.16"
+                },
+                {
+                  "id": "CVE-2026-35189",
+                  "package": "openssl",
+                  "version": "3.0.13-0ubuntu3.15",
+                  "severity": "BAJA",
+                  "fixedVersion": "3.0.13-0ubuntu3.16"
+                },
+                {
+                  "id": "CVE-2026-54872",
+                  "package": "openssl",
+                  "version": "3.0.13-0ubuntu3.15",
+                  "severity": "BAJA",
+                  "fixedVersion": "3.0.13-0ubuntu3.16"
+                },
+                {
+                  "id": "CVE-2026-75805",
+                  "package": "openssl",
+                  "version": "3.0.13-0ubuntu3.15",
+                  "severity": "BAJA",
+                  "fixedVersion": "3.0.13-0ubuntu3.16"
+                },
+                {
+                  "id": "CVE-2026-75806",
+                  "package": "openssl",
+                  "version": "3.0.13-0ubuntu3.15",
+                  "severity": "BAJA",
+                  "fixedVersion": "3.0.13-0ubuntu3.16"
+                },
+                {
+                  "id": "CVE-2026-77696",
+                  "package": "openssl",
+                  "version": "3.0.13-0ubuntu3.15",
+                  "severity": "BAJA",
+                  "fixedVersion": "3.0.13-0ubuntu3.16"
+                }
+              ],
+              "fuente": "pr",
+              "pipeline": "ms-ophir-messaging-api-pr",
+              "rama": "refs/pull/11791/merge"
+            },
+            "trivyBuild": {
+              "image": "accusystechnology/ms-ophir-messaging-api:0.0.1-26fe0b88",
+              "baseImage": "ms-ophir-messaging-api:0.0.1-26fe0b88",
+              "critical": 0,
+              "high": 2,
+              "medium": 6,
+              "low": 10,
+              "fixable": 18,
+              "unfixable": 0,
+              "buildId": "36092",
+              "scanDate": "2026-10-14",
+              "findings": [
+                {
+                  "id": "CVE-2026-19499",
+                  "package": "libc6",
+                  "version": "2.39-0ubuntu8.8",
+                  "severity": "MEDIA",
+                  "fixedVersion": "2.39-0ubuntu8.9"
+                },
+                {
+                  "id": "CVE-2026-19542",
+                  "package": "libc6",
+                  "version": "2.39-0ubuntu8.8",
+                  "severity": "MEDIA",
+                  "fixedVersion": "2.39-0ubuntu8.9"
+                },
+                {
+                  "id": "CVE-2026-6368",
+                  "package": "libc6",
+                  "version": "2.39-0ubuntu8.8",
+                  "severity": "MEDIA",
+                  "fixedVersion": "2.39-0ubuntu8.9"
+                },
+                {
+                  "id": "CVE-2026-6791",
+                  "package": "libc6",
+                  "version": "2.39-0ubuntu8.8",
+                  "severity": "MEDIA",
+                  "fixedVersion": "2.39-0ubuntu8.9"
+                },
+                {
+                  "id": "CVE-2026-77117",
+                  "package": "libc6",
+                  "version": "2.39-0ubuntu8.8",
+                  "severity": "MEDIA",
+                  "fixedVersion": "2.39-0ubuntu8.9"
+                },
+                {
+                  "id": "CVE-2026-80489",
+                  "package": "libc6",
+                  "version": "2.39-0ubuntu8.8",
+                  "severity": "MEDIA",
+                  "fixedVersion": "2.39-0ubuntu8.9"
+                },
+                {
+                  "id": "CVE-2026-84782",
+                  "package": "libssl3t64",
+                  "version": "3.0.13-0ubuntu3.15",
+                  "severity": "ALTA",
+                  "fixedVersion": "3.0.13-0ubuntu3.16"
+                },
+                {
+                  "id": "CVE-2026-35189",
+                  "package": "libssl3t64",
+                  "version": "3.0.13-0ubuntu3.15",
+                  "severity": "BAJA",
+                  "fixedVersion": "3.0.13-0ubuntu3.16"
+                },
+                {
+                  "id": "CVE-2026-54872",
+                  "package": "libssl3t64",
+                  "version": "3.0.13-0ubuntu3.15",
+                  "severity": "BAJA",
+                  "fixedVersion": "3.0.13-0ubuntu3.16"
+                },
+                {
+                  "id": "CVE-2026-75805",
+                  "package": "libssl3t64",
+                  "version": "3.0.13-0ubuntu3.15",
+                  "severity": "BAJA",
+                  "fixedVersion": "3.0.13-0ubuntu3.16"
+                },
+                {
+                  "id": "CVE-2026-75806",
+                  "package": "libssl3t64",
+                  "version": "3.0.13-0ubuntu3.15",
+                  "severity": "BAJA",
+                  "fixedVersion": "3.0.13-0ubuntu3.16"
+                },
+                {
+                  "id": "CVE-2026-77696",
+                  "package": "libssl3t64",
+                  "version": "3.0.13-0ubuntu3.15",
+                  "severity": "BAJA",
+                  "fixedVersion": "3.0.13-0ubuntu3.16"
+                },
+                {
+                  "id": "CVE-2026-84782",
+                  "package": "openssl",
+                  "version": "3.0.13-0ubuntu3.15",
+                  "severity": "ALTA",
+                  "fixedVersion": "3.0.13-0ubuntu3.16"
+                },
+                {
+                  "id": "CVE-2026-35189",
+                  "package": "openssl",
+                  "version": "3.0.13-0ubuntu3.15",
+                  "severity": "BAJA",
+                  "fixedVersion": "3.0.13-0ubuntu3.16"
+                },
+                {
+                  "id": "CVE-2026-54872",
+                  "package": "openssl",
+                  "version": "3.0.13-0ubuntu3.15",
+                  "severity": "BAJA",
+                  "fixedVersion": "3.0.13-0ubuntu3.16"
+                },
+                {
+                  "id": "CVE-2026-75805",
+                  "package": "openssl",
+                  "version": "3.0.13-0ubuntu3.15",
+                  "severity": "BAJA",
+                  "fixedVersion": "3.0.13-0ubuntu3.16"
+                },
+                {
+                  "id": "CVE-2026-75806",
+                  "package": "openssl",
+                  "version": "3.0.13-0ubuntu3.15",
+                  "severity": "BAJA",
+                  "fixedVersion": "3.0.13-0ubuntu3.16"
+                },
+                {
+                  "id": "CVE-2026-77696",
+                  "package": "openssl",
+                  "version": "3.0.13-0ubuntu3.15",
+                  "severity": "BAJA",
+                  "fixedVersion": "3.0.13-0ubuntu3.16"
+                }
+              ],
+              "fuente": "build",
+              "pipeline": "ms-ophir-messaging-api-build",
+              "rama": "master"
+            },
+            "trivy": {
+              "image": "accusystechnology/ms-ophir-messaging-api:0.0.1-26fe0b88",
+              "baseImage": "ms-ophir-messaging-api:0.0.1-26fe0b88",
+              "critical": 0,
+              "high": 2,
+              "medium": 6,
+              "low": 10,
+              "fixable": 18,
+              "unfixable": 0,
+              "buildId": "36092",
+              "scanDate": "2026-10-14",
+              "findings": [
+                {
+                  "id": "CVE-2026-19499",
+                  "package": "libc6",
+                  "version": "2.39-0ubuntu8.8",
+                  "severity": "MEDIA",
+                  "fixedVersion": "2.39-0ubuntu8.9"
+                },
+                {
+                  "id": "CVE-2026-19542",
+                  "package": "libc6",
+                  "version": "2.39-0ubuntu8.8",
+                  "severity": "MEDIA",
+                  "fixedVersion": "2.39-0ubuntu8.9"
+                },
+                {
+                  "id": "CVE-2026-6368",
+                  "package": "libc6",
+                  "version": "2.39-0ubuntu8.8",
+                  "severity": "MEDIA",
+                  "fixedVersion": "2.39-0ubuntu8.9"
+                },
+                {
+                  "id": "CVE-2026-6791",
+                  "package": "libc6",
+                  "version": "2.39-0ubuntu8.8",
+                  "severity": "MEDIA",
+                  "fixedVersion": "2.39-0ubuntu8.9"
+                },
+                {
+                  "id": "CVE-2026-77117",
+                  "package": "libc6",
+                  "version": "2.39-0ubuntu8.8",
+                  "severity": "MEDIA",
+                  "fixedVersion": "2.39-0ubuntu8.9"
+                },
+                {
+                  "id": "CVE-2026-80489",
+                  "package": "libc6",
+                  "version": "2.39-0ubuntu8.8",
+                  "severity": "MEDIA",
+                  "fixedVersion": "2.39-0ubuntu8.9"
+                },
+                {
+                  "id": "CVE-2026-84782",
+                  "package": "libssl3t64",
+                  "version": "3.0.13-0ubuntu3.15",
+                  "severity": "ALTA",
+                  "fixedVersion": "3.0.13-0ubuntu3.16"
+                },
+                {
+                  "id": "CVE-2026-35189",
+                  "package": "libssl3t64",
+                  "version": "3.0.13-0ubuntu3.15",
+                  "severity": "BAJA",
+                  "fixedVersion": "3.0.13-0ubuntu3.16"
+                },
+                {
+                  "id": "CVE-2026-54872",
+                  "package": "libssl3t64",
+                  "version": "3.0.13-0ubuntu3.15",
+                  "severity": "BAJA",
+                  "fixedVersion": "3.0.13-0ubuntu3.16"
+                },
+                {
+                  "id": "CVE-2026-75805",
+                  "package": "libssl3t64",
+                  "version": "3.0.13-0ubuntu3.15",
+                  "severity": "BAJA",
+                  "fixedVersion": "3.0.13-0ubuntu3.16"
+                },
+                {
+                  "id": "CVE-2026-75806",
+                  "package": "libssl3t64",
+                  "version": "3.0.13-0ubuntu3.15",
+                  "severity": "BAJA",
+                  "fixedVersion": "3.0.13-0ubuntu3.16"
+                },
+                {
+                  "id": "CVE-2026-77696",
+                  "package": "libssl3t64",
+                  "version": "3.0.13-0ubuntu3.15",
+                  "severity": "BAJA",
+                  "fixedVersion": "3.0.13-0ubuntu3.16"
+                },
+                {
+                  "id": "CVE-2026-84782",
+                  "package": "openssl",
+                  "version": "3.0.13-0ubuntu3.15",
+                  "severity": "ALTA",
+                  "fixedVersion": "3.0.13-0ubuntu3.16"
+                },
+                {
+                  "id": "CVE-2026-35189",
+                  "package": "openssl",
+                  "version": "3.0.13-0ubuntu3.15",
+                  "severity": "BAJA",
+                  "fixedVersion": "3.0.13-0ubuntu3.16"
+                },
+                {
+                  "id": "CVE-2026-54872",
+                  "package": "openssl",
+                  "version": "3.0.13-0ubuntu3.15",
+                  "severity": "BAJA",
+                  "fixedVersion": "3.0.13-0ubuntu3.16"
+                },
+                {
+                  "id": "CVE-2026-75805",
+                  "package": "openssl",
+                  "version": "3.0.13-0ubuntu3.15",
+                  "severity": "BAJA",
+                  "fixedVersion": "3.0.13-0ubuntu3.16"
+                },
+                {
+                  "id": "CVE-2026-75806",
+                  "package": "openssl",
+                  "version": "3.0.13-0ubuntu3.15",
+                  "severity": "BAJA",
+                  "fixedVersion": "3.0.13-0ubuntu3.16"
+                },
+                {
+                  "id": "CVE-2026-77696",
+                  "package": "openssl",
+                  "version": "3.0.13-0ubuntu3.15",
+                  "severity": "BAJA",
+                  "fixedVersion": "3.0.13-0ubuntu3.16"
+                }
+              ],
+              "fuente": "build",
+              "pipeline": "ms-ophir-messaging-api-build",
+              "rama": "master"
+            },
+            "aplicaSonar": true
+          },
+          {
+            "name": "ms-ophir-proyecciones-api",
+            "publicaImagen": true,
+            "sonarProjectName": "gema_ms-ophir-proyecciones-api",
+            "sonarProjectKey": "gema_ms-ophir-proyecciones-api_c1de9fb6-fc79-4a1d-a424-fb42bc2466f7",
+            "sonar": {
+              "ncloc": 11439,
+              "coverage": 0,
+              "newCoverage": 0,
+              "duplications": 3.9,
+              "sqaleIndex": 1024,
+              "bugs": 1,
+              "vulnerabilities": 0,
+              "hotspotsToReview": 1,
+              "codeSmells": 185,
+              "reliabilityRating": "E",
+              "securityRating": "A",
+              "maintainabilityRating": "A",
+              "alertStatus": "ERROR",
+              "lastAnalysis": "2026-10-14"
+            },
+            "trivyPr": {
+              "image": "accusystechnology/ms-ophir-proyecciones-api:36848",
+              "baseImage": "ms-ophir-proyecciones-api:36848",
+              "critical": 0,
+              "high": 0,
+              "medium": 0,
+              "low": 0,
+              "fixable": 0,
+              "unfixable": 0,
+              "buildId": "36848",
+              "scanDate": "2026-10-14",
+              "findings": [],
+              "fuente": "pr",
+              "pipeline": "ms-ophir-proyecciones-api-pr",
+              "rama": "refs/pull/12114/merge"
+            },
+            "trivyBuild": {
+              "image": "accusystechnology/ms-ophir-proyecciones-api:0.0.1-0f9b94bc",
+              "baseImage": "ms-ophir-proyecciones-api:0.0.1-0f9b94bc",
+              "critical": 0,
+              "high": 0,
+              "medium": 0,
+              "low": 0,
+              "fixable": 0,
+              "unfixable": 0,
+              "buildId": "36849",
+              "scanDate": "2026-10-14",
+              "findings": [],
+              "fuente": "build",
+              "pipeline": "ms-ophir-proyecciones-api-build",
+              "rama": "master"
+            },
+            "trivy": {
+              "image": "accusystechnology/ms-ophir-proyecciones-api:0.0.1-0f9b94bc",
+              "baseImage": "ms-ophir-proyecciones-api:0.0.1-0f9b94bc",
+              "critical": 0,
+              "high": 0,
+              "medium": 0,
+              "low": 0,
+              "fixable": 0,
+              "unfixable": 0,
+              "buildId": "36849",
+              "scanDate": "2026-10-14",
+              "findings": [],
+              "fuente": "build",
+              "pipeline": "ms-ophir-proyecciones-api-build",
+              "rama": "master"
+            },
+            "aplicaSonar": true
+          },
+          {
+            "name": "ms-ophir-calendario-api",
+            "publicaImagen": true,
+            "sonarProjectName": "gema_ms-ophir-calendario-api",
+            "sonarProjectKey": "gema_ms-ophir-calendario-api_8fbd1341-87ba-42b1-98a8-da5422621e21",
+            "sonar": {
+              "ncloc": 709,
+              "coverage": 22.6,
+              "newCoverage": 0,
+              "duplications": 0,
+              "sqaleIndex": 60,
+              "bugs": 0,
+              "vulnerabilities": 0,
+              "hotspotsToReview": 0,
+              "codeSmells": 10,
+              "reliabilityRating": "A",
+              "securityRating": "A",
+              "maintainabilityRating": "A",
+              "alertStatus": "OK",
+              "lastAnalysis": "2026-10-14"
+            },
+            "trivyPr": {
+              "image": "accusystechnology/ms-ophir-calendario-api:33740",
+              "baseImage": "ms-ophir-calendario-api:33740",
+              "critical": 0,
+              "high": 0,
+              "medium": 4,
+              "low": 6,
+              "fixable": 10,
+              "unfixable": 0,
+              "buildId": "33740",
+              "scanDate": "2026-10-14",
+              "findings": [
+                {
+                  "id": "CVE-2026-63072",
+                  "package": "libssl3t64",
+                  "version": "3.0.13-0ubuntu3.12",
+                  "severity": "MEDIA",
+                  "fixedVersion": "3.0.13-0ubuntu3.15"
+                },
+                {
+                  "id": "CVE-2026-63076",
+                  "package": "libssl3t64",
+                  "version": "3.0.13-0ubuntu3.12",
+                  "severity": "MEDIA",
+                  "fixedVersion": "3.0.13-0ubuntu3.15"
+                },
+                {
+                  "id": "CVE-2026-54874",
+                  "package": "libssl3t64",
+                  "version": "3.0.13-0ubuntu3.12",
+                  "severity": "BAJA",
+                  "fixedVersion": "3.0.13-0ubuntu3.15"
+                },
+                {
+                  "id": "CVE-2026-63074",
+                  "package": "libssl3t64",
+                  "version": "3.0.13-0ubuntu3.12",
+                  "severity": "BAJA",
+                  "fixedVersion": "3.0.13-0ubuntu3.15"
+                },
+                {
+                  "id": "CVE-2026-75803",
+                  "package": "libssl3t64",
+                  "version": "3.0.13-0ubuntu3.12",
+                  "severity": "BAJA",
+                  "fixedVersion": "3.0.13-0ubuntu3.15"
+                },
+                {
+                  "id": "CVE-2026-63072",
+                  "package": "openssl",
+                  "version": "3.0.13-0ubuntu3.12",
+                  "severity": "MEDIA",
+                  "fixedVersion": "3.0.13-0ubuntu3.15"
+                },
+                {
+                  "id": "CVE-2026-63076",
+                  "package": "openssl",
+                  "version": "3.0.13-0ubuntu3.12",
+                  "severity": "MEDIA",
+                  "fixedVersion": "3.0.13-0ubuntu3.15"
+                },
+                {
+                  "id": "CVE-2026-54874",
+                  "package": "openssl",
+                  "version": "3.0.13-0ubuntu3.12",
+                  "severity": "BAJA",
+                  "fixedVersion": "3.0.13-0ubuntu3.15"
+                },
+                {
+                  "id": "CVE-2026-63074",
+                  "package": "openssl",
+                  "version": "3.0.13-0ubuntu3.12",
+                  "severity": "BAJA",
+                  "fixedVersion": "3.0.13-0ubuntu3.15"
+                },
+                {
+                  "id": "CVE-2026-75803",
+                  "package": "openssl",
+                  "version": "3.0.13-0ubuntu3.12",
+                  "severity": "BAJA",
+                  "fixedVersion": "3.0.13-0ubuntu3.15"
+                }
+              ],
+              "fuente": "pr",
+              "pipeline": "ms-ophir-calendario-api-pr",
+              "rama": "refs/pull/10877/merge"
+            },
+            "trivyBuild": {
+              "image": "accusystechnology/ms-ophir-calendario-api:0.0.1-10ee9c40",
+              "baseImage": "ms-ophir-calendario-api:0.0.1-10ee9c40",
+              "critical": 0,
+              "high": 0,
+              "medium": 0,
+              "low": 0,
+              "fixable": 0,
+              "unfixable": 0,
+              "buildId": "32968",
+              "scanDate": "2026-10-14",
+              "findings": [],
+              "fuente": "build",
+              "pipeline": "ms-ophir-calendario-api-build",
+              "rama": "master"
+            },
+            "trivy": {
+              "image": "accusystechnology/ms-ophir-calendario-api:0.0.1-10ee9c40",
+              "baseImage": "ms-ophir-calendario-api:0.0.1-10ee9c40",
+              "critical": 0,
+              "high": 0,
+              "medium": 0,
+              "low": 0,
+              "fixable": 0,
+              "unfixable": 0,
+              "buildId": "32968",
+              "scanDate": "2026-10-14",
+              "findings": [],
+              "fuente": "build",
+              "pipeline": "ms-ophir-calendario-api-build",
+              "rama": "master"
+            },
+            "aplicaSonar": true
+          },
+          {
+            "name": "ophir",
+            "publicaImagen": true,
+            "sonarProjectName": null,
+            "sonarProjectKey": null,
+            "sonar": null,
+            "trivyPr": null,
+            "trivyBuild": null,
+            "trivy": null,
+            "aplicaSonar": false
+          },
+          {
+            "name": "db",
+            "publicaImagen": true,
+            "sonarProjectName": null,
+            "sonarProjectKey": null,
+            "sonar": null,
+            "trivyPr": null,
+            "trivyBuild": null,
+            "trivy": null,
+            "aplicaSonar": false
+          },
+          {
+            "name": "ms-ophir-api",
+            "publicaImagen": true,
+            "sonarProjectName": "gema_ms-ophir-api",
+            "sonarProjectKey": "gema_ms-ophir-api_853290eb-17f6-415b-9f1e-c23033aa2705",
+            "sonar": {
+              "ncloc": 133475,
+              "coverage": 0,
+              "newCoverage": 0,
+              "duplications": 7.5,
+              "sqaleIndex": 9884,
+              "bugs": 7,
+              "vulnerabilities": 0,
+              "hotspotsToReview": 1,
+              "codeSmells": 2108,
+              "reliabilityRating": "E",
+              "securityRating": "A",
+              "maintainabilityRating": "A",
+              "alertStatus": "ERROR",
+              "lastAnalysis": "2026-10-14"
+            },
+            "trivyPr": {
+              "image": "accusystechnology/ms-ophir-api:37386",
+              "baseImage": "ms-ophir-api:37386",
+              "critical": 0,
+              "high": 0,
+              "medium": 0,
+              "low": 0,
+              "fixable": 0,
+              "unfixable": 0,
+              "buildId": "37386",
+              "scanDate": "2026-10-14",
+              "findings": [],
+              "fuente": "pr",
+              "pipeline": "ms-ophir-api-pr",
+              "rama": "refs/pull/12292/merge"
+            },
+            "trivyBuild": {
+              "image": "accusystechnology/ms-ophir-api:0.0.1-22da2971",
+              "baseImage": "ms-ophir-api:0.0.1-22da2971",
+              "critical": 0,
+              "high": 0,
+              "medium": 0,
+              "low": 0,
+              "fixable": 0,
+              "unfixable": 0,
+              "buildId": "37388",
+              "scanDate": "2026-10-14",
+              "findings": [],
+              "fuente": "build",
+              "pipeline": "ms-ophir-api-build",
+              "rama": "master"
+            },
+            "trivy": {
+              "image": "accusystechnology/ms-ophir-api:0.0.1-22da2971",
+              "baseImage": "ms-ophir-api:0.0.1-22da2971",
+              "critical": 0,
+              "high": 0,
+              "medium": 0,
+              "low": 0,
+              "fixable": 0,
+              "unfixable": 0,
+              "buildId": "37388",
+              "scanDate": "2026-10-14",
+              "findings": [],
+              "fuente": "build",
+              "pipeline": "ms-ophir-api-build",
+              "rama": "master"
+            },
+            "aplicaSonar": true
+          },
+          {
+            "name": "ms-ophir-migrador-api",
+            "publicaImagen": true,
+            "sonarProjectName": "gema_ms-ophir-migrador-api",
+            "sonarProjectKey": "gema_ms-ophir-migrador-api_c99b2f90-4103-48a3-ae74-6e850533ada7",
+            "sonar": {
+              "ncloc": 95801,
+              "coverage": 0.1,
+              "newCoverage": 0,
+              "duplications": 7.1,
+              "sqaleIndex": 8335,
+              "bugs": 5,
+              "vulnerabilities": 0,
+              "hotspotsToReview": 1,
+              "codeSmells": 1854,
+              "reliabilityRating": "C",
+              "securityRating": "A",
+              "maintainabilityRating": "A",
+              "alertStatus": "ERROR",
+              "lastAnalysis": "2026-10-14"
+            },
+            "trivyPr": {
+              "image": "accusystechnology/ms-ophir-migrador-api:37371",
+              "baseImage": "ms-ophir-migrador-api:37371",
+              "critical": 0,
+              "high": 0,
+              "medium": 0,
+              "low": 0,
+              "fixable": 0,
+              "unfixable": 0,
+              "buildId": "37371",
+              "scanDate": "2026-10-14",
+              "findings": [],
+              "fuente": "pr",
+              "pipeline": "ms-ophir-migrador-api-pr",
+              "rama": "refs/pull/12289/merge"
+            },
+            "trivyBuild": {
+              "image": "accusystechnology/ms-ophir-migrador-api:0.0.1-c7278537",
+              "baseImage": "ms-ophir-migrador-api:0.0.1-c7278537",
+              "critical": 0,
+              "high": 0,
+              "medium": 0,
+              "low": 0,
+              "fixable": 0,
+              "unfixable": 0,
+              "buildId": "37374",
+              "scanDate": "2026-10-14",
+              "findings": [],
+              "fuente": "build",
+              "pipeline": "ms-ophir-migrador-api-build",
+              "rama": "master"
+            },
+            "trivy": {
+              "image": "accusystechnology/ms-ophir-migrador-api:0.0.1-c7278537",
+              "baseImage": "ms-ophir-migrador-api:0.0.1-c7278537",
+              "critical": 0,
+              "high": 0,
+              "medium": 0,
+              "low": 0,
+              "fixable": 0,
+              "unfixable": 0,
+              "buildId": "37374",
+              "scanDate": "2026-10-14",
+              "findings": [],
+              "fuente": "build",
+              "pipeline": "ms-ophir-migrador-api-build",
+              "rama": "master"
+            },
+            "aplicaSonar": true
+          },
+          {
+            "name": "ms-ophir-learning-api",
+            "publicaImagen": true,
+            "sonarProjectName": "gema_ms-ophir-learning-api",
+            "sonarProjectKey": "gema_ms-ophir-learning-api_473277e2-8109-474b-b173-ca2bfc01f39a",
+            "sonar": {
+              "ncloc": 0,
+              "coverage": 0,
+              "newCoverage": 0,
+              "duplications": 0,
+              "sqaleIndex": 0,
+              "bugs": 0,
+              "vulnerabilities": 0,
+              "hotspotsToReview": 0,
+              "codeSmells": 0,
+              "reliabilityRating": "A",
+              "securityRating": "A",
+              "maintainabilityRating": "A",
+              "alertStatus": "ERROR",
+              "lastAnalysis": "2026-10-14"
+            },
+            "trivyPr": {
+              "image": "accusystechnology/ms-ophir-learning-api:32814",
+              "baseImage": "ms-ophir-learning-api:32814",
+              "critical": 0,
+              "high": 0,
+              "medium": 0,
+              "low": 0,
+              "fixable": 0,
+              "unfixable": 0,
+              "buildId": "32814",
+              "scanDate": "2026-10-14",
+              "findings": [],
+              "fuente": "pr",
+              "pipeline": "ms-ophir-learning-api-pr",
+              "rama": "refs/pull/10503/merge"
+            },
+            "trivyBuild": {
+              "image": "accusystechnology/ms-ophir-learning-api:0.0.1-1e5664fd",
+              "baseImage": "ms-ophir-learning-api:0.0.1-1e5664fd",
+              "critical": 0,
+              "high": 0,
+              "medium": 0,
+              "low": 0,
+              "fixable": 0,
+              "unfixable": 0,
+              "buildId": "32811",
+              "scanDate": "2026-10-14",
+              "findings": [],
+              "fuente": "build",
+              "pipeline": "ms-ophir-learning-api-build",
+              "rama": "master"
+            },
+            "trivy": {
+              "image": "accusystechnology/ms-ophir-learning-api:0.0.1-1e5664fd",
+              "baseImage": "ms-ophir-learning-api:0.0.1-1e5664fd",
+              "critical": 0,
+              "high": 0,
+              "medium": 0,
+              "low": 0,
+              "fixable": 0,
+              "unfixable": 0,
+              "buildId": "32811",
+              "scanDate": "2026-10-14",
+              "findings": [],
+              "fuente": "build",
+              "pipeline": "ms-ophir-learning-api-build",
+              "rama": "master"
+            },
+            "aplicaSonar": true
+          },
+          {
+            "name": "ms-ophir-caja-api",
+            "publicaImagen": true,
+            "sonarProjectName": "gema_ms-ophir-caja-api",
+            "sonarProjectKey": "gema_ms-ophir-caja-api_34e6c279-9b77-41df-a4f6-7d5fd263a13f",
+            "sonar": {
+              "ncloc": 20595,
+              "coverage": 0,
+              "newCoverage": 0,
+              "duplications": 5.2,
+              "sqaleIndex": 2029,
+              "bugs": 1,
+              "vulnerabilities": 0,
+              "hotspotsToReview": 1,
+              "codeSmells": 372,
+              "reliabilityRating": "C",
+              "securityRating": "A",
+              "maintainabilityRating": "A",
+              "alertStatus": "ERROR",
+              "lastAnalysis": "2026-10-14"
+            },
+            "trivyPr": {
+              "image": "accusystechnology/ms-ophir-caja-api:37070",
+              "baseImage": "ms-ophir-caja-api:37070",
+              "critical": 0,
+              "high": 0,
+              "medium": 0,
+              "low": 0,
+              "fixable": 0,
+              "unfixable": 0,
+              "buildId": "37070",
+              "scanDate": "2026-10-14",
+              "findings": [],
+              "fuente": "pr",
+              "pipeline": "ms-ophir-caja-api-pr",
+              "rama": "refs/pull/12189/merge"
+            },
+            "trivyBuild": {
+              "image": "accusystechnology/ms-ophir-caja-api:0.0.1-bb96a9da",
+              "baseImage": "ms-ophir-caja-api:0.0.1-bb96a9da",
+              "critical": 0,
+              "high": 0,
+              "medium": 0,
+              "low": 0,
+              "fixable": 0,
+              "unfixable": 0,
+              "buildId": "37092",
+              "scanDate": "2026-10-14",
+              "findings": [],
+              "fuente": "build",
+              "pipeline": "ms-ophir-caja-api-build",
+              "rama": "master"
+            },
+            "trivy": {
+              "image": "accusystechnology/ms-ophir-caja-api:0.0.1-bb96a9da",
+              "baseImage": "ms-ophir-caja-api:0.0.1-bb96a9da",
+              "critical": 0,
+              "high": 0,
+              "medium": 0,
+              "low": 0,
+              "fixable": 0,
+              "unfixable": 0,
+              "buildId": "37092",
+              "scanDate": "2026-10-14",
+              "findings": [],
+              "fuente": "build",
+              "pipeline": "ms-ophir-caja-api-build",
+              "rama": "master"
+            },
+            "aplicaSonar": true
+          },
+          {
+            "name": "ms-ophir-geolocation-api",
+            "publicaImagen": true,
+            "sonarProjectName": "gema_ms-ophir-geolocation-api",
+            "sonarProjectKey": "gema_ms-ophir-geolocation-api_40a8aa06-6947-4752-9882-a3bad5978217",
+            "sonar": {
+              "ncloc": 469,
+              "coverage": 18.6,
+              "newCoverage": 0,
+              "duplications": 0,
+              "sqaleIndex": 102,
+              "bugs": 0,
+              "vulnerabilities": 0,
+              "hotspotsToReview": 1,
+              "codeSmells": 11,
+              "reliabilityRating": "A",
+              "securityRating": "A",
+              "maintainabilityRating": "A",
+              "alertStatus": "ERROR",
+              "lastAnalysis": "2026-10-14"
+            },
+            "trivyPr": {
+              "image": "accusystechnology/ms-ophir-geolocation-api:32966",
+              "baseImage": "ms-ophir-geolocation-api:32966",
+              "critical": 0,
+              "high": 0,
+              "medium": 0,
+              "low": 0,
+              "fixable": 0,
+              "unfixable": 0,
+              "buildId": "32966",
+              "scanDate": "2026-10-14",
+              "findings": [],
+              "fuente": "pr",
+              "pipeline": "ms-ophir-geolocation-api-pr",
+              "rama": "refs/pull/10531/merge"
+            },
+            "trivyBuild": {
+              "image": "accusystechnology/ms-ophir-geolocation-api:0.0.1-44077faa",
+              "baseImage": "ms-ophir-geolocation-api:0.0.1-44077faa",
+              "critical": 0,
+              "high": 0,
+              "medium": 0,
+              "low": 0,
+              "fixable": 0,
+              "unfixable": 0,
+              "buildId": "32970",
+              "scanDate": "2026-10-14",
+              "findings": [],
+              "fuente": "build",
+              "pipeline": "ms-ophir-geolocation-api-build",
+              "rama": "master"
+            },
+            "trivy": {
+              "image": "accusystechnology/ms-ophir-geolocation-api:0.0.1-44077faa",
+              "baseImage": "ms-ophir-geolocation-api:0.0.1-44077faa",
+              "critical": 0,
+              "high": 0,
+              "medium": 0,
+              "low": 0,
+              "fixable": 0,
+              "unfixable": 0,
+              "buildId": "32970",
+              "scanDate": "2026-10-14",
+              "findings": [],
+              "fuente": "build",
+              "pipeline": "ms-ophir-geolocation-api-build",
+              "rama": "master"
+            },
+            "aplicaSonar": true
+          },
+          {
+            "name": "ms-ophir-reportes-api",
+            "publicaImagen": true,
+            "sonarProjectName": "gema_ms-ophir-reportes-api",
+            "sonarProjectKey": "gema_ms-ophir-reportes-api_ac8384e4-6ba2-458c-a704-aa22c5b05e54",
+            "sonar": {
+              "ncloc": 1985,
+              "coverage": 0,
+              "newCoverage": 0,
+              "duplications": 2.7,
+              "sqaleIndex": 380,
+              "bugs": 0,
+              "vulnerabilities": 0,
+              "hotspotsToReview": 1,
+              "codeSmells": 54,
+              "reliabilityRating": "A",
+              "securityRating": "A",
+              "maintainabilityRating": "A",
+              "alertStatus": "ERROR",
+              "lastAnalysis": "2026-10-14"
+            },
+            "trivyPr": {
+              "image": "accusystechnology/ms-ophir-reportes-api:36776",
+              "baseImage": "ms-ophir-reportes-api:36776",
+              "critical": 0,
+              "high": 0,
+              "medium": 0,
+              "low": 0,
+              "fixable": 0,
+              "unfixable": 0,
+              "buildId": "36776",
+              "scanDate": "2026-10-14",
+              "findings": [],
+              "fuente": "pr",
+              "pipeline": "ms-ophir-reportes-api-pr",
+              "rama": "refs/pull/12070/merge"
+            },
+            "trivyBuild": {
+              "image": "accusystechnology/ms-ophir-reportes-api:1.0.0-b001f82c",
+              "baseImage": "ms-ophir-reportes-api:1.0.0-b001f82c",
+              "critical": 0,
+              "high": 0,
+              "medium": 0,
+              "low": 0,
+              "fixable": 0,
+              "unfixable": 0,
+              "buildId": "36806",
+              "scanDate": "2026-10-14",
+              "findings": [],
+              "fuente": "build",
+              "pipeline": "ms-ophir-reportes-api-build",
+              "rama": "master"
+            },
+            "trivy": {
+              "image": "accusystechnology/ms-ophir-reportes-api:1.0.0-b001f82c",
+              "baseImage": "ms-ophir-reportes-api:1.0.0-b001f82c",
+              "critical": 0,
+              "high": 0,
+              "medium": 0,
+              "low": 0,
+              "fixable": 0,
+              "unfixable": 0,
+              "buildId": "36806",
+              "scanDate": "2026-10-14",
+              "findings": [],
+              "fuente": "build",
+              "pipeline": "ms-ophir-reportes-api-build",
+              "rama": "master"
+            },
+            "aplicaSonar": true
+          },
+          {
+            "name": "ms-ophir-remesa-api",
+            "publicaImagen": true,
+            "sonarProjectName": "gema_ms-ophir-remesa-api",
+            "sonarProjectKey": "gema_ms-ophir-remesa-api_b060a3c5-78cd-4de7-9d7a-e93b88ce6b89",
+            "sonar": {
+              "ncloc": 9068,
+              "coverage": 0,
+              "newCoverage": 0,
+              "duplications": 2,
+              "sqaleIndex": 673,
+              "bugs": 0,
+              "vulnerabilities": 0,
+              "hotspotsToReview": 1,
+              "codeSmells": 144,
+              "reliabilityRating": "A",
+              "securityRating": "A",
+              "maintainabilityRating": "A",
+              "alertStatus": "OK",
+              "lastAnalysis": "2026-10-14"
+            },
+            "trivyPr": {
+              "image": "accusystechnology/ms-ophir-remesa-api:36994",
+              "baseImage": "ms-ophir-remesa-api:36994",
+              "critical": 0,
+              "high": 0,
+              "medium": 0,
+              "low": 0,
+              "fixable": 0,
+              "unfixable": 0,
+              "buildId": "36994",
+              "scanDate": "2026-10-14",
+              "findings": [],
+              "fuente": "pr",
+              "pipeline": "ms-ophir-remesa-api-pr",
+              "rama": "refs/pull/12166/merge"
+            },
+            "trivyBuild": {
+              "image": "accusystechnology/ms-ophir-remesa-api:0.0.1-7e5137a0",
+              "baseImage": "ms-ophir-remesa-api:0.0.1-7e5137a0",
+              "critical": 0,
+              "high": 0,
+              "medium": 6,
+              "low": 0,
+              "fixable": 6,
+              "unfixable": 0,
+              "buildId": "34483",
+              "scanDate": "2026-10-14",
+              "findings": [
+                {
+                  "id": "CVE-2026-19499",
+                  "package": "libc6",
+                  "version": "2.39-0ubuntu8.8",
+                  "severity": "MEDIA",
+                  "fixedVersion": "2.39-0ubuntu8.9"
+                },
+                {
+                  "id": "CVE-2026-19542",
+                  "package": "libc6",
+                  "version": "2.39-0ubuntu8.8",
+                  "severity": "MEDIA",
+                  "fixedVersion": "2.39-0ubuntu8.9"
+                },
+                {
+                  "id": "CVE-2026-6368",
+                  "package": "libc6",
+                  "version": "2.39-0ubuntu8.8",
+                  "severity": "MEDIA",
+                  "fixedVersion": "2.39-0ubuntu8.9"
+                },
+                {
+                  "id": "CVE-2026-6791",
+                  "package": "libc6",
+                  "version": "2.39-0ubuntu8.8",
+                  "severity": "MEDIA",
+                  "fixedVersion": "2.39-0ubuntu8.9"
+                },
+                {
+                  "id": "CVE-2026-77117",
+                  "package": "libc6",
+                  "version": "2.39-0ubuntu8.8",
+                  "severity": "MEDIA",
+                  "fixedVersion": "2.39-0ubuntu8.9"
+                },
+                {
+                  "id": "CVE-2026-80489",
+                  "package": "libc6",
+                  "version": "2.39-0ubuntu8.8",
+                  "severity": "MEDIA",
+                  "fixedVersion": "2.39-0ubuntu8.9"
+                }
+              ],
+              "fuente": "build",
+              "pipeline": "ms-ophir-remesa-api-build",
+              "rama": "ci/deploy"
+            },
+            "trivy": {
+              "image": "accusystechnology/ms-ophir-remesa-api:0.0.1-7e5137a0",
+              "baseImage": "ms-ophir-remesa-api:0.0.1-7e5137a0",
+              "critical": 0,
+              "high": 0,
+              "medium": 6,
+              "low": 0,
+              "fixable": 6,
+              "unfixable": 0,
+              "buildId": "34483",
+              "scanDate": "2026-10-14",
+              "findings": [
+                {
+                  "id": "CVE-2026-19499",
+                  "package": "libc6",
+                  "version": "2.39-0ubuntu8.8",
+                  "severity": "MEDIA",
+                  "fixedVersion": "2.39-0ubuntu8.9"
+                },
+                {
+                  "id": "CVE-2026-19542",
+                  "package": "libc6",
+                  "version": "2.39-0ubuntu8.8",
+                  "severity": "MEDIA",
+                  "fixedVersion": "2.39-0ubuntu8.9"
+                },
+                {
+                  "id": "CVE-2026-6368",
+                  "package": "libc6",
+                  "version": "2.39-0ubuntu8.8",
+                  "severity": "MEDIA",
+                  "fixedVersion": "2.39-0ubuntu8.9"
+                },
+                {
+                  "id": "CVE-2026-6791",
+                  "package": "libc6",
+                  "version": "2.39-0ubuntu8.8",
+                  "severity": "MEDIA",
+                  "fixedVersion": "2.39-0ubuntu8.9"
+                },
+                {
+                  "id": "CVE-2026-77117",
+                  "package": "libc6",
+                  "version": "2.39-0ubuntu8.8",
+                  "severity": "MEDIA",
+                  "fixedVersion": "2.39-0ubuntu8.9"
+                },
+                {
+                  "id": "CVE-2026-80489",
+                  "package": "libc6",
+                  "version": "2.39-0ubuntu8.8",
+                  "severity": "MEDIA",
+                  "fixedVersion": "2.39-0ubuntu8.9"
+                }
+              ],
+              "fuente": "build",
+              "pipeline": "ms-ophir-remesa-api-build",
+              "rama": "ci/deploy"
+            },
+            "aplicaSonar": true
+          }
+        ]
+      }
+    ]
+  }
+]

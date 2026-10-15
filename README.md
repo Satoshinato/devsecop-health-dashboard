@@ -45,6 +45,18 @@ npm run build          # sale `out/`
 | `npm run scan -- --source=azure` | Inventario + Trivy (agente hosted). |
 | `npm run scan -- --merge --azure-file … --sonar-file …` | Une ambos parciales. |
 
+### Rutina diaria Sonar — solo Gema (POC)
+
+PowerShell (requiere `SONAR_ORG` + `SONAR_TOKEN` en la sesión):
+
+```powershell
+.\scripts\daily-sonar-gema.ps1
+```
+
+Hace: `npm run scan -- --source=sonar` → recorte Gema en `data/gema/scans/` + `data/gema/history.json` → `data/gema/triage-<fecha>.md` (delta bugs/vulns, gate ERROR, links a issues abiertos en Sonar para preparar bugs en ADO proyecto `gema`).
+
+Solo export/delta sin re-escanear: `.\scripts\daily-sonar-gema.ps1 -SkipScan` o `npm run gema:export` / `npm run gema:delta`.
+
 Variables para el scan real (Library group **`devsecops-dashboard`**):
 
 | Variable | Uso |
