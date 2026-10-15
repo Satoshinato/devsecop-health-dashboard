@@ -7,7 +7,12 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { rollHistory } from "../lib/history.ts";
-import { SONAR_HOST_DEFAULT } from "../lib/quality-gate.ts";
+import {
+  sonarDashboardUrl,
+  sonarHostFromEnv,
+  sonarProjectIssuesAllOpenUrl,
+  sonarProjectIssuesUrl,
+} from "../lib/sonar-links.ts";
 import type { Repo, ScanSnapshot } from "../lib/snapshot.ts";
 
 const GEMA_KEY = "gema";
@@ -26,11 +31,6 @@ function argValue(prefix: string): string | undefined {
     }
   }
   return undefined;
-}
-
-function sonarHost(): string {
-  const raw = process.env.SONAR_HOST?.trim() || SONAR_HOST_DEFAULT;
-  return raw.replace(/\/+$/, "");
 }
 
 function readJson<T>(path: string): T {
@@ -99,20 +99,6 @@ function deltaMetric(prev: number | null, curr: number | null): string {
   return d > 0 ? `+${d}` : String(d);
 }
 
-function issuesUrl(projectKey: string, types: "BUG" | "VULNERABILITY"): string {
-  const host = sonarHost();
-  const params = new URLSearchParams({
-    id: projectKey,
-    resolved: "false",
-    types,
-  });
-  return `${host}/project/issues?${params.toString()}`;
-}
-
-function dashboardUrl(projectKey: string): string {
-  return `${sonarHost()}/dashboard?id=${encodeURIComponent(projectKey)}`;
-}
-
 function formatTriage(
   fecha: string,
   prev: ScanSnapshot | null,
@@ -134,8 +120,8 @@ function formatTriage(
   }
 
   lines.push("## Repos a revisar (delta bugs / vulns vs scan anterior)", "");
-  lines.push("| Repo | Bugs Δ | Vulns Δ | Gate | Último análisis | Acciones |");
-  lines.push("| --- | ---: | ---: | --- | --- | --- |");
+  lines.push("| Repo | Bugs | Vulns | Bugs Δ | Gate | Acciones |");
+  lines.push("| --- | ---: | ---: | ---: | --- | --- |");
 
   const attention: RepoRow[] = [];
 
@@ -149,7 +135,8 @@ function formatTriage(
     const p = prevRepo ? repoRow(prevRepo) : null;
 
     const bugsD = prev ? deltaMetric(p!.bugs, cur.bugs) : "—";
-    const vulnsD = prev ? deltaMetric(p!.vulns, cur.vulns) : "—";
+    const bugsN = cur.bugs ?? "—";
+    const vulnsN = cur.vulns ?? "—";
 
     const needs =
       cur.gate === "ERROR" ||
@@ -161,19 +148,28 @@ function formatTriage(
 
     let actions = "—";
     if (cur.key) {
-      actions = `[Dashboard](${dashboardUrl(cur.key)}) · [Bugs abiertos](${issuesUrl(cur.key, "BUG")})`;
+      const bugsLink = sonarProjectIssuesUrl(cur.key, { kinds: "bugs" });
+      const allLink = sonarProjectIssuesAllOpenUrl(cur.key);
+      actions =
+        `[Dashboard](${sonarDashboardUrl(cur.key)}) · ` +
+        `[Bugs (${bugsN})](${bugsLink}) · ` +
+        `[Issues abiertos](${allLink})`;
     } else if (isMsMf) {
       actions = "_Sin key Sonar — revisar match en Community_";
     }
 
     lines.push(
-      `| ${repo.name} | ${bugsD} | ${vulnsD} | ${cur.gate ?? "—"} | ${cur.lastAnalysis ?? "—"} | ${actions} |`,
+      `| ${repo.name} | ${bugsN} | ${vulnsN} | ${bugsD} | ${cur.gate ?? "—"} | ${actions} |`,
     );
   }
 
   lines.push("", "## Checklist bugs Azure DevOps", "");
-  lines.push("Por cada fila con Δ positivo o gate **ERROR**:");
-  lines.push("1. Abrir *Bugs abiertos* en Sonar y filtrar **Open**.");
+  lines.push(
+    "_Si **Bugs (0)** el link puede mostrar lista vacía: es normal. Gate ERROR sin bugs suele ser cobertura/duplicación/hotspots._",
+  );
+  lines.push("");
+  lines.push("Por cada fila con bugs > 0, Δ positivo o gate **ERROR**:");
+  lines.push("1. Abrir *Bugs (N)* o usar `npm run gema:issues-ado -- --repo=<repo> --apply`.");
   lines.push("2. Buscar en ADO (proyecto `gema`) si ya existe WI con el link Sonar.");
   lines.push("3. Crear **Bug** con título `[Sonar][Bug] <repo> — <regla> — <archivo>:<línea>`.");
   lines.push("4. Descripción: mensaje Sonar + URL del issue + `sonarProjectKey`.", "");

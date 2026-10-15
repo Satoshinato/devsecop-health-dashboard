@@ -11,7 +11,8 @@
     "scan": "tsx collector/main.ts",
     "scan:fixture": "tsx collector/main.ts --from-fixture",
     "gema:export": "tsx scripts/gema-daily.ts export",
-    "gema:delta": "tsx scripts/gema-daily.ts delta"
+    "gema:delta": "tsx scripts/gema-daily.ts delta",
+    "gema:issues-ado": "tsx scripts/gema-sonar-issues-ado.ts"
   },
   "dependencies": {
     "next": "16.3.3",

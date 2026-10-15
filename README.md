@@ -57,6 +57,15 @@ Hace: `npm run scan -- --source=sonar` → recorte Gema en `data/gema/scans/` + 
 
 Solo export/delta sin re-escanear: `.\scripts\daily-sonar-gema.ps1 -SkipScan` o `npm run gema:export` / `npm run gema:delta`.
 
+Bugs Sonar → ADO (API, sin copiar links a mano):
+
+```powershell
+$env:SONAR_TOKEN = "..."
+$env:AZDO_PAT = "..."   # solo con --apply
+npm run gema:issues-ado -- --repo=ms-ophir-app --limit=3          # dry-run
+npm run gema:issues-ado -- --repo=ms-ophir-app --limit=3 --apply  # crea Bugs en AZDO_PROJECT (default qa)
+```
+
 Variables para el scan real (Library group **`devsecops-dashboard`**):
 
 | Variable | Uso |
