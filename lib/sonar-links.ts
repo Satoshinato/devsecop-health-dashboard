@@ -5,6 +5,9 @@ export function sonarHostFromEnv(env: NodeJS.Dict<string | undefined> = process.
   return raw.replace(/\/+$/, "");
 }
 
+/** UI Community 25: OPEN, CONFIRMED, … — no admite REOPENED en issueStatuses. */
+const OPEN_ISSUE_STATUSES_UI = "OPEN,CONFIRMED";
+
 /** Enlace a la pestaña Issues del proyecto (Community 25 / MQR). */
 export function sonarProjectIssuesUrl(
   projectKey: string,
@@ -14,7 +17,7 @@ export function sonarProjectIssuesUrl(
   const host = sonarHostFromEnv(env);
   const params = new URLSearchParams({ id: projectKey });
   // `resolved=false` ya no filtra bien en UI reciente; usar estados explícitos.
-  params.set("issueStatuses", "OPEN,CONFIRMED,REOPENED");
+  params.set("issueStatuses", OPEN_ISSUE_STATUSES_UI);
   if (opts.kinds === "bugs") params.set("types", "BUG");
   else if (opts.kinds === "vulnerabilities") params.set("types", "VULNERABILITY");
   return `${host}/project/issues?${params.toString()}`;
@@ -28,7 +31,7 @@ export function sonarProjectIssuesAllOpenUrl(
   const host = sonarHostFromEnv(env);
   const params = new URLSearchParams({
     id: projectKey,
-    issueStatuses: "OPEN,CONFIRMED,REOPENED",
+    issueStatuses: OPEN_ISSUE_STATUSES_UI,
   });
   return `${host}/project/issues?${params.toString()}`;
 }

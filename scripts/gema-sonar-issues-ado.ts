@@ -59,7 +59,7 @@ async function fetchOpenBugs(componentKey: string, token: string): Promise<Sonar
     const url = new URL(`${host}/api/issues/search`);
     url.searchParams.set("componentKeys", componentKey);
     url.searchParams.set("types", "BUG");
-    url.searchParams.set("statuses", "OPEN,CONFIRMED,REOPENED");
+    url.searchParams.set("statuses", "OPEN,CONFIRMED");
     url.searchParams.set("ps", String(ps));
     url.searchParams.set("p", String(page));
     const res = await fetch(url, {
